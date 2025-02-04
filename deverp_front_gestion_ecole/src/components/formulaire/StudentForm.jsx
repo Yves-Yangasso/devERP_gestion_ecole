@@ -30,9 +30,10 @@ const StudentForm = () => {
           <Input label="Email" type="email" placeholder="Veuillez saisir l'email" />
           <Input label="Téléphone" type="tel" placeholder="Veuillez saisir le téléphone" />
           <Input label="Nationalité" placeholder="Veuillez saisir la nationalité" />
+          <Input label="Dernier Etablissement" placeholder="Veuillez saisir la dernier université fréquenté" />
           <SelectInput label="Niveau" name="niveau" options={options.niveau} />
           <SelectInput label="Formation Supérieure" name="formation" options={options.formation} />
-          <div className="col-span-2">
+          <div className="col-span-1">
             <SelectInput label="Spécialités" name="specialites" options={options.specialites} onChange={handleSpecialtyChange} />
             <div className="mt-4">
               {selectedSpecialties.length > 0 && (

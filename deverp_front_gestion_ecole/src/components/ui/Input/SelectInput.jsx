@@ -1,11 +1,10 @@
 import React from 'react';
+import SimpleLabel from '../label/SimpleLabel';
 
 const SelectInput = ({ label, name, options, className = '', ...props }) => {
   return (
     <div className="flex flex-col gap-2">
-      <label className="text-gray-700 font-medium" htmlFor={name}>
-        {label}
-      </label>
+      <SimpleLabel text={label} className="text-gray-700 font-medium" />
       <select
         id={name}
         name={name}
