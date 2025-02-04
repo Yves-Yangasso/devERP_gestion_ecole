@@ -1,7 +1,7 @@
 import React from 'react';
 
 const SimpleLabel = ({ text, className }) => (
-  <div className="mb-4 flex flex-col lg:flex-row gap-2">
+  <div className="mb-1 text-left">
     <label className={className}>
       {text}
     </label>
