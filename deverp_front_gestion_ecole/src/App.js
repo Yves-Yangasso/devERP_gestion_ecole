@@ -1,5 +1,5 @@
 import { BrowserRouter as Router } from 'react-router-dom';
-import AppRoutes from './components/pages/Demandeurs/InformationStudent'; // Il faut utiliser ici AppRoutes
+import AppRoutes from './components/pages/Admins/Decision.jsx'; // Il faut utiliser ici AppRoutes
 import './App.css';
 
 function App() {
