@@ -4,7 +4,7 @@ import StudentForm from '../../formulaire/StudentForm'; // Assure-toi d'importer
 import StepIndicator from '../../formulaire/StepIndicator';
 import TuteurForm from '../../formulaire/TuteurForm';
 
-const InformationStudentPage = () => {
+const InformationTuteur = () => {
   return (
     <Layout
       leftText="Veuillez compléter les informations concernant le tuteur en suivant les instructions ci-dessous." 
@@ -14,4 +14,4 @@ const InformationStudentPage = () => {
   );
 }
 
-export default InformationStudentPage;
+export default InformationTuteur;

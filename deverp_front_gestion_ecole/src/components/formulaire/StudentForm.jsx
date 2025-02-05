@@ -4,13 +4,14 @@ import SelectInput from '../ui/Input/SelectInput';
 import Button from '../ui/Button/SimpleButton';
 import { ArrowRight } from 'lucide-react';
 import { useSpecialtySelection } from '../../utils/specialtyUtils';
+import { Link } from 'react-router-dom';
 
 export const options = {
-    niveau: [],
-    formation: [],
-    specialites: [],
-  };
-  
+  niveau: [],
+  formation: [],
+  specialites: [],
+};
+
 const StudentForm = () => {
   const { selectedSpecialties, handleSpecialtyChange, removeSpecialty } = useSpecialtySelection();
 
@@ -59,10 +60,12 @@ const StudentForm = () => {
           </div>
         </div>
         <div className="flex justify-end mt-auto pt-8">
-          <Button>
-            Suivant
-            <ArrowRight className="w-5 h-5" />
-          </Button>
+          <Link to="/TuteurInfos">
+            <Button>
+              Suivant
+              <ArrowRight className="w-5 h-5" />
+            </Button>
+          </Link>
         </div>
       </form>
     </div>

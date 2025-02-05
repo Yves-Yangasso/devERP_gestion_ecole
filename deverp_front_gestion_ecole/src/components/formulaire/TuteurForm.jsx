@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import Input from '../ui/Input/InputField';
 import Button from '../ui/Button/SimpleButton';
 import { ArrowRightCircle, ArrowLeftCircle, PlusCircle } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const TuteurForm = () => {
   // État pour suivre les formulaires de tuteurs
@@ -15,9 +16,9 @@ const TuteurForm = () => {
   return (
     <div className="flex flex-col min-h-screen">
       {/* Titre */}
-      <h2 className="relative inline-block text-xl font-bold text-blue-600 mb-8 px-4 py-2 border-2 border-blue-600 rounded-tl-full rounded-br-full bg-white">
-  INFORMATION DU TUTEUR
-</h2>
+      <h2 className="relative inline-block text-xl font-bold text-blue-600 mb-8 px-4 py-2 border-2 border-blue-600 rounded-tl-full rounded-br-full bg-white text-center">
+        INFORMATION DU TUTEUR
+      </h2>
 
 
 
@@ -56,16 +57,21 @@ const TuteurForm = () => {
       {/* Boutons en bas */}
       <div className="flex justify-between items-center mt-auto py-4 px-8 border-t border-gray-300">
         {/* Bouton Précédent */}
+        <Link to="/StudentInfos">
         <Button type="button" className="flex items-center text-blue-600">
           <ArrowLeftCircle className="w-6 h-6 mr-2" />
           Précédent
         </Button>
+        </Link>
+        
 
         {/* Bouton Suivant */}
-        <Button type="button" className="flex items-center text-blue-600">
-          Suivant
-          <ArrowRightCircle className="w-6 h-6 ml-2" />
-        </Button>
+        <Link to="/DocAFournir">
+          <Button type="button" className="flex items-center text-blue-600">
+            Suivant
+            <ArrowRightCircle className="w-6 h-6 ml-2" />
+          </Button></Link>
+
       </div>
     </div>
   );
