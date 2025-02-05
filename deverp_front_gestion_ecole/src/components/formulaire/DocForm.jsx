@@ -14,12 +14,12 @@ const DocForm = () => {
 
       <form className="flex-1 flex flex-col">
         <div className="grid grid-cols-2 gap-x-8 gap-y-6 flex-1">
-          <Input label="CNI/passport" placeholder="Veuillez saisir le CNI passport" />
-          <Input label="Dernier diplome" placeholder="Veuillez saisir le diplome" />
-          <Input label="Certificat Scolarite" type="date" placeholder="Veuillez saisir le certificat de scolarite" />
-          <Input label="Telephone" placeholder="Veuillez saisir le Telephone" />
-          <Input label="Bulletins" placeholder="Veuillez saisir le bulletin" />
-          <Input label="Certificat residence" type="email" placeholder="Veuillez saisir le certificat residence" />
+          <Input label="CNI/passport" type='file' placeholder="Veuillez saisir le CNI passport" />
+          <Input label="Dernier diplome" type='file' placeholder="Veuillez saisir le diplome" />
+          <Input label="Certificat Scolarite" type='file' placeholder="Veuillez saisir le certificat de scolarite" />
+          <Input label="Telephone" type='file' placeholder="Veuillez saisir le Telephone" />
+          <Input label="Bulletins" type='file' placeholder="Veuillez saisir le bulletin" />
+          <Input label="Certificat residence"  type='file' placeholder="Veuillez saisir le certificat residence" />
           
         </div>
         <div className="flex justify-between items-center mt-auto py-4 px-8 border-t border-gray-300">
