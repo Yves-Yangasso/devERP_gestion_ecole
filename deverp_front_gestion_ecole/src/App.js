@@ -1,17 +1,20 @@
-<<<<<<< HEAD
 import { BrowserRouter as Router } from 'react-router-dom';
-import AppRoutes from './components/pages/Admins/Decision.jsx'; // Il faut utiliser ici AppRoutes
+import AppRoutes from './routes.jsx';
+import Navbar from './components/ui/NavBar/menuItems.jsx'; // Vérifie que ce fichier contient bien le composant Navbar
 import './App.css';
-=======
-import logo from "./logo.svg";
-import "./App.css";
->>>>>>> ae13001 (Mise a jour front)
+
+const menuItems = [
+  { path: '/SuivieDossier', label: 'Suivie Dossier' },
+  { path: '/Decision', label: 'Décision' },
+  { path: '/Etudiants', label: 'Etudiants' },
+];
 
 function App() {
   return (
-    <Router> {/* Assurer que le Router est ici */}
+    <Router> {/* Un seul Router englobant toute l'application */}
       <div className="App">
-        <AppRoutes />
+        <Navbar menuItems={menuItems} /> {/* Barre de navigation */}
+        <AppRoutes /> {/* Gestion des routes */}
       </div>
     </Router>
   );

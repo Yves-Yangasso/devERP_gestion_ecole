@@ -12,4 +12,5 @@ const InputSaisie = ({ className, type, placeholder, name, value }) => {
   );
 };
 
+
 export default InputSaisie;

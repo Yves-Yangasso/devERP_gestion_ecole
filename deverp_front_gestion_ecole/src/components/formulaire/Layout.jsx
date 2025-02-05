@@ -16,7 +16,7 @@ const Layout = ({ leftText, formComponent, StepIndicator }) => {
             {/* Contenu */}
             <div className="relative flex w-full">
                 {/* Section gauche */}
-                <div className="flex-1 flex flex-col p-12">
+                <div className="flex-1 flex flex-col p-8">
                     <div className="mb-auto">
                         <img
                             src="https://suptech.info/sup1/public/template/assets/img/isi.png"

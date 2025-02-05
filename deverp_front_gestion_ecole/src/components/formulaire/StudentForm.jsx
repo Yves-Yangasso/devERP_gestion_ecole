@@ -4,6 +4,7 @@ import SelectInput from '../ui/Input/SelectInput';
 import Button from '../ui/Button/SimpleButton';
 import { ArrowRight } from 'lucide-react';
 import { useSpecialtySelection } from '../../utils/specialtyUtils';
+import { useNavigate } from 'react-router-dom'; 
 
 export const options = {
     niveau: [],
@@ -13,6 +14,15 @@ export const options = {
   
 const StudentForm = () => {
   const { selectedSpecialties, handleSpecialtyChange, removeSpecialty } = useSpecialtySelection();
+  const navigate = useNavigate(); // Hook pour la navigation
+
+
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    navigate('/Tuteurs');
+  };
 
   return (
     <div className="flex flex-col flex-1">
@@ -20,7 +30,7 @@ const StudentForm = () => {
         INFORMATION ÉTUDIANT
       </h2>
 
-      <form className="flex-1 flex flex-col">
+      <form onSubmit={handleSubmit} className="flex-1 flex flex-col">
         <div className="grid grid-cols-2 gap-x-8 gap-y-6 flex-1">
           <Input label="Prénom" placeholder="Veuillez saisir le prénom(s)" />
           <Input label="Nom" placeholder="Veuillez saisir le nom(s)" />

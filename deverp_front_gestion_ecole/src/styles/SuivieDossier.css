@@ -1,0 +1,79 @@
+
+.header-demandeur {
+    display: flex;
+    align-items: center;
+}
+.header-demandeur img {
+    width: 40px;
+    height: 40px;
+    margin-right: 10px;
+}
+.info {
+    display: flex;
+    gap: 10px;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+.label {
+    font-weight: bold;
+}
+.info-row {
+    display: flex;
+    gap: 40px;
+}
+
+.dossier-demandeur{
+    text-align: left; /* Alignement à gauche */
+    width: 100%; /* Rendre responsive */
+    max-width: 500px; /* Largeur maximale */
+    margin: 3px auto; /* Centrer le conteneur */
+    padding: 15px; /* Espacement interne */
+    border-radius: 5px; /* Coins arrondis */
+    background-color: transparent; /* Couleur de fond */
+}
+
+
+.info-demandeur {
+    margin-top: 20px;
+    text-align: left; /* Alignement à gauche */
+    width: 100%; /* Rendre responsive */
+    max-width: 500px; /* Largeur maximale */
+    margin: 20px auto; /* Centrer le conteneur */
+    border: 1px solid #ccc; /* Bordure */
+    padding: 15px; /* Espacement interne */
+    border-radius: 5px; /* Coins arrondis */
+    background-color: #f9f9f9; /* Couleur de fond */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Ombre subtile */
+  }
+  
+  .info-demandeur h6 {
+    margin-bottom: 10px; /* Espacement sous le titre */
+    font-weight: bold; /* Mettre en gras */
+  }
+  
+  .info-demandeur p {
+    margin: 5px 0; /* Espacement entre les paragraphes */
+  }
+  
+
+  .title-container {
+    background: white;
+    color: #007bff;
+    font-weight: bold;
+    border-radius: 30px 0;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    padding: 0px;
+    width: 300px;
+    position: relative;
+    left: 20%;
+    margin-top: 10px;
+    border: 1px solid black;
+  }
+
+  .form-container {
+    background: transparent;
+    border: 1.5px dashed blue; 
+    padding: 20px;
+    width: 100%;
+    margin-top: 20px;
+  }

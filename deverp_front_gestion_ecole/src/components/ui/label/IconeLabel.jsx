@@ -9,3 +9,4 @@ const IconeLabel = ({ text, icon, className }) => (
 );
 
 export default IconeLabel;
+
