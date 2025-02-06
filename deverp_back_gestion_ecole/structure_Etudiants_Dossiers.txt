@@ -157,7 +157,7 @@ touch app/Traits/Etudiant/AvoirInscriptions.php
 
 
 
------------------ Dossiers Étudiants et mise en place de la gestion des documents avec stockage sur Cloudinary---------
+----------------- Dossiers Étudiants et mise en place de la gestion des documents avec stockage sur Cloudinary---------------
 app/
 ├── Models/
 │   ├── Document.php
