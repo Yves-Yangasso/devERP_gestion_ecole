@@ -2,9 +2,7 @@ import React from 'react'
 import InfosTuteur from '../ui/Card/InfosTuteur'
 import StudentInfos from '../ui/Card/StudentInfos'
 import DocInfos from '../ui/Card/DocInfos'
-import { ArrowLeftCircle, ArrowRightCircle } from 'lucide-react'
-import Button from '../ui/Button/SimpleButton';
-import { Link } from 'react-router-dom'
+import NavigationButtons from '../ui/Button/NavigationButtons'
 
 const RecapStudents = ({ tuteur, demandeur, document }) => {
   return (
@@ -19,24 +17,8 @@ const RecapStudents = ({ tuteur, demandeur, document }) => {
         </div>
         <DocInfos documents={document} />
       </div>
-      <div className="flex justify-between items-center mt-auto py-4 px-8 border-t border-gray-300">
-        {/* Bouton Précédent */}
-        <Link to="/DocAFournir">
-        <Button type="button" className="flex items-center text-blue-600">
-          <ArrowLeftCircle className="w-6 h-6 mr-2" />
-          Précédent
-        </Button>
-        </Link>
-
-        {/* Bouton Suivant */}
-        <Button type="button" className="flex items-center text-blue-600">
-          Envoyer
-          <ArrowRightCircle className="w-6 h-6 ml-2" />
-        </Button>
-      </div>
+      <NavigationButtons prevLink="/DocAFournir" nextLink="/RecapEtudiant" prevText="Précédent" nextText="Envoyer" /> 
     </div>
-    
-
   )
 }
 

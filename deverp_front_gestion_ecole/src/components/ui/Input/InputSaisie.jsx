@@ -1,13 +1,23 @@
-import React from 'react';
+import React from "react";
 
-const InputSaisie = ({ className, type, placeholder, name, value }) => {
+const InputSaisie = ({
+  type,
+  placeholder,
+  name,
+  value,
+  onChange,
+  className,
+  ...rest
+}) => {
   return (
-    <input 
-      className={className}
+    <input
       type={type}
       placeholder={placeholder}
       name={name}
-      value={value}
+      value={value || ''}
+      onChange={onChange}
+      className={className}
+      {...rest}
     />
   );
 };

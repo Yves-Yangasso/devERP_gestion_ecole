@@ -1,0 +1,66 @@
+import React from 'react';
+import Input from '../ui/Input/InputField';
+import SelectInput from '../ui/Input/SelectInput';
+import { useSpecialtySelection } from '../../utils/specialtyUtils';
+import NavigationButtons from '../ui/Button/NavigationButtons';
+
+export const options = {
+  niveau: [],
+  formation: [],
+  specialites: [],
+};
+
+const StudentForm = () => {
+  const { selectedSpecialties, handleSpecialtyChange, removeSpecialty } = useSpecialtySelection();
+
+  return (
+    <div className="flex flex-col flex-1">
+      <h2 className="text-2xl font-bold text-center text-blue-600 mb-8">
+        INFORMATION ÉTUDIANT
+      </h2>
+
+      <form className="flex-1 flex flex-col">
+        <div className="grid grid-cols-2 gap-x-8 gap-y-6 flex-1">
+          <Input label="Prénom" placeholder="Veuillez saisir le prénom(s)" />
+          <Input label="Nom" placeholder="Veuillez saisir le nom(s)" />
+          <Input label="Date Naissance" type="date" placeholder="Veuillez saisir la date de naissance" />
+          <Input label="Lieu Naissance" placeholder="Veuillez saisir le lieu de naissance" />
+          <Input label="Addresse" placeholder="Veuillez saisir l'adresse" />
+          <Input label="Email" type="email" placeholder="Veuillez saisir l'email" />
+          <Input label="Téléphone" type="tel" placeholder="Veuillez saisir le téléphone" />
+          <Input label="Nationalité" placeholder="Veuillez saisir la nationalité" />
+          <Input label="Dernier Etablissement" placeholder="Veuillez saisir la dernier université fréquenté" />
+          <SelectInput label="Niveau" name="niveau" options={options.niveau} />
+          <SelectInput label="Formation Supérieure" name="formation" options={options.formation} />
+          <div className="col-span-1">
+            <SelectInput label="Spécialités" name="specialites" options={options.specialites} onChange={handleSpecialtyChange} />
+            <div className="mt-4">
+              {selectedSpecialties.length > 0 && (
+                <div>
+                  <p className="text-gray-700 font-medium">Spécialités sélectionnées :</p>
+                  <ul className="mt-2">
+                    {selectedSpecialties.map((specialty, index) => (
+                      <li key={index} className="flex justify-between bg-gray-200 p-2 rounded-lg mt-2">
+                        {specialty}
+                        <button
+                          type="button"
+                          onClick={() => removeSpecialty(index)}
+                          className="text-red-500 font-bold ml-4"
+                        >
+                          X
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+        <NavigationButtons nextLink="/TuteurInfos" nextText="Suivant" />
+      </form>
+    </div>
+  );
+};
+
+export default StudentForm;

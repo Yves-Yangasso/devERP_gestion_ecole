@@ -1,16 +1,17 @@
 import React from 'react';
 import DocCard from '../DocText/DocCard';
-import { FileText, PersonStanding } from 'lucide-react';
+import { FileText } from 'lucide-react';
 import Title from '../DocText/Title';
 
-const DocInfos = ({documents}) => {
+const DocInfos = ({ documents = {} }) => {
+  const documentEntries = Object.entries(documents); // Convertir l'objet en tableau
 
   return (
-    <div className="p-6 bg-[#E5F1FF] shadow-md rounded-xl">
-      <Title icon={FileText} title={"Documents recquis"}/>
+    <div className="p-6 bg-[#E5F1FF] shadow-md rounded-xl w-full">
+      <Title icon={FileText} title="Documents requis" />
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {documents.map((doc, index) => (
-          <DocCard key={index} title={doc}/>
+        {documentEntries.map(([key, value], index) => (
+          <DocCard key={index} title={`${key}`} />
         ))}
       </div>
     </div>
@@ -18,3 +19,4 @@ const DocInfos = ({documents}) => {
 };
 
 export default DocInfos;
+
