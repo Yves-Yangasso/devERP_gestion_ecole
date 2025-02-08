@@ -1,14 +1,44 @@
 import React from 'react';
-import Input from '../ui/Input/InputField';
+import { useNavigate } from 'react-router-dom';  // Assurez-vous d'importer useNavigate
 import NavigationButtons from '../ui/Button/NavigationButtons';
 import { useFormContext } from '../../context/FormContext';
-
+import FileInput from '../ui/Input/InputField';
+import AlertService from '../../services/notifications/AlertService';
 
 const DocForm = () => {
   const { formState, updateDocuments } = useFormContext();
+  const navigate = useNavigate();
 
+  // Fonction de gestion de l'upload de fichiers
   const handleFileUpload = (name, files) => {
     updateDocuments({ ...formState.documents, [name]: files[0] });
+  };
+
+  // Vérification que tous les fichiers nécessaires sont fournis
+  const areAllFilesProvided = () => {
+    const requiredFiles = [
+      'cni', 'diplome', 'scolarite', 'casier', 'bulletin', 'residence', 
+      'visite', 'signa', 'adresse', 'ville', 'pays', 'region'
+    ];
+    return requiredFiles.every(file => formState.documents[file]);
+  };
+
+  // Fonction pour gérer le clic "Précédent"
+  const handlePrevClick = (e) => {
+    e.preventDefault();
+    navigate('/TuteurInfos');
+  };
+
+  // Fonction pour gérer le clic "Suivant"
+  const handleNextClick = (e) => {
+    e.preventDefault();
+
+    // Si tous les fichiers ne sont pas fournis, afficher une alerte
+    if (!areAllFilesProvided()) {
+      AlertService.error('Veuillez télécharger tous les documents requis.');
+    } else {
+      navigate('/RecapEtudiant');
+    }
   };
 
   return (
@@ -18,22 +48,111 @@ const DocForm = () => {
       </h2>
 
       <form className="flex flex-col">
-        <div className="grid grid-cols-2 gap-x-8 gap-y-6 py-6">
-          <Input label="CNI/passport" name="cni" type='file' onChange={(e) => handleFileUpload('cni', e.target.files)} placeholder="Veuillez saisir le CNI passport" />
-          <Input label="Dernier diplome" name="diplome" type='file' onChange={(e) => handleFileUpload('diplome', e.target.files)} placeholder="Veuillez saisir le diplome" />
-          <Input label="Certificat Scolarite" name="scolarite" type='file' onChange={(e) => handleFileUpload('scolarite', e.target.files)} placeholder="Veuillez saisir le certificat de scolarite" />
-          <Input label="Casier Judiciaire" name="casier" type='file' onChange={(e) => handleFileUpload('casier', e.target.files)} placeholder="Veuillez saisir le Telephone" />
-          <Input label="Bulletins de Notes" name="bulletin" type='file' onChange={(e) => handleFileUpload('bulletin', e.target.files)} placeholder="Veuillez saisir le bulletin" />
-          <Input label="Certificat residence" name="residence" type='file' onChange={(e) => handleFileUpload('residence', e.target.files)} placeholder="Veuillez saisir le certificat residence" />
-          <Input label="Visite contre visite" name="visite" type='file' onChange={(e) => handleFileUpload('visite', e.target.files)} placeholder="Veuillez saisir le certificat visite" />
-          <Input label="Certificat signa" name="signa" type='file' onChange={(e) => handleFileUpload('signa', e.target.files)} placeholder="Veuillez saisir le certificat signature" />
-          <Input label="Certificat adresse" name="adresse" type='file' onChange={(e) => handleFileUpload('adresse', e.target.files)} placeholder="Veuillez saisir le certificat adresse" />
-          <Input label="Certificat ville" name="ville" type='file' onChange={(e) => handleFileUpload('ville', e.target.files)} placeholder="Veuillez saisir le certificat ville" />
-          <Input label="Certificat pays" name="pays" type='file' onChange={(e) => handleFileUpload('pays', e.target.files)} placeholder="Veuillez saisir le certificat pays" />
-          <Input label="Certificat region" name="region" type='file' onChange={(e) => handleFileUpload('region', e.target.files)} placeholder="Veuillez saisir le certificat region" />
-
+        <div className="grid grid-cols-2 gap-x-6 gap-y-4 py-6">
+          <FileInput
+            label="CNI/passport"
+            type="file"
+            name="cni"
+            accept=".pdf"
+            initialFile={formState.documents.cni}
+            onChange={(e) => handleFileUpload('cni', e.target.files)}
+          />
+          <FileInput
+            label="Dernier diplome"
+            type="file"
+            name="diplome"
+            accept=".pdf"
+            initialFile={formState.documents.diplome}
+            onChange={(e) => handleFileUpload('diplome', e.target.files)}
+          />
+          <FileInput
+            label="Certificat Scolarite"
+            type="file"
+            name="scolarite"
+            accept=".pdf"
+            initialFile={formState.documents.scolarite}
+            onChange={(e) => handleFileUpload('scolarite', e.target.files)}
+          />
+          <FileInput
+            label="Casier Judiciaire"
+            type="file"
+            name="casier"
+            accept=".pdf"
+            initialFile={formState.documents.casier}
+            onChange={(e) => handleFileUpload('casier', e.target.files)}
+          />
+          <FileInput
+            label="Bulletins de Notes"
+            type="file"
+            name="bulletin"
+            accept=".pdf"
+            initialFile={formState.documents.bulletin}
+            onChange={(e) => handleFileUpload('bulletin', e.target.files)}
+          />
+          <FileInput
+            label="Certificat residence"
+            type="file"
+            name="residence"
+            accept=".pdf"
+            initialFile={formState.documents.residence}
+            onChange={(e) => handleFileUpload('residence', e.target.files)}
+          />
+          <FileInput
+            label="Visite contre visite"
+            type="file"
+            name="visite"
+            accept=".pdf"
+            initialFile={formState.documents.visite}
+            onChange={(e) => handleFileUpload('visite', e.target.files)}
+          />
+          <FileInput
+            label="Certificat signa"
+            type="file"
+            name="signa"
+            accept=".pdf"
+            initialFile={formState.documents.signa}
+            onChange={(e) => handleFileUpload('signa', e.target.files)}
+          />
+          <FileInput
+            label="Certificat adresse"
+            type="file"
+            name="adresse"
+            accept=".pdf"
+            initialFile={formState.documents.adresse}
+            onChange={(e) => handleFileUpload('adresse', e.target.files)}
+          />
+          <FileInput
+            label="Certificat ville"
+            type="file"
+            name="ville"
+            accept=".pdf"
+            initialFile={formState.documents.ville}
+            onChange={(e) => handleFileUpload('ville', e.target.files)}
+          />
+          <FileInput
+            label="Certificat pays"
+            type="file"
+            name="pays"
+            accept=".pdf"
+            initialFile={formState.documents.pays}
+            onChange={(e) => handleFileUpload('pays', e.target.files)}
+          />
+          <FileInput
+            label="Certificat region"
+            type="file"
+            name="region"
+            accept=".pdf"
+            initialFile={formState.documents.region}
+            onChange={(e) => handleFileUpload('region', e.target.files)}
+          />
         </div>
-        <NavigationButtons prevLink="/TuteurInfos" nextLink="/RecapEtudiant" prevText="Précédent" nextText="Suivant" /> 
+
+        <NavigationButtons 
+          onPrevClick={handlePrevClick} 
+          onNextClick={handleNextClick} 
+          prevText="Précédent"
+          nextText="Suivant"
+        />
       </form>
     </div>
   );

@@ -1,60 +1,116 @@
-import React, { useState } from "react";
-import { Upload } from "lucide-react"; // Icône pour améliorer le design
-import clsx from "clsx";
+import React, { useState, useEffect } from 'react';
+import { Upload, X, File } from 'lucide-react';
+import clsx from 'clsx';
+import { validateFile } from '../../../utils/validators'; // Ou le chemin correct
 
-const FileInput = ({ label, name, accept, className, onChange, ...rest }) => {
-  const [fileName, setFileName] = useState("");
+const FileInput = ({
+  label,
+  name,
+  accept,
+  onChange,
+  className,
+  initialFile = null, // Cette propriété permet de passer un fichier initial depuis le parent
+  ...rest
+}) => {
+  const [selectedFile, setSelectedFile] = useState(initialFile);
+  const [error, setError] = useState(null);
+
+  // Effect pour initialiser le fichier sélectionné
+  useEffect(() => {
+    if (initialFile) {
+      setSelectedFile(initialFile);
+    }
+  }, [initialFile]);
 
   const handleFileChange = (e) => {
     const files = e.target.files;
     if (files && files.length > 0) {
-      setFileName(files[0].name); // Mettre à jour le nom du fichier
-      if (onChange) onChange(e); // Appeler la fonction onChange passée en prop
-    } else {
-      setFileName("");
+      const file = files[0];
+
+      const errorMessage = validateFile(file);
+      if (errorMessage) {
+        setError(errorMessage); // Affiche l'erreur
+        setSelectedFile(null);  // Réinitialise le fichier sélectionné
+        return;
+      }
+
+      setError(null); // Pas d'erreur, on valide le fichier
+      setSelectedFile(file);
+      if (onChange) {
+        onChange(e);
+      }
     }
   };
 
-  const handleRemoveFile = () => {
-    setFileName("");
-    // Mettre à jour le parent si nécessaire
-    if (onChange) onChange({ target: { name, value: "" } });
+  const handleRemoveFile = (e) => {
+    e.preventDefault();  // Empêcher la propagation de l'événement
+    setSelectedFile(null);
+
+    // Réinitialiser la valeur de l'input file
+    const input = document.querySelector(`input[name="${name}"]`);
+    if (input) {
+      input.value = '';
+    }
+    if (onChange) {
+      // Créer un événement synthétique pour maintenir la cohérence
+      const syntheticEvent = {
+        target: { name, value: null, files: [] },
+        preventDefault: () => {}
+      };
+      onChange(syntheticEvent);
+    }
   };
 
   return (
-    <div className="flex flex-col gap-2">
-      <label
-        htmlFor={name}
-        className={clsx(
-          "cursor-pointer w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg border border-gray-300 bg-white text-gray-700",
-          "hover:bg-gray-100 active:bg-gray-200 transition-all duration-200",
-          className
-        )}
-      >
-        <Upload size={20} className="text-blue-500" />
-        <span className="text-sm">Choisir un fichier</span>
-      </label>
-
+    <div className="relative">
       <input
-        id={name}
-        name={name}
         type="file"
+        name={name}
         accept={accept}
         onChange={handleFileChange}
         className="hidden"
+        id={`file-${name}`}
         {...rest}
       />
-
-      {fileName && (
-        <div className="flex items-center gap-2 mt-2">
-          <span className="text-gray-600">{fileName}</span>
+      {!selectedFile ? (
+        <label
+          htmlFor={`file-${name}`}
+          className={clsx(
+            "flex items-center justify-center w-full p-3 border-2 border-dashed",
+            "rounded-lg cursor-pointer transition-all duration-200",
+            "hover:border-blue-500 hover:bg-blue-50",
+            selectedFile ? "border-green-500 bg-green-50" : "border-gray-300",
+            className
+          )}
+        >
+          <div className="flex items-center gap-4">
+            <Upload className="w-6 h-6 text-gray-400" />
+            <span className="text-sm text-gray-500">
+              {label || "Choisir un fichier"}
+            </span>
+          </div>
+        </label>
+      ) : (
+        <div className="flex items-center justify-between w-full p-3 border-2 border-green-500 bg-green-50 rounded-lg">
+          <div className="flex items-center gap-2">
+            <File className="w-5 h-5 text-green-600" />
+            <span className="text-sm text-green-700 truncate max-w-[200px]">
+              {selectedFile.name}
+            </span>
+          </div>
           <button
             type="button"
             onClick={handleRemoveFile}
-            className="text-red-500"
+            className="p-1 hover:bg-green-100 rounded-full transition-colors"
+            title="Supprimer le fichier"
           >
-            ✕
+            <X className="w-5 h-5 text-green-600" />
           </button>
+        </div>
+      )}
+      {error && (
+        <div className="text-red-500 text-sm mt-1">
+          {error}
         </div>
       )}
     </div>

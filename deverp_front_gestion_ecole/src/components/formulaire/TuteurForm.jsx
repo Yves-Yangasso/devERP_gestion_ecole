@@ -1,41 +1,39 @@
-import React, { useState } from 'react';
+import React from "react";
+import { useNavigate } from "react-router-dom"; // Utilisation de useNavigate pour la navigation
 import Input from '../ui/Input/InputField';
 import Button from '../ui/Button/Button';
 import { PlusCircle, Trash2 } from 'lucide-react';
 import NavigationButtons from '../ui/Button/NavigationButtons';
 import { useFormContext } from '../../context/FormContext';
+import { validateName, validateEmail, validatePhone, validateRequired } from '../../utils/validators'; // Ou le chemin correct
+import AlertService from "../../services/notifications/AlertService";
 
 const TuteurForm = () => {
   const { formState, updateTutors } = useFormContext();
+  const navigate = useNavigate(); // Le hook useNavigate pour la navigation
 
-  // Toujours afficher un premier tuteur
-  const [tuteurs, setTuteurs] = useState(() => {
+  const [tuteurs, setTuteurs] = React.useState(() => {
     return formState.tutors && formState.tutors.length > 0
       ? formState.tutors
       : [{ prenom: '', nom: '', adresse: '', telephone: '', email: '', fonction: '' }];
   });
 
-  const [ajoutPossible, setAjoutPossible] = useState(false);
+  const [ajoutPossible, setAjoutPossible] = React.useState(false);
 
-  // Vérifie si un tuteur est totalement rempli
   const isTuteurComplet = (tuteur) => {
     return Object.values(tuteur).every((val) => val.trim() !== '');
   };
 
-  // Met à jour le formulaire lors de la saisie
   const handleTuteurChange = (index, field, value) => {
     const newTuteurs = [...tuteurs];
     newTuteurs[index] = { ...newTuteurs[index], [field]: value };
     setTuteurs(newTuteurs);
     updateTutors(newTuteurs);
-
-    // Active l'ajout du deuxième tuteur seulement si le premier est rempli
     if (index === 0) {
       setAjoutPossible(isTuteurComplet(newTuteurs[0]));
     }
   };
 
-  // Ajoute un deuxième tuteur uniquement si le premier est complètement rempli
   const ajouterTuteur = () => {
     if (!ajoutPossible) return;
     const newTuteurs = [...tuteurs, { prenom: '', nom: '', adresse: '', telephone: '', email: '', fonction: '' }];
@@ -43,13 +41,41 @@ const TuteurForm = () => {
     updateTutors(newTuteurs);
   };
 
-  // Supprime le deuxième tuteur
   const supprimerTuteur = (index) => {
     if (index === 1) {
-      const newTuteurs = tuteurs.slice(0, 1); // Garde seulement le premier tuteur
+      const newTuteurs = tuteurs.slice(0, 1);
       setTuteurs(newTuteurs);
       updateTutors(newTuteurs);
-      setAjoutPossible(true); // Réactive le bouton d'ajout
+      setAjoutPossible(true);
+    }
+  };
+
+  const handlePrevClick = () => {
+    navigate("/StudentInfos"); // Redirection vers /StudentInfos
+  };
+
+  const handleNextClick = (e) => {
+    e.preventDefault();
+  
+    const errors = {};
+  
+    // Vérification de chaque tuteur
+    tuteurs.forEach((tuteur, index) => {
+      if (!tuteur.prenom) errors[`prenom-${index}`] = "Le prénom est requis";
+      if (!tuteur.nom) errors[`nom-${index}`] = "Le nom est requis";
+      if (!tuteur.adresse) errors[`adresse-${index}`] = "L'adresse est requise";
+      if (!tuteur.telephone) errors[`telephone-${index}`] = "Le téléphone est requis";
+      if (!tuteur.email) errors[`email-${index}`] = "L'email est requis";
+      if (!tuteur.fonction) errors[`fonction-${index}`] = "La fonction est requise";
+    });
+  
+    // Si des erreurs sont présentes, on les affiche et on bloque la navigation
+    if (Object.keys(errors).length > 0) {
+      AlertService.error("Veillez remplir tous les champs", errors);
+      updateTutors({ errors });
+    } else {
+      // Si tout est validé, on peut rediriger
+      navigate("/DocAFournir"); // Redirige vers la page suivante, par exemple "/SuivantPage"
     }
   };
 
@@ -74,13 +100,13 @@ const TuteurForm = () => {
               </button>
             )}
 
-            <div className="grid grid-cols-2 gap-x-8 gap-y-6">
-              <Input label="Prénom" name={`prenom-${index}`} placeholder="Veillez saisir le prenom" value={tuteur.prenom} onChange={(e) => handleTuteurChange(index, 'prenom', e.target.value)} />
-              <Input label="Nom" name={`nom-${index}`} placeholder="Veillez saisir le nom" value={tuteur.nom} onChange={(e) => handleTuteurChange(index, 'nom', e.target.value)} />
-              <Input label="Adresse" name={`adresse-${index}`} placeholder="Veillez saisir l'adresse" value={tuteur.adresse} onChange={(e) => handleTuteurChange(index, 'adresse', e.target.value)} />
-              <Input label="Téléphone" name={`telephone-${index}`} placeholder="Veillez saisir le numéro de tелефone" value={tuteur.telephone} onChange={(e) => handleTuteurChange(index, 'telephone', e.target.value)} />
-              <Input label="Email" name={`email-${index}`} placeholder="Veillez saisir l'email" value={tuteur.email} onChange={(e) => handleTuteurChange(index, 'email', e.target.value)} />
-              <Input label="Fonction" name={`fonction-${index}`} placeholder="Veillez saisir la fonction" value={tuteur.fonction} onChange={(e) => handleTuteurChange(index, 'fonction', e.target.value)} />
+            <div className="grid grid-cols-2 gap-x-8 gap-y-2">
+              <Input label="Prénom" name={`prenom-${index}`} placeholder="Veillez saisir le prenom" value={tuteur.prenom} onChange={(e) => handleTuteurChange(index, 'prenom', e.target.value)} validate={(value) => validateName(value, 'Prénom')}/>
+              <Input label="Nom" name={`nom-${index}`} placeholder="Veillez saisir le nom" value={tuteur.nom} onChange={(e) => handleTuteurChange(index, 'nom', e.target.value)} validate={(value) => validateName(value, 'nom')}/>
+              <Input label="Adresse" name={`adresse-${index}`} placeholder="Veillez saisir l'adresse" value={tuteur.adresse} onChange={(e) => handleTuteurChange(index, 'adresse', e.target.value)} validate={(value) => validateRequired(value, 'adresse')}/>
+              <Input label="Téléphone" name={`telephone-${index}`} placeholder="Veillez saisir le numéro de téléphone" value={tuteur.telephone} onChange={(e) => handleTuteurChange(index, 'telephone', e.target.value)} validate={(value) => validatePhone(value, 'telephone')}/>
+              <Input label="Email" name={`email-${index}`} placeholder="Veillez saisir l'email" value={tuteur.email} onChange={(e) => handleTuteurChange(index, 'email', e.target.value)} validate={(value) => validateEmail(value, 'email')}/>
+              <Input label="Fonction" name={`fonction-${index}`} placeholder="Veillez saisir la fonction" value={tuteur.fonction} onChange={(e) => handleTuteurChange(index, 'fonction', e.target.value)} validate={(value) => validateRequired(value, 'fonction')}/>
             </div>
           </div>
         ))}
@@ -94,7 +120,12 @@ const TuteurForm = () => {
           </div>
         )}
 
-        <NavigationButtons prevLink="/StudentInfos" nextLink="/DocAFournir" prevText="Précédent" nextText="Suivant" />
+        <NavigationButtons 
+          onPrevClick={handlePrevClick} 
+          onNextClick={handleNextClick} 
+          prevText="Précédent"
+          nextText="Suivant"
+        />
       </form>
     </div>
   );

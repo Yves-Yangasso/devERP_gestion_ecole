@@ -2,6 +2,7 @@ import { useState } from 'react';
 
 export const useSpecialtySelection = (maxSpecialties = 3) => {
   const [selectedSpecialties, setSelectedSpecialties] = useState([]);
+  const [error, setError] = useState('');
 
   const handleSpecialtyChange = (event) => {
     const value = event.target.value;
@@ -9,8 +10,9 @@ export const useSpecialtySelection = (maxSpecialties = 3) => {
     if (value && !selectedSpecialties.includes(value)) {
       if (selectedSpecialties.length < maxSpecialties) {
         setSelectedSpecialties([...selectedSpecialties, value]);
+        setError(''); // Réinitialiser l'erreur si la sélection est valide
       } else {
-        alert(`Vous ne pouvez choisir que ${maxSpecialties} spécialités.`);
+        setError(`Vous ne pouvez choisir que ${maxSpecialties} spécialités.`);
       }
     }
   };
@@ -21,5 +23,5 @@ export const useSpecialtySelection = (maxSpecialties = 3) => {
     setSelectedSpecialties(newSpecialties);
   };
 
-  return { selectedSpecialties, handleSpecialtyChange, removeSpecialty };
+  return { selectedSpecialties, handleSpecialtyChange, removeSpecialty, error };
 };

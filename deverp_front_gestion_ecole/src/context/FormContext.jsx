@@ -32,4 +32,10 @@ export const FormProvider = ({ children }) => {
   );
 };
 
-export const useFormContext = () => useContext(FormContext);
+export const useFormContext = () => {
+  const context = useContext(FormContext);
+  if (!context) {
+    throw new Error('useFormContext must be used within a FormProvider');
+  }
+  return context;
+};

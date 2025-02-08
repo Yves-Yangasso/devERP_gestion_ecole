@@ -11,7 +11,7 @@ const InputField = ({
   type = "text",
   placeholder,
   value,
-  validate,
+  validate, // Validation à passer en prop
   className,
   onChange,
   accept,
@@ -20,7 +20,7 @@ const InputField = ({
   const { error, isValid, handleValidation } = useValidation(validate, onChange);
 
   const inputClass = clsx(
-    "w-full px-4 py-2.5 rounded-lg color-black border bg-white placeholder-gray-400 transition-all duration-200",
+    "w-full px-4 py-2.5 rounded-lg focus:outline-none color-black border bg-white placeholder-gray-400 transition-all duration-200",
     {
       "border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent": !error && !isValid,
       "border-red-500 focus:ring-2 focus:ring-red-500": error,
@@ -30,11 +30,12 @@ const InputField = ({
   );
 
   const handleInputChange = (e) => {
-    handleValidation(e);
+    handleValidation(e); // Applique la validation à chaque changement
+    if (onChange) onChange(e); // Propager le changement si une fonction onChange est passée
   };
 
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col gap-1">
       {label && <SimpleLabel text={label} className="text-gray-700 font-medium" />}
       
       {type === "file" ? (
@@ -62,5 +63,6 @@ const InputField = ({
     </div>
   );
 };
+
 
 export default InputField;
