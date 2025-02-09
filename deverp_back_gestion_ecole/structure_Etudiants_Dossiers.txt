@@ -4,22 +4,27 @@ app/
 │
 ├── Http/
 │   ├── Controllers/
-│   │   └── API/
 │   │       └── Etudiant/
 │   │           ├── EtudiantController.php
 │   │           ├── InscriptionEtudiantController.php
+│   │           ├── RecapitulatifController.php
 │   │           └── ProfilEtudiantController.php
 │   │
 │   ├── Requests/
 │   │   └── Etudiant/
 │   │       ├── CreerEtudiantRequest.php
 │   │       ├── ModifierEtudiantRequest.php
+│   │       ├── EtudiantRequest.php
 │   │       └── InscrireEtudiantRequest.php
 │   │
 │   ├── Resources/
 │   │   └── Etudiant/
 │   │       ├── EtudiantResource.php
 │   │       ├── EtudiantCollection.php
+│   │       ├── DetailsEtudiantResource.php
+│   │       ├── InscriptionResource.php
+│   │       ├── ProfilEtudiantResource.php
+│   │       ├── RecapitulatifResource.php
 │   │       └── DetailsEtudiantResource.php
 │   │
 │   └── Middleware/
@@ -29,6 +34,9 @@ app/
 │   ├── Etudiant.php
 │   ├── ProfilEtudiant.php
 │   ├── Tuteur.php
+│   ├── TypeDocument.php
+│   ├── Document.php
+│   ├── Dossier.php
 │   └── Inscription.php
 │
 ├── Contracts/
@@ -40,6 +48,10 @@ app/
 ├── Repositories/
 │   └── Eloquent/
 │       ├── BaseRepository.php
+│       ├── DossierRepository.php
+│       ├── InscriptionRepository.php
+│       ├── ProfilEtudiantRepository.php
+│       ├── TuteurRepository.php
 │       ├── EtudiantRepository.php
 │       └── InscriptionRepository.php
 │
@@ -54,6 +66,8 @@ app/
 │       ├── EtudiantCree.php
 │       ├── EtudiantModifie.php
 │       └── EtudiantInscrit.php
+├── Exception/
+│   └── InscriptionException.php
 │
 ├── Listeners/
 │   └── Etudiant/
@@ -64,21 +78,28 @@ app/
 ├── Jobs/
 │   └── Etudiant/
 │       ├── TraiterDocumentEtudiant.php
+│       ├── GenererCarteEtudiantJob.php
 │       └── GenererRapportsEtudiant.php
 │
 ├── Notifications/
 │   └── Etudiant/
 │       ├── NotificationBienvenue.php
 │       ├── ConfirmationInscription.php
+│       ├── NotificationNouvelleInscription.php
 │       └── ValidationDocument.php
 │
 ├── Providers/
 │   └── EtudiantServiceProvider.php
+│   └── RepositoryServiceProvider.php
+|
+├── Rules/
+│   └── UniqueInscriptionRule.php
 │
 ├── Enums/
 │   └── Etudiant/
 │       ├── StatutEtudiant.php
 │       ├── TypeDocument.php
+│       ├── EtapeInscription.php
 │       └── StatutInscription.php
 │
 └── Traits/
