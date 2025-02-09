@@ -13,7 +13,7 @@ function App() {
   return (
     <Router> {/* Un seul Router englobant toute l'application */}
       <div className="App">
-        <Navbar menuItems={menuItems} /> {/* Barre de navigation */}
+        {/* <Navbar menuItems={menuItems} /> Barre de navigation */}
         <AppRoutes /> {/* Gestion des routes */}
       </div>
     </Router>

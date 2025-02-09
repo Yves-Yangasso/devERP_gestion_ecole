@@ -16,7 +16,7 @@ const Layout = ({ leftText, formComponent, StepIndicator }) => {
             {/* Contenu */}
             <div className="relative flex w-full">
                 {/* Section gauche */}
-                <div className="flex-1 flex flex-col p-8">
+                <div className="flex-1 flex flex-col p-12">
                     <div className="mb-auto">
                         <img
                             src="https://suptech.info/sup1/public/template/assets/img/isi.png"
@@ -33,7 +33,7 @@ const Layout = ({ leftText, formComponent, StepIndicator }) => {
 
                 {/* Section droite */}
                 <div className="w-1/2 bg-white bg-opacity-85 min-h-screen shadow-2xl flex flex-col justify-center items-center">
-                    <div className="h-full w-full flex flex-col px-12 py-8">
+                    <div className="h-full w-full flex flex-col">
                         {StepIndicator}
                         {formComponent}
                     </div>
