@@ -1,8 +1,19 @@
-import { useState } from 'react';
+import { useState, useEffect } from "react";
 
 export const useSpecialtySelection = (maxSpecialties = 3) => {
-  const [selectedSpecialties, setSelectedSpecialties] = useState([]);
+  const [selectedSpecialties, setSelectedSpecialties] = useState(() => {
+    // Charger les spécialités depuis localStorage si disponibles
+    const savedSpecialties = localStorage.getItem("selectedSpecialties");
+    return savedSpecialties ? JSON.parse(savedSpecialties) : [];
+  });
   const [error, setError] = useState('');
+
+  // Sauvegarder les spécialités dans localStorage à chaque changement
+  useEffect(() => {
+    if (selectedSpecialties.length > 0) {
+      localStorage.setItem("selectedSpecialties", JSON.stringify(selectedSpecialties));
+    }
+  }, [selectedSpecialties]);
 
   const handleSpecialtyChange = (event) => {
     const value = event.target.value;

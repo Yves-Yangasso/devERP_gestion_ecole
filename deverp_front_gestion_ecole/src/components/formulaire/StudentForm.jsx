@@ -1,12 +1,11 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-
 import Input from "../ui/Input/InputField";
 import SelectInput from "../ui/Input/SelectInput";
 import { useSpecialtySelection } from "../../utils/useSpecialtySelection";
-import NavigationButtons from "../ui/Button/NavigationButtons"; // Importation du composant NavigationButtons
+import NavigationButtons from "../ui/Button/NavigationButtons";
 import { useFormContext } from "../../context/FormContext";
-import { validateName, validateDate, validateEmail, validatePhone, validateSelect, validateRequired, validateNationality } from "../../utils/validators"; // Importation des validateurs
+import { validateName, validateDate, validateEmail, validatePhone, validateSelect, validateRequired, validateNationality } from "../../utils/validators";
 import AlertService from "../../services/notifications/AlertService";
 
 // Options des sélecteurs
@@ -28,13 +27,14 @@ export const options = {
     { value: "Web", label: "Web" },
     { value: "Mobile", label: "Mobile" },
     { value: "Cloud", label: "Cloud" },
-    { value: "full", label: "full" },
+    { value: "Full Stack", label: "Full Stack" },
   ],
 };
 
 const StudentForm = () => {
-  const { selectedSpecialties, handleSpecialtyChange, removeSpecialty } = useSpecialtySelection();
+  const { selectedSpecialties, handleSpecialtyChange, removeSpecialty } = useSpecialtySelection(); // Hook pour gérer les spécialités sélectionnées
   const { updateStudent, formState } = useFormContext();
+  const navigate = useNavigate();
 
   // Fonction de gestion des changements
   const handleChange = (e) => {
@@ -42,13 +42,15 @@ const StudentForm = () => {
   };
 
   // Fonction qui est appelée lors du clic sur "Suivant"
-  const navigate = useNavigate(); // Hook pour la navigation
-
   const handleNextClick = (e) => {
     e.preventDefault();
 
     const errors = {};
-    // Validation des champs requis
+
+    // Ajoute les spécialités sélectionnées à `formState.student`
+    updateStudent({ specialites: selectedSpecialties });
+
+    // Validation des champs
     if (!formState.student.prenom) errors.prenom = "Le prénom est requis";
     if (!formState.student.nom) errors.nom = "Le nom est requis";
     if (!formState.student.date) errors.date = "La date de naissance est requise";
@@ -62,12 +64,10 @@ const StudentForm = () => {
     if (!formState.student.formation) errors.formation = "La formation est requise";
     if (selectedSpecialties.length === 0) errors.specialites = "Les spécialités sont requises";
 
-    // Si des erreurs sont présentes, on les affiche et on bloque la navigation
     if (Object.keys(errors).length > 0) {
       AlertService.error("Veillez remplir tous les champs", errors);
       updateStudent({ errors });
     } else {
-      // Si tout est validé, on peut rediriger
       navigate("/TuteurInfos");
     }
   };
@@ -176,10 +176,13 @@ const StudentForm = () => {
               label="Spécialités"
               name="specialites"
               options={options.specialites}
-              value={selectedSpecialties}
-              onChange={handleSpecialtyChange}
+              value={selectedSpecialties} // On lie `selectedSpecialties`
+              onChange={(e) => {
+                handleSpecialtyChange(e);
+                updateStudent({ specialites: [...selectedSpecialties, e.target.value] });
+              }}
               validate={() => validateSelect(selectedSpecialties.length > 0, "Spécialités")}
-              error={formState.errors?.niveau}
+              error={formState.errors?.specialites}
             />
             <div className="mt-2">
               {selectedSpecialties.length > 0 && (
@@ -194,7 +197,7 @@ const StudentForm = () => {
                         {specialty}
                         <button
                           type="button"
-                          onClick={() => removeSpecialty(index)}
+                          onClick={() => removeSpecialty(index)} // Appel de la fonction de suppression
                           className="ml-2 text-blue-600 hover:text-blue-800"
                         >
                           ×
@@ -209,8 +212,7 @@ const StudentForm = () => {
         </div>
 
         {/* Boutons de navigation */}
-        <NavigationButtons onNextClick={handleNextClick} nextText="Suivant"
-        />
+        <NavigationButtons onNextClick={handleNextClick} nextText="Suivant" />
       </form>
     </div>
   );
