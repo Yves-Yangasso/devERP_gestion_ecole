@@ -1,5 +1,7 @@
 <?php
-namespace App\Events\Etudiant;
+
+namespace App\Events;
+
 use App\Models\Inscription;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Foundation\Events\Dispatchable;

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Exceptions\Etudiant;
+namespace App\Exceptions;
 
 use Exception;
 use Symfony\Component\HttpFoundation\Response;

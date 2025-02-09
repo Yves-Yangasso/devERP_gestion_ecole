@@ -1,5 +1,7 @@
 <?php
 
+use App\Providers\RepositoryServiceProvider;
+
 return [
 
     /*
@@ -124,11 +126,11 @@ return [
     ],
 
     'providers' => [
-        // ...
+        // ...    
+        Illuminate\Filesystem\FilesystemServiceProvider::class, // Ajoute ceci
         App\Providers\RepositoryServiceProvider::class,
-        Intervention\Image\ImageServiceProvider::class,
-        SimpleSoftwareIO\QrCode\QrCodeServiceProvider::class,
-
+        // Intervention\Image\ImageServiceProvider::class,
+        // SimpleSoftwareIO\QrCode\QrCodeServiceProvider::class,
     ],
 
 ];

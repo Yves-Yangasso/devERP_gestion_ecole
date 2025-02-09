@@ -1,7 +1,6 @@
 <?php
-// app/Contracts/Repositories/DossierRepositoryInterface.php
 
-namespace App\Contracts\Repositories;
+namespace App\Contracts\Repositories\Dossier;
 
 interface DossierRepositoryInterface
 {

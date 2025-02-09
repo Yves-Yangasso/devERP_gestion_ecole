@@ -1,7 +1,6 @@
 <?php
-// app/Contracts/Services/Etudiant/RecapitulatifEtudiantServiceInterface.php
 
-namespace App\Contracts\Services\Etudiant;
+namespace App\Contracts\Services\Document;
 use App\Enums\Etudiant\EtapeInscription;
 
 interface RecapitulatifEtudiantServiceInterface
