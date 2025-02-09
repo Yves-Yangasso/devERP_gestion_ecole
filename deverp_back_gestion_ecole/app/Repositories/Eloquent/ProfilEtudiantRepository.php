@@ -25,8 +25,6 @@ class ProfilEtudiantRepository extends BaseRepository implements ProfilEtudiantR
         $profil->save();
         return $profil;
     }
-    public function create(array $donnees)
-    {
-        return $this->model->create($donnees);
-    }
+
+
 }

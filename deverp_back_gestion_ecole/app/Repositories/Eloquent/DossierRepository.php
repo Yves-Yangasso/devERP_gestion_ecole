@@ -4,7 +4,7 @@
 namespace App\Repositories\Eloquent;
 
 use App\Contracts\Repositories\DossierRepositoryInterface;
-use App\Models\Dossier; // Assurez-vous de créer ce modèle
+use App\Models\Dossier;
 
 class DossierRepository implements DossierRepositoryInterface
 {

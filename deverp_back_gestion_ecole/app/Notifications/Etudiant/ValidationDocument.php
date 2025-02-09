@@ -51,8 +51,8 @@ class ValidationDocument extends Notification implements ShouldQueue
     {
         return [
             'titre' => 'Statut document mis à jour',
-            'message' => $this->statut === 'valide' 
-                ? 'Votre document a été validé' 
+            'message' => $this->statut === 'valide'
+                ? 'Votre document a été validé'
                 : 'Votre document nécessite des modifications',
             'type' => 'document',
             'statut' => $this->statut,

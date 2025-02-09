@@ -15,7 +15,7 @@ class EtudiantInscrit
     public $etudiant;
     public $inscription;
 
-    public function __construct(Etudiant $etudiant, Inscription $inscription)
+    public function __construct(Etudiant $etudiant,$inscription)
     {
         $this->etudiant = $etudiant;
         $this->inscription = $inscription;

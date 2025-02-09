@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Etudiant;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Etudiant\InscrireEtudiantRequest;
+use App\Http\Requests\InscrireEtudiantRequest as RequestsInscrireEtudiantRequest;
 use App\Services\Etudiant\InscriptionService;
 use App\Http\Resources\Etudiant\EtudiantResource;
 use Exception;
@@ -18,7 +19,7 @@ class InscriptionController extends Controller
         $this->inscriptionService = $inscriptionService;
     }
 
-    public function inscrire(InscrireEtudiantRequest $request)
+    public function inscrire(RequestsInscrireEtudiantRequest $request)
     {
         try {
             $etudiant = $this->inscriptionService->inscrire($request->validated());

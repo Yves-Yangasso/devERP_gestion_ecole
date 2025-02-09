@@ -11,30 +11,30 @@ interface InscriptionRepositoryInterface extends BaseRepositoryInterface
 {
     /**
      * Créer une nouvelle inscription pour un étudiant
-     * 
+     *
      * @param Etudiant $etudiant
      * @param array $donnees
      * @return Inscription
      */
-    public function creerInscription(Etudiant $etudiant, array $donnees): Inscription;
+    public function creerInscription(array $donnees): Inscription;
     // public function create(array $data);
 
     /**
      * Vérifier si l'étudiant est déjà inscrit pour une période donnée
-     * 
+     *
      * @param Etudiant $etudiant
      * @param string $anneeAcademique
      * @return bool
      */
-    public function estDejaInscrit(Etudiant $etudiant, string $anneeAcademique): bool;
+    public function estDejaInscrit(Inscription $inscription, string $anneeAcademique): bool;
 
     /**
      * Obtenir les inscriptions actives d'un étudiant
-     * 
+     *
      * @param Etudiant $etudiant
      * @return \Illuminate\Database\Eloquent\Collection
      */
-    public function obtenirInscriptionsActives(Etudiant $etudiant);
+    public function obtenirInscriptionsActives(Inscription $inscription);
 
     public function update($id, array $data);
 
@@ -43,6 +43,7 @@ interface InscriptionRepositoryInterface extends BaseRepositoryInterface
     public function delete($id);
 
     public function paginate($perPage = 15, $columns = ["*"]);
-    
+
     public function get_all();
+
 }

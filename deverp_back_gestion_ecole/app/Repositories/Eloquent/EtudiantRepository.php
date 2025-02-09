@@ -53,7 +53,7 @@ class EtudiantRepository extends BaseRepository implements EtudiantRepositoryInt
         $etudiant->save();
         return $etudiant;
     }
-    public function create(array $donnees)
+    public function create_And_Generate_Matricule(array $donnees)
     {
         $donnees['matricule'] = $this->genererMatricule();
         return $this->model->create($donnees);

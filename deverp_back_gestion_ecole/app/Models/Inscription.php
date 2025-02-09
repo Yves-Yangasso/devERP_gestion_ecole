@@ -32,4 +32,8 @@ class Inscription extends Model
     {
         return $this->belongsTo(Etudiant::class);
     }
+
+    public function utilisateu(){
+        return $this->belongsTo(User::class,'utilisateur_id');
+    }
 }

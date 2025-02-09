@@ -12,7 +12,7 @@ class TuteurRepository extends BaseRepository implements TuteurRepositoryInterfa
         parent::__construct($model);
     }
 
-    public function create(array $donnees)
+    public function createTuteur(array $donnees)
     {
         return $this->model->create($donnees);
     }
