@@ -1,0 +1,137 @@
+-------------------------Gestion des Tuteurs-----------------------
+app/
+├── Http/
+│   ├── Controllers/
+│   │   └── API/
+│   │       └── Tuteur/
+│   │           ├── TuteurController.php
+│   │           └── ProfilTuteurController.php
+│   │
+│   ├── Requests/
+│   │   └── Tuteur/
+│   │       ├── CreerTuteurRequest.php
+│   │       ├── ModifierTuteurRequest.php
+│   │       └── AssocierEtudiantRequest.php
+│   │
+│   ├── Resources/
+│   │   └── Tuteur/
+│   │       ├── TuteurResource.php
+│   │       ├── TuteurCollection.php
+│   │       └── DetailsTuteurResource.php
+│   │
+│   └── Middleware/
+│       └── VerifierStatutTuteur.php
+│
+├── Models/
+│   ├── Tuteur.php
+│   ├── ProfilTuteur.php
+│   └── AssociationEtudiantTuteur.php
+│
+├── Contracts/
+│   └── Repositories/
+│       └── Tuteur/
+│           ├── TuteurRepositoryInterface.php
+│           └── AssociationRepositoryInterface.php
+│
+├── Repositories/
+│   └── Eloquent/
+│       ├── TuteurRepository.php
+│       └── AssociationEtudiantTuteurRepository.php
+│
+├── Services/
+│   └── Tuteur/
+│       ├── TuteurService.php
+│       └── AssociationService.php
+│
+├── Events/
+│   └── Tuteur/
+│       ├── TuteurCree.php
+│       ├── TuteurModifie.php
+│       └── EtudiantAssocieTuteur.php
+│
+├── Listeners/
+│   └── Tuteur/
+│       ├── NotifierCreationTuteur.php
+│       └── MettreAJourAssociations.php
+│
+├── Jobs/
+│   └── Tuteur/
+│       └── TraiterInformationsTuteur.php
+│
+├── Notifications/
+│   └── Tuteur/
+│       ├── NotificationCreationTuteur.php
+│       └── NotificationModificationProfil.php
+│
+├── Providers/
+│   └── TuteurServiceProvider.php
+│
+├── Enums/
+│   └── Tuteur/
+│       ├── StatutTuteur.php
+│       └── TypeAssociation.php
+│
+└── Traits/
+    └── Tuteur/
+        └── GestionAssociations.php
+
+# Création des répertoires et fichiers
+mkdir -p app/Http/Controllers/API/Tuteur
+touch app/Http/Controllers/API/Tuteur/TuteurController.php
+touch app/Http/Controllers/API/Tuteur/ProfilTuteurController.php
+
+mkdir -p app/Http/Requests/Tuteur
+touch app/Http/Requests/Tuteur/CreerTuteurRequest.php
+touch app/Http/Requests/Tuteur/ModifierTuteurRequest.php
+touch app/Http/Requests/Tuteur/AssocierEtudiantRequest.php
+
+mkdir -p app/Http/Resources/Tuteur
+touch app/Http/Resources/Tuteur/TuteurResource.php
+touch app/Http/Resources/Tuteur/TuteurCollection.php
+touch app/Http/Resources/Tuteur/DetailsTuteurResource.php
+
+mkdir -p app/Http/Middleware
+touch app/Http/Middleware/VerifierStatutTuteur.php
+
+mkdir -p app/Models
+touch app/Models/Tuteur.php
+touch app/Models/ProfilTuteur.php
+touch app/Models/AssociationEtudiantTuteur.php
+
+mkdir -p app/Contracts/Repositories/Tuteur
+touch app/Contracts/Repositories/Tuteur/TuteurRepositoryInterface.php
+touch app/Contracts/Repositories/Tuteur/AssociationRepositoryInterface.php
+
+mkdir -p app/Repositories/Eloquent
+touch app/Repositories/Eloquent/TuteurRepository.php
+touch app/Repositories/Eloquent/AssociationEtudiantTuteurRepository.php
+
+mkdir -p app/Services/Tuteur
+touch app/Services/Tuteur/TuteurService.php
+touch app/Services/Tuteur/AssociationService.php
+
+mkdir -p app/Events/Tuteur
+touch app/Events/Tuteur/TuteurCree.php
+touch app/Events/Tuteur/TuteurModifie.php
+touch app/Events/Tuteur/EtudiantAssocieTuteur.php
+
+mkdir -p app/Listeners/Tuteur
+touch app/Listeners/Tuteur/NotifierCreationTuteur.php
+touch app/Listeners/Tuteur/MettreAJourAssociations.php
+
+mkdir -p app/Jobs/Tuteur
+touch app/Jobs/Tuteur/TraiterInformationsTuteur.php
+
+mkdir -p app/Notifications/Tuteur
+touch app/Notifications/Tuteur/NotificationCreationTuteur.php
+touch app/Notifications/Tuteur/NotificationModificationProfil.php
+
+mkdir -p app/Providers
+touch app/Providers/TuteurServiceProvider.php
+
+mkdir -p app/Enums/Tuteur
+touch app/Enums/Tuteur/StatutTuteur.php
+touch app/Enums/Tuteur/TypeAssociation.php
+
+mkdir -p app/Traits/Tuteur
+touch app/Traits/Tuteur/GestionAssociations.php

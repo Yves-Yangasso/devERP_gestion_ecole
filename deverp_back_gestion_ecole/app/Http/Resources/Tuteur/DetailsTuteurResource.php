@@ -3,8 +3,10 @@
 namespace App\Http\Resources\Etudiant;
 
 use Illuminate\Http\Resources\Json\JsonResource;
+use App\Http\Resources\Etudiant\EtudiantResource;
 
-class EtudiantResource extends JsonResource
+
+class DetailsTuteurResource extends JsonResource
 {
     public function toArray($request)
     {
@@ -12,12 +14,12 @@ class EtudiantResource extends JsonResource
             'id' => $this->id,
             'nom' => $this->nom,
             'prenom' => $this->prenom,
-            'email' => $this->email,
             'telephone' => $this->telephone,
-            'date_naissance' => $this->date_naissance,
-            'classe' => $this->classe->nom ?? null,
+            'email' => $this->email,
+            'profession' => $this->profession,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
+            'etudiants' => EtudiantResource::collection($this->whenLoaded('etudiants')),
         ];
     }
 }
