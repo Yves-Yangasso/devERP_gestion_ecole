@@ -15,11 +15,3 @@ class NotifierCreationTuteur implements ShouldQueue
         $event->tuteur->notify(new NotificationCreationTuteur($event->tuteur));
     }
 }
-
-class MettreAJourAssociations implements ShouldQueue
-{
-    public function handle(TuteurModifie $event)
-    {
-        $event->tuteur->notify(new NotificationModificationProfil($event->tuteur));
-    }
-}
