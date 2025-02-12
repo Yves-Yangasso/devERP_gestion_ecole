@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\API\Document\DocumentController;
+use App\Http\Controllers\API\Dossier\DossierController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Etudiant\InscriptionEtudiantController;
@@ -43,3 +45,10 @@ Route::prefix('/tuteurs')->group(function () {
     Route::delete('/{id}', [TuteurController::class, 'supprimer']);
 });
 
+Route::prefix('api/dossiers')->group(function () {
+    Route::post('/', [DossierController::class, 'store']);
+});
+
+Route::prefix('api/documents')->group(function () {
+    Route::post('/', [DocumentController::class, 'store']);
+});

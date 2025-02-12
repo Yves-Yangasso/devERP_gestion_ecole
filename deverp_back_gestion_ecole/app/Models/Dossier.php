@@ -10,14 +10,14 @@ class Dossier extends Model
     use HasFactory;
 
     protected $fillable = [
+        'inscription_id',
         'nom',
-        'date_creation',
-        'status_dossier_id',
+        'description'
     ];
 
-    public function status()
+    public function inscription()
     {
-        return $this->belongsTo(StatusDossier::class);
+        return $this->belongsTo(Inscription::class);
     }
 
     public function documents()

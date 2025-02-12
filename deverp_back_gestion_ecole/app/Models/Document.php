@@ -10,9 +10,9 @@ class Document extends Model
     use HasFactory;
 
     protected $fillable = [
+        'dossier_id',
         'type_document',
-        'date_creation',
-        'chemin_acces',
+        'chemin_fichier'
     ];
 
     public function dossier()

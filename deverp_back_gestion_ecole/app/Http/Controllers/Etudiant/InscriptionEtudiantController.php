@@ -28,7 +28,7 @@ class InscriptionEtudiantController extends Controller
 
     public function index(): JsonResponse
     {
-        $inscriptions = $this->inscriptionService->getAllinscrit();
+        $inscriptions = $this->inscriptionService->getAllinscrits();
         return response()->json($inscriptions);
     }
 
