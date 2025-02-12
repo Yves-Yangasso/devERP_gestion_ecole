@@ -4,11 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Etudiant\InscriptionEtudiantController;
 use App\Http\Controllers\API\Tuteur\TuteurController;
-
-// Route::post('/inscription_etudiant', [InscriptionEtudiantController::class, 'store']);
-// Route::get('/inscriptions', [InscriptionEtudiantController::class, 'index']);
-// Route::get('/inscription/{id}', [InscriptionEtudiantController::class, 'show']);
-
+use App\Http\Controllers\API\Dossier\DossierController;
 
 Route::prefix('/inscription')->group(function () {
     // Liste des inscription
@@ -43,3 +39,23 @@ Route::prefix('/tuteurs')->group(function () {
     Route::delete('/{id}', [TuteurController::class, 'supprimer']);
 });
 
+
+Route::prefix('api/v1')->group(function () {
+    Route::prefix('dossiers')->group(function () {
+        // Création d'un nouveau dossier
+        Route::post('/', [DossierController::class, 'store'])
+            ->name('dossiers.store');
+        
+        // Récupération d'un dossier par code de suivi
+        Route::get('/{codeSuivi}', [DossierController::class, 'show'])
+            ->name('dossiers.show');
+        
+        // Soumission d'un document
+        Route::post('/{codeSuivi}/documents', [DossierController::class, 'soumettreDocument'])
+            ->name('dossiers.soumettre-document');
+        
+        // Liste des dossiers d'un étudiant
+        Route::get('/etudiant/{etudiantId}', [DossierController::class, 'getDossiersEtudiant'])
+            ->name('dossiers.etudiant');
+    });
+});

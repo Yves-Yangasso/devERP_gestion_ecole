@@ -13,7 +13,12 @@ return new class extends Migration
     {
         Schema::create('etudiants', function (Blueprint $table) {
             $table->id();
+            $table->string('matricule')->unique();
+            $table->string('nom');
+            $table->string('prenom');
+            $table->string('email')->unique();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

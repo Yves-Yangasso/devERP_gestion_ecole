@@ -1,0 +1,159 @@
+```
+app/
+├── Http/
+│   ├── Controllers/
+│   │   └── API/
+│   │       └── Dossier/
+│   │           ├── DossierController.php
+│   │           └── DocumentController.php
+│   │
+│   ├── Requests/
+│   │   └── Dossier/
+│   │       ├── CreerDossierRequest.php
+│   │       ├── ModifierDossierRequest.php
+│   │       └── SoumettreDocumentRequest.php
+│   │
+│   ├── Resources/
+│   │   └── Dossier/
+│   │       ├── DossierResource.php
+│   │       ├── DossierCollection.php
+│   │       └── DocumentResource.php
+│   │
+│   └── Middleware/
+│       └── VerifierStatutDossier.php
+│
+├── Models/
+│   ├── Dossier.php
+│   ├── Document.php
+│   └── ValidationDocument.php
+│
+├── Contracts/
+│   └── Repositories/
+│       └── Dossier/
+│           ├── DossierRepositoryInterface.php
+│           └── DocumentRepositoryInterface.php
+│
+├── Repositories/
+│   └── Eloquent/
+│       ├── DossierRepository.php
+│       └── DocumentRepository.php
+│
+├── Services/
+│   └── Dossier/
+│       ├── DossierService.php
+│       ├── ValidationService.php
+│       └── IAValidationService.php
+│
+├── Events/
+│   └── Dossier/
+│       ├── DossierCree.php
+│       ├── DocumentSoumis.php
+│       └── DossierValide.php
+│
+├── Listeners/
+│   └── Dossier/
+│       ├── NotifierSoumissionDossier.php
+│       └── TraiterValidationDocument.php
+│
+├── Jobs/
+│   └── Dossier/
+│       ├── AnalyserDocumentIA.php
+│       └── GenererRapportConformite.php
+│
+├── Notifications/
+│   └── Dossier/
+│       ├── DossierSoumisNotification.php
+│       └── ResultatValidationNotification.php
+│
+├── Providers/
+│   └── DossierServiceProvider.php
+│
+├── Enums/
+│   └── Dossier/
+│       ├── StatutDossier.php
+│       ├── TypeDocument.php
+│       └── ResultatValidation.php
+│
+└── Traits/
+    └── Dossier/
+        └── GestionDocuments.php
+
+# 📌Création des dossiers
+mkdir -p app/Http/Controllers/API/Dossier
+mkdir -p app/Http/Requests/Dossier
+mkdir -p app/Http/Resources/Dossier
+mkdir -p app/Http/Middleware
+mkdir -p app/Models
+mkdir -p app/Contracts/Repositories/Dossier
+mkdir -p app/Repositories/Eloquent
+mkdir -p app/Services/Dossier
+mkdir -p app/Events/Dossier
+mkdir -p app/Listeners/Dossier
+mkdir -p app/Jobs/Dossier
+mkdir -p app/Notifications/Dossier
+mkdir -p app/Providers
+mkdir -p app/Enums/Dossier
+mkdir -p app/Traits/Dossier
+
+# 📌 Contrôleurs
+touch app/Http/Controllers/API/Dossier/DossierController.php
+touch app/Http/Controllers/API/Dossier/DocumentController.php
+
+# 📌 Form Requests
+touch app/Http/Requests/Dossier/CreerDossierRequest.php
+touch app/Http/Requests/Dossier/ModifierDossierRequest.php
+touch app/Http/Requests/Dossier/SoumettreDocumentRequest.php
+
+# 📌 Resources
+touch app/Http/Resources/Dossier/DossierResource.php
+touch app/Http/Resources/Dossier/DossierCollection.php
+touch app/Http/Resources/Dossier/DocumentResource.php
+
+# 📌 Middleware
+touch app/Http/Middleware/VerifierStatutDossier.php
+
+# 📌 Modèles
+touch app/Models/Dossier.php
+touch app/Models/Document.php
+touch app/Models/ValidationDocument.php
+
+# 📌 Contracts (Interfaces)
+touch app/Contracts/Repositories/Dossier/DossierRepositoryInterface.php
+touch app/Contracts/Repositories/Dossier/DocumentRepositoryInterface.php
+
+# 📌 Repositories (Implémentation)
+touch app/Repositories/Eloquent/DossierRepository.php
+touch app/Repositories/Eloquent/DocumentRepository.php
+
+# 📌 Services
+touch app/Services/Dossier/DossierService.php
+touch app/Services/Dossier/ValidationService.php
+touch app/Services/Dossier/IAValidationService.php
+
+# 📌 Events
+touch app/Events/Dossier/DossierCree.php
+touch app/Events/Dossier/DocumentSoumis.php
+touch app/Events/Dossier/DossierValide.php
+
+# 📌 Listeners
+touch app/Listeners/Dossier/NotifierSoumissionDossier.php
+touch app/Listeners/Dossier/TraiterValidationDocument.php
+
+# 📌  Jobs
+touch app/Jobs/Dossier/AnalyserDocumentIA.php
+touch app/Jobs/Dossier/GenererRapportConformite.php
+
+# 📌 Notifications
+touch app/Notifications/Dossier/DossierSoumisNotification.php
+touch app/Notifications/Dossier/ResultatValidationNotification.php
+
+# 📌 Providers
+touch app/Providers/DossierServiceProvider.php
+
+# 📌 Enums
+touch app/Enums/Dossier/StatutDossier.php
+touch app/Enums/Dossier/TypeDocument.php
+touch app/Enums/Dossier/ResultatValidation.php
+
+# 📌 Traits
+touch app/Traits/Dossier/GestionDocuments.php
