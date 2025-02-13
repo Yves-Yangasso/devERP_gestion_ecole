@@ -14,7 +14,7 @@ class Inscription extends Model
     protected $fillable = [
         'prenom', 'nom', 'date_naissance', 'lieu_naissance',
         'adresse', 'telephone', 'email', 'nationalite',
-        'dernier_etablissement', 'niveau', 'formation_superieure', 'specialites','id_tuteur'
+        'dernier_etablissement', 'niveau', 'formation_superieure', 'specialites'
     ];
 }
 

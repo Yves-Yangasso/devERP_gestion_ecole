@@ -17,4 +17,14 @@ class AssociationEtudiantTuteurService
     {
         return $this->associationRepository->create($data);
     }
+
+    public function getInscriptionsByTuteur(int $tuteurId)
+    {
+        return $this->associationRepository->getInscriptionsByTuteur($tuteurId);
+    }
+
+    public function getTuteursByInscription(int $inscriptionId)
+    {
+        return $this->associationRepository->getTuteursByInscription($inscriptionId);
+    }
 }

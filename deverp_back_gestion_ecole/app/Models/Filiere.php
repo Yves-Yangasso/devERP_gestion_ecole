@@ -11,6 +11,7 @@ class Filiere extends Model
 
     protected $fillable = [
         'nom_filiere',
+        'idepartement',
         'description',
         'status',
     ];

@@ -25,4 +25,14 @@ class AssociationEtudiantTuteurController extends Controller
             'data' => $association
         ], 201);
     }
+
+    public function getInscriptionsByTuteur($tuteurId)
+    {
+        return response()->json($this->associationService->getInscriptionsByTuteur($tuteurId));
+    }
+
+    public function getTuteursByInscription($inscriptionId)
+    {
+        return response()->json($this->associationService->getTuteursByInscription($inscriptionId));
+    }
 }

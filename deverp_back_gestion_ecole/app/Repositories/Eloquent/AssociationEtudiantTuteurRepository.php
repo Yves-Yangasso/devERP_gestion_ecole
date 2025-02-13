@@ -2,62 +2,45 @@
 
 namespace App\Repositories\Eloquent;
 
-
-use App\Contracts\Repositories\Etudiant\AssociationEtudiantTuteurRepositoryInterface;
 use App\Models\AssociationEtudiantTuteur;
+use App\Models\Inscription;
+use App\Models\Tuteur;
 
-class AssociationEtudiantTuteurRepository implements AssociationEtudiantTuteurRepositoryInterface
+class AssociationEtudiantTuteurRepository
 {
+    protected $model;
+
+    public function __construct(AssociationEtudiantTuteur $model)
+    {
+        $this->model = $model;
+    }
+
     public function create(array $data)
     {
-        return AssociationEtudiantTuteur::create($data);
+        return $this->model->create($data);
+    }
+
+    /**
+     * Récupère toutes les inscriptions associées à un tuteur donné,
+     * en incluant les informations des inscriptions.
+     */
+    public function getInscriptionsByTuteur(int $tuteurId)
+    {
+        return $this->model
+            ->where('tuteur_id', $tuteurId)
+            ->with('inscription') // Charge les informations de l'inscription
+            ->get();
+    }
+
+    /**
+     * Récupère tous les tuteurs associés à une inscription donnée,
+     * en incluant les informations des tuteurs.
+     */
+    public function getTuteursByInscription(int $inscriptionId)
+    {
+        return $this->model
+            ->where('inscription_id', $inscriptionId)
+            ->with('tuteur') // Charge les informations du tuteur
+            ->get();
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// use App\Models\AssociationEtudiantTuteur;
-
-// class AssociationEtudiantTuteurRepository implements
-// {
-//     public function associerEtudiantATuteur(array $data)
-//     {
-//         return AssociationEtudiantTuteur::create($data);
-//     }
-
-//     public function dissocierEtudiantDuTuteur(int $etudiantId, int $tuteurId)
-//     {
-//         return AssociationEtudiantTuteur::where('etudiant_id', $etudiantId)
-//             ->where('tuteur_id', $tuteurId)
-//             ->delete();
-//     }
-
-//     public function obtenirTuteursParEtudiant(int $etudiantId)
-//     {
-//         return AssociationEtudiantTuteur::where('etudiant_id', $etudiantId)
-//             ->with('tuteur')
-//             ->get();
-//     }
-
-//     public function obtenirEtudiantsParTuteur(int $tuteurId)
-//     {
-//         return AssociationEtudiantTuteur::where('tuteur_id', $tuteurId)
-//             ->with('etudiant')
-//             ->get();
-//     }
-// }

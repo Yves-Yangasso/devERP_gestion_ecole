@@ -1,0 +1,17 @@
+<?php
+namespace App\Http\Requests\Departement;
+
+use Illuminate\Foundation\Http\FormRequest;
+
+class StoreDepartementRequest extends FormRequest {
+    public function authorize() {
+        return true;
+    }
+
+    public function rules() {
+        return [
+            'nom_departement' => 'required|string|max:255|unique:departements,nom_departement',
+            'description' => 'nullable|string',
+        ];
+    }
+}
