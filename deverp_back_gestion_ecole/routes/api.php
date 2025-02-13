@@ -9,58 +9,94 @@ use App\Http\Controllers\API\Dossier\ValidationDossierController;
 use App\Http\Controllers\API\Dossier\TraitementDossierController;
 use App\Http\Controllers\API\Dossier\DocumentController;
 use App\Http\Controllers\API\Dossier\SuiviDossierController;
+use App\Http\Controllers\API\Auth\AuthController;
+
+/*
+|--------------------------------------------------------------------------
+| API Routes
+|--------------------------------------------------------------------------
+*/
+
+// Routes d'authentification (publiques)
+Route::post('/login', [AuthController::class, 'login']);
+Route::post('/refresh', [AuthController::class, 'refresh']);
+
+// Routes de test et debug
+Route::get('/test', function () {
+    return response()->json(['message' => 'Test route works!']);
+});
 
 Route::prefix('v1')->group(function () {
     
-    /*** 📌 Routes d'inscription des étudiants ***/
+    /*
+    |--------------------------------------------------------------------------
+    | Routes Publiques
+    |--------------------------------------------------------------------------
+    */
+    
+    // Inscriptions étudiants
     Route::prefix('inscriptions')->group(function () {
         Route::get('/', [InscriptionEtudiantController::class, 'index']);
-        Route::get('/{id}', [InscriptionEtudiantController::class, 'show']);
         Route::post('/', [InscriptionEtudiantController::class, 'store']);
+        Route::get('/{id}', [InscriptionEtudiantController::class, 'show']);
     });
 
-    /*** 📌 Routes des tuteurs ***/
-    Route::prefix('tuteurs')->group(function () {
-        Route::get('/', [TuteurController::class, 'index']);
-        Route::get('/{id}', [TuteurController::class, 'show']);
-        Route::post('/', [TuteurController::class, 'creer']);
-        Route::put('/{id}', [TuteurController::class, 'modifier']);
-        Route::delete('/{id}', [TuteurController::class, 'supprimer']);
-    });
-
-    /*** 📌 Routes pour la gestion des dossiers ***/
-    Route::prefix('dossiers')->group(function () {
-        Route::post('/', [DossierController::class, 'store'])->name('dossiers.store');
-        Route::get('/{codeSuivi}', [DossierController::class, 'show'])->name('dossiers.show');
-        Route::post('/{codeSuivi}/documents', [DossierController::class, 'soumettreDocument'])->name('dossiers.soumettre-document');
-        Route::get('/etudiant/{etudiantId}', [DossierController::class, 'getDossiersEtudiant'])->name('dossiers.etudiant');
-    });
-
-    /*** 📌 Routes pour le suivi des dossiers ***/
+    // Suivi des dossiers (public)
     Route::prefix('suivi-dossier')->group(function () {
         Route::post('/verifier', [SuiviDossierController::class, 'suivreDossier']);
         Route::post('/historique', [SuiviDossierController::class, 'getHistorique']);
     });
 
-    /*** 🔒 Routes protégées par middleware 'auth:sanctum' ***/
-    Route::middleware(['auth:sanctum'])->group(function () {    
+    // Dossiers (routes publiques)
+    Route::prefix('dossiers')->group(function () {
+        Route::get('/{dossierId}', [TraitementDossierController::class, 'getDossierDetails']);
+        Route::get('/a-traiter', [TraitementDossierController::class, 'getDossiersATraiter']);
+    });
 
-        /*** 📌 Routes pour la validation des dossiers ***/
+    /*
+    |--------------------------------------------------------------------------
+    | Routes Protégées (authentification requise)
+    |--------------------------------------------------------------------------
+    */
+    
+    Route::middleware(['auth:api'])->group(function () {
+        // Informations utilisateur
+        Route::get('/user', function (Request $request) {
+            return response()->json($request->user());
+        });
+        
+        // Déconnexion
+        Route::post('/logout', [AuthController::class, 'logout']);
+
+        // Gestion des tuteurs
+        Route::prefix('tuteurs')->group(function () {
+            Route::get('/', [TuteurController::class, 'index']);
+            Route::post('/', [TuteurController::class, 'creer']);
+            Route::get('/{id}', [TuteurController::class, 'show']);
+            Route::put('/{id}', [TuteurController::class, 'modifier']);
+            Route::delete('/{id}', [TuteurController::class, 'supprimer']);
+        });
+
+        // Gestion des dossiers
         Route::prefix('dossiers')->group(function () {
+            // Création et modification
+            Route::post('/', [DossierController::class, 'store']);
+            Route::get('/etudiant/{etudiantId}', [DossierController::class, 'getDossiersEtudiant']);
+            
+            // Validation des dossiers
             Route::get('/en-attente', [ValidationDossierController::class, 'getDossiersEnAttente']);
             Route::post('/{dossierId}/valider', [ValidationDossierController::class, 'validerDossier']);
             Route::get('/{dossierId}/documents', [ValidationDossierController::class, 'getDocuments']);
             Route::post('/documents/{documentId}/valider', [ValidationDossierController::class, 'validerDocument']);
-        });
 
-        /*** 📌 Routes pour le traitement des dossiers ***/
-        Route::prefix('dossiers')->group(function () {
-            Route::get('/a-traiter', [TraitementDossierController::class, 'getDossiersATraiter']);
-            Route::get('/{dossierId}', [TraitementDossierController::class, 'getDossierDetails']);
+            // Traitement des documents
             Route::post('/documents/{documentId}/traiter', [TraitementDossierController::class, 'traiterDocument']);
-            Route::post('/documents/upload', [DocumentController::class, 'uploadDocument']);
         });
 
+        // Gestion des documents
+        Route::prefix('documents')->group(function () {
+            Route::post('/', [DocumentController::class, 'store']);
+            Route::post('/upload', [DocumentController::class, 'uploadDocument']);
+        });
     });
-
 });

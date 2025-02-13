@@ -2,19 +2,18 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Laravel\Sanctum\HasApiTokens;
+use Laravel\Passport\HasApiTokens; // Ajout de l'import de Passport
 use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable;
-    
+    use HasFactory, Notifiable, HasApiTokens; // Utilisation de HasApiTokens pour la gestion des tokens API
+
     /**
-     * The attributes that are mass assignable.
+     * Les attributs qui peuvent être assignés en masse.
      *
      * @var array<int, string>
      */
@@ -24,13 +23,18 @@ class User extends Authenticatable
         'password',
     ];
 
+    /**
+     * Relation avec le modèle Personne.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
     public function personne()
     {
         return $this->belongsTo(Personne::class);
     }
 
     /**
-     * The attributes that should be hidden for serialization.
+     * Les attributs qui doivent être cachés lors de la sérialisation.
      *
      * @var array<int, string>
      */
@@ -40,11 +44,23 @@ class User extends Authenticatable
     ];
 
     /**
-     * The attributes that should be cast.
+     * Les attributs qui doivent être convertis.
      *
      * @var array<string, string>
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    /**
+     * Assure-toi que l'utilisateur peut créer un token.
+     * 
+     * @param string $name
+     * @return \Laravel\Passport\PersonalAccessTokenResult
+     */
+    public function createToken(string $name)
+    {
+        return $this->createToken($name);
+    }
 }
+

@@ -31,7 +31,6 @@ class DocumentController extends Controller
         $file = $request->file('document');
         $dossierPath = "dossier_{$request->dossier_id}/";
 
-        // ✅ Correction : Utilisation de $this->cloudinaryService
         $uploadResult = $this->cloudinaryService->uploadDocument($file, $dossierPath, $request->type_document);
 
         if (!$uploadResult['success']) {

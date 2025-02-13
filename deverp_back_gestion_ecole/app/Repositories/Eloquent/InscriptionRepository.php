@@ -4,12 +4,17 @@ namespace App\Repositories\Eloquent;
 
 use App\Models\Inscription;
 use Illuminate\Database\Eloquent\Collection; // Ajout de l'import
+use Exception;
 
 class InscriptionRepository
 {
     public function create(array $data)
     {
-        return Inscription::create($data);
+        try {
+            return Inscription::create($data);
+        } catch (Exception $e) {
+            throw new Exception('Erreur lors de la création de l\'inscription : ' . $e->getMessage());
+        }
     }
 
     public function getAll(): Collection
@@ -22,12 +27,14 @@ class InscriptionRepository
         return Inscription::findOrFail($id);
     }
 
-    public function findByCodeSuiviAndEmail(string $codeSuivi, string $email): ?Inscription
+    public function findByCodeSuiviAndEmail(string $codeSuivi, string $email)
     {
-        return Inscription::where('code_suivi', $codeSuivi)
-            ->where('email', $email)
+        return Inscription::whereHas('dossier', function ($query) use ($codeSuivi) {
+            $query->where('code_suivi', $codeSuivi);
+        })->where('email', $email)
             ->first();
     }
+
 
     public function updateStatut($id, string $statut): bool
     {

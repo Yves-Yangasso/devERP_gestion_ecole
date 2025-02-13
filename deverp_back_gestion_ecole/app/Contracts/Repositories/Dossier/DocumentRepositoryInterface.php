@@ -7,6 +7,10 @@ use Illuminate\Database\Eloquent\Collection;
 
 interface DocumentRepositoryInterface
 {
+    // public function creer(array $data): Document;
+    // public function trouverParId(int $id): ?Document;
+    // public function trouverParDossierId(int $dossierId);
+
     /**
      * Créer un nouveau document
      */
@@ -20,7 +24,7 @@ interface DocumentRepositoryInterface
     /**
      * Récupérer tous les documents d'un dossier
      */
-    public function getByDossier(string $codeDossier): Collection;
+    // public function getByDossier(string $codeDossier): Collection;
 
     /**
      * Mettre à jour un document
@@ -37,14 +41,14 @@ interface DocumentRepositoryInterface
     /**
      * Vérifier si un type de document existe déjà pour un dossier
      */
-    public function typeExistsPourDossier(string $codeDossier, string $type): bool;
+    // public function typeExistsPourDossier(string $codeDossier, string $type): bool;
 
     /**
      * Récupérer les documents manquants pour un dossier
      */
-    public function getDocumentsManquants(string $codeDossier): array;
+    // public function getDocumentsManquants(string $codeDossier): array;
     
     public function findByDossierId(int $dossierId): Collection;
     
-    public function findByType(int $dossierId, string $type): ?Document;
+    // public function findByType(int $dossierId, string $type): ?Document;
 }

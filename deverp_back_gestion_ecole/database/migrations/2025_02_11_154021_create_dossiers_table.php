@@ -11,7 +11,7 @@ return new class extends Migration
     {
         Schema::create('dossiers', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('etudiant_id')->constrained('etudiants')->onDelete('cascade');
+            $table->foreignId('inscription_id')->constrained('inscriptions')->onDelete('cascade');
             $table->string('code_suivi')->unique();
             $table->enum('statut', [
                 'en_attente',
@@ -29,7 +29,7 @@ return new class extends Migration
             // Index pour améliorer les performances des recherches
             $table->index('code_suivi');
             $table->index('statut');
-            $table->index(['etudiant_id', 'statut']);
+            $table->index(['inscription_id', 'statut']);
         });
     }
 

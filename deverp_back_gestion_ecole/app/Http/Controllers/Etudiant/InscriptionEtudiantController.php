@@ -19,22 +19,42 @@ class InscriptionEtudiantController extends Controller
     public function store(InscrireEtudiantRequest $request): JsonResponse
     {
         try {
-        $inscription = $this->inscriptionService->createInscription($request->validated());
-        return response()->json(['message' => 'Inscription enregistrée avec succès', 'inscription' => $inscription], 201);
-        } catch (\Throwable $th) {
-            return response()->json(['message' => 'Erreur lors de l\'enregistrement de l\'inscription',''=> $th],500);
+            $inscription = $this->inscriptionService->createCompleteInscription($request->validated());
+            return response()->json([
+                'message' => 'Inscription enregistrée avec succès',
+                'data' => $inscription
+            ], 201);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Erreur lors de l\'enregistrement de l\'inscription',
+                'error' => $e->getMessage()
+            ], 500);
         }
     }
 
     public function index(): JsonResponse
     {
-        $inscriptions = $this->inscriptionService->getAllinscrit();
-        return response()->json($inscriptions);
+        try {
+            $inscriptions = $this->inscriptionService->getAllInscriptionsComplete();
+            return response()->json($inscriptions);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Erreur lors de la récupération des inscriptions',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 
     public function show($id): JsonResponse
     {
-        $inscription = $this->inscriptionService->getInscritById($id);
-        return response()->json($inscription);
+        try {
+            $inscription = $this->inscriptionService->getInscriptionComplete($id);
+            return response()->json($inscription);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Erreur lors de la récupération de l\'inscription',
+                'error' => $e->getMessage()
+            ], 404);
+        }
     }
 }

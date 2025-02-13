@@ -1,4 +1,5 @@
 <?php
+// app/Http/Controllers/API/Dossier/TraitementDossierController.php
 
 namespace App\Http\Controllers\API\Dossier;
 
@@ -17,20 +18,65 @@ class TraitementDossierController extends Controller
         $this->traitementService = $traitementService;
     }
 
-    public function traiterDocument(TraiterDocumentRequest $request, int $documentId): JsonResponse
+    public function getDossierDetails(int $dossierId): JsonResponse
     {
-        $document = $this->traitementService->traiterDocument($documentId, $request->validated());
-        return response()->json([
-            'message' => 'Document traité avec succès',
-            'document' => $document
-        ]);
+        try {
+            $dossier = $this->traitementService->getDossierById($dossierId);
+
+            if (!$dossier) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Dossier non trouvé'
+                ], 404);
+            }
+
+            return response()->json([
+                'success' => true,
+                'dossier' => new DossierResource($dossier)
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur lors de la récupération du dossier',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 
     public function getDossiersATraiter(): JsonResponse
     {
-        $dossiers = $this->traitementService->getDossiersEnAttente();
-        return response()->json([
-            'dossiers' => DossierResource::collection($dossiers)
-        ]);
+        try {
+            $dossiers = $this->traitementService->getDossiersEnAttente();
+
+            return response()->json([
+                'success' => true,
+                'dossiers' => DossierResource::collection($dossiers)
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur lors de la récupération des dossiers',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function traiterDocument(TraiterDocumentRequest $request, int $documentId): JsonResponse
+    {
+        try {
+            $document = $this->traitementService->traiterDocument($documentId, $request->validated());
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Document traité avec succès',
+                'document' => $document
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur lors du traitement du document',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 }

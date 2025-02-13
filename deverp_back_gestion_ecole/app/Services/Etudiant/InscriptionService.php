@@ -1,37 +1,72 @@
 <?php
-
 namespace App\Services\Etudiant;
-use App\Events\Etudiant\EtudiantInscrit;
-use App\Repositories\Eloquent\InscriptionRepository;
+
+use App\Models\Inscription;
+use App\Models\Tuteur;
+use App\Models\Dossier;
+use App\Models\Document;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
+use Exception;
 use Illuminate\Support\Facades\Log;
+
 class InscriptionService
 {
-    protected $inscritRepository;
-    public function __construct(InscriptionRepository $inscriptionRepository)
-    {
-        $this->inscritRepository = $inscriptionRepository;
-    }
-    public function createInscription(array $data)
+    public function createCompleteInscription(array $data)
     {
         try {
-            $student = $this->inscritRepository->create($data);
-            event(new EtudiantInscrit($student));
+            DB::beginTransaction();
 
-            return $student;
-        } catch (\Exception $e) {
-           Log::error('Erreur lors de l’inscription : ' . $e->getMessage());
-            return response()->json(['error' => 'Une erreur est survenue lors de l’inscription.'], 500);
+            // Créer les tuteurs
+            $tuteurIds = [];
+            foreach ($data['tuteurs'] as $tuteurData) {
+                $tuteur = Tuteur::create($tuteurData);
+                $tuteurIds[] = $tuteur->id;
+            }
+
+            // Créer l'inscription
+            $inscription = Inscription::create(array_merge(
+                $data['etudiant'],
+                ['id_tuteur' => $tuteurIds[0]]
+            ));
+
+            // Créer le dossier
+            $dossier = Dossier::create([
+                'inscription_id' => $inscription->id,
+                'titre' => $data['dossier']['titre'], // Changé de 'nom' à 'titre'
+                'description' => $data['dossier']['description'],
+                'code_suivi' => 'DOS-' . strtoupper(Str::random(12)),
+                'statut' => 'en_attente'
+            ]);
+
+            // Créer les documents
+            foreach ($data['dossier']['documents'] as $documentData) {
+                Document::create([
+                    'dossier_id' => $dossier->id,
+                    'type_document' => $documentData['type_document'],
+                    'chemin_fichier' => $documentData['chemin_fichier']
+                ]);
+            }
+
+            DB::commit();
+
+            return $this->getInscriptionComplete($inscription->id);
+        } catch (Exception $e) {
+            DB::rollBack();
+            Log::error('Erreur lors de l\'inscription : ' . $e->getMessage());
+            throw new Exception('Erreur lors de l\'inscription : ' . $e->getMessage());
         }
     }
 
-
-    public function getAllinscrit()
+    public function getInscriptionComplete($id)
     {
-        return $this->inscritRepository->getAll();
+        return Inscription::with(['tuteur', 'dossier.documents'])
+            ->findOrFail($id);
     }
 
-    public function getInscritById($id)
+    public function getAllInscriptionsComplete()
     {
-        return $this->inscritRepository->getById($id);
+        return Inscription::with(['tuteur', 'dossier.documents'])
+            ->get();
     }
 }

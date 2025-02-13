@@ -1,6 +1,5 @@
 <?php
 
-// app/Services/Dossier/TraitementDossierService.php
 namespace App\Services\Dossier;
 
 use App\Events\Document\DocumentTraite;
@@ -10,6 +9,7 @@ use App\Enums\Dossier\StatutDocument;
 use App\Enums\Dossier\StatutDossier;
 use Exception;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Eloquent\Collection;
 
 class TraitementDossierService
 {
@@ -24,17 +24,45 @@ class TraitementDossierService
         $this->dossierRepository = $dossierRepository;
     }
 
+    public function getDossierById(int $dossierId)
+    {
+        try {
+            $dossier = $this->dossierRepository->findById($dossierId);
+
+            if (!$dossier) {
+                throw new Exception('Dossier non trouvé');
+            }
+
+            return $dossier;
+        } catch (Exception $e) {
+            throw new Exception('Erreur lors de la récupération du dossier: ' . $e->getMessage());
+        }
+    }
+
+    public function getDossiersEnAttente()
+    {
+        try {
+            return $this->dossierRepository->getDossiersByStatut(StatutDossier::EN_ATTENTE);
+        } catch (Exception $e) {
+            throw new Exception('Erreur lors de la récupération des dossiers en attente: ' . $e->getMessage());
+        }
+    }
+
     public function traiterDocument(int $documentId, array $data)
     {
         DB::beginTransaction();
         try {
             $document = $this->documentRepository->trouverParId($documentId);
+
+            if (!$document) {
+                throw new Exception('Document non trouvé');
+            }
+
             $document->update([
                 'statut' => $data['statut'],
                 'commentaire' => $data['commentaire'] ?? null
             ]);
 
-            // Mise à jour du statut du dossier
             $this->verifierEtMajStatutDossier($document->dossier);
 
             event(new DocumentTraite($document));
@@ -43,32 +71,32 @@ class TraitementDossierService
             return $document;
         } catch (Exception $e) {
             DB::rollBack();
-            throw $e;
+            throw new Exception('Erreur lors du traitement du document: ' . $e->getMessage());
         }
     }
 
     protected function verifierEtMajStatutDossier($dossier)
     {
-        $documents = $dossier->documents;
-        $tousDocumentsValides = $documents->every(function ($doc) {
-            return $doc->statut === StatutDocument::VALIDE;
-        });
+        try {
+            $documents = $dossier->documents;
 
-        $documentsInvalides = $documents->contains(function ($doc) {
-            return $doc->statut === StatutDocument::INVALIDE;
-        });
+            $tousDocumentsValides = $documents->every(function ($doc) {
+                return $doc->statut === StatutDocument::VALIDE;
+            });
 
-        if ($tousDocumentsValides) {
-            $dossier->update(['statut' => StatutDossier::VALIDE]);
-        } elseif ($documentsInvalides) {
-            $dossier->update(['statut' => StatutDossier::INVALIDE]);
-        } else {
-            $dossier->update(['statut' => StatutDossier::EN_COURS_VALIDATION]);
+            $documentsInvalides = $documents->contains(function ($doc) {
+                return $doc->statut === StatutDocument::INVALIDE;
+            });
+
+            if ($tousDocumentsValides) {
+                $dossier->update(['statut' => StatutDossier::VALIDE]);
+            } elseif ($documentsInvalides) {
+                $dossier->update(['statut' => StatutDossier::INVALIDE]);
+            } else {
+                $dossier->update(['statut' => StatutDossier::EN_COURS_VALIDATION]);
+            }
+        } catch (Exception $e) {
+            throw new Exception('Erreur lors de la mise à jour du statut du dossier: ' . $e->getMessage());
         }
-    }
-
-    public function getDossiersEnAttente()
-    {
-        return $this->dossierRepository->getDossiersByStatut(StatutDossier::EN_ATTENTE);
     }
 }

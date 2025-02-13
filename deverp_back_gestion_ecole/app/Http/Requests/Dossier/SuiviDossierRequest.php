@@ -9,7 +9,7 @@ class SuiviDossierRequest extends FormRequest
     public function rules()
     {
         return [
-            'code_suivi' => 'required|string|size:6',
+            'code_suivi' => 'required|string|regex:/^DOS-\w{6,}$/',
             'email' => 'required|email'
         ];
     }

@@ -7,6 +7,9 @@ use Illuminate\Database\Eloquent\Collection;
 
 interface DossierRepositoryInterface
 {
+    // public function creer(array $data): Dossier;
+    // public function trouverParId(int $id): ?Dossier;
+    // public function trouverParInscriptionId(int $inscriptionId);
     /**
      * Créer un nouveau dossier
      */

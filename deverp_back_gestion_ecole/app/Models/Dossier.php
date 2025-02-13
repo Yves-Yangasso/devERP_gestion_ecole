@@ -16,9 +16,12 @@ class Dossier extends Model
 
     protected $fillable = [
         'inscription_id',
-        'nom',
-        'description',
-        'statut'
+        'titre',
+        'commentaire',
+        'code_suivi',
+        'statut',
+        'mode_validation',
+        'date_soumission'
     ];
 
     protected $casts = [
@@ -29,14 +32,14 @@ class Dossier extends Model
 
 
     protected $attributes = [
-        'statut' => StatutDossier::EN_ATTENTE,
-        //'mode_validation' => 'manuel',
+        'statut' => 'en_attente',
+        'mode_validation' => 'manuel',
     ];
 
     protected static function boot()
     {
         parent::boot();
-        
+
         static::creating(function ($dossier) {
             if (!$dossier->code_suivi) {
                 $dossier->genererCodeSuivi();
@@ -44,7 +47,7 @@ class Dossier extends Model
         });
     }
 
-    public function inscription(): BelongsTo
+    public function inscription()
     {
         return $this->belongsTo(Inscription::class);
     }
@@ -68,7 +71,7 @@ class Dossier extends Model
     {
         $documentsRequis = config('dossier.documents_requis');
         $documentsPresents = $this->documents->pluck('type')->toArray();
-        
+
         return count(array_diff($documentsRequis, $documentsPresents)) === 0;
     }
 }

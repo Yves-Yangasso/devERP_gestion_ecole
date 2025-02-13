@@ -26,4 +26,42 @@ class SuiviDossierResource extends JsonResource
             'prochaine_etape' => $this->prochaineEtape(),
         ];
     }
+
+    public function calculerProgression()
+    {
+        $documents = $this->documents; // On récupère les documents associés au dossier
+        $totalDocuments = $documents->count();  // Total de documents
+        $documentsValides = $documents->where('statut', 'valide')->count();  // Documents validés
+
+        if ($totalDocuments === 0) {
+            return 0;  // Aucun document, donc progression à 0%
+        }
+
+        // Calcul de la progression en pourcentage
+        return ($documentsValides / $totalDocuments) * 100;
+    }
+
+    public function prochaineEtape()
+    {
+        $documents = $this->documents; // Récupère les documents associés au dossier
+
+        // Vérifie si tous les documents sont validés
+        $documentsValidés = $documents->where('statut', 'valide')->count();
+        $documentsEnAttente = $documents->where('statut', 'en_attente')->count();
+        $documentsInvalides = $documents->where('statut', 'invalide')->count();
+
+        if ($documentsEnAttente > 0) {
+            return 'Documents en attente de validation';
+        }
+
+        if ($documentsInvalides > 0) {
+            return 'Documents invalides à corriger';
+        }
+
+        if ($documentsValidés == $documents->count()) {
+            return 'Validation terminée, dossier prêt';
+        }
+
+        return 'En cours de traitement';
+    }
 }

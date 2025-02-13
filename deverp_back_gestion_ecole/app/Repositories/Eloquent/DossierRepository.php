@@ -24,12 +24,12 @@ class DossierRepository implements DossierRepositoryInterface
         return $this->model->create($data);
     }
 
-    public function findById(int $id): ?Dossier
-    {
-        return $this->model
-            ->with(['documents', 'inscription'])
-            ->find($id);
-    }
+    // public function findById(int $id): ?Dossier
+    // {
+    //     return $this->model
+    //         ->with(['documents', 'inscription'])
+    //         ->find($id);
+    // }
 
     public function findByCodeSuivi(string $codeSuivi): ?Dossier
     {
@@ -87,6 +87,12 @@ class DossierRepository implements DossierRepositoryInterface
             ->with(['documents', 'inscription'])
             ->latest()
             ->paginate($perPage);
+    }
+    public function findById(int $id): ?Dossier
+    {
+        return $this->model
+            ->with(['documents', 'inscription'])
+            ->find($id);
     }
 }
 // namespace App\Repositories\Eloquent;

@@ -11,4 +11,9 @@ enum StatutDossier: string
     case REJETE = 'rejete';
     case INCOMPLET = 'incomplet';
     case ARCHIVE = 'archive';
+
+    public static function values(): array
+    {
+        return array_column(self::cases(), 'value');
+    }
 }

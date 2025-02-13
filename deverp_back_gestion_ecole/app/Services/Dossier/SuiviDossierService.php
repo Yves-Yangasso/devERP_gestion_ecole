@@ -1,5 +1,5 @@
 <?php
-// app/Services/Dossier/SuiviDossierService.php
+
 namespace App\Services\Dossier;
 
 use App\Models\Dossier;
@@ -15,19 +15,27 @@ class SuiviDossierService
         $this->inscriptionRepository = $inscriptionRepository;
     }
 
+    /**
+     * Récupère un dossier par son code de suivi et l'email de l'utilisateur
+     */
     public function getDossierParCodeSuivi(string $codeSuivi, string $email)
     {
         $inscription = $this->inscriptionRepository->findByCodeSuiviAndEmail($codeSuivi, $email);
 
-        if (!$inscription) {
+        if (!$inscription || !$inscription->dossier) {
             throw new ModelNotFoundException('Dossier non trouvé. Vérifiez votre code de suivi et email.');
         }
 
-        return $inscription->dossier()->with(['documents' => function ($query) {
-            $query->orderBy('updated_at', 'desc');
-        }])->first();
+        return $inscription->dossier()->with([
+            'documents' => function ($query) {
+                $query->orderBy('updated_at', 'desc');
+            }
+        ])->firstOrFail();
     }
 
+    /**
+     * Récupère l'historique des validations du dossier
+     */
     public function getHistoriqueDossier(string $codeSuivi, string $email)
     {
         $inscription = $this->inscriptionRepository->findByCodeSuiviAndEmail($codeSuivi, $email);
@@ -36,13 +44,24 @@ class SuiviDossierService
             throw new ModelNotFoundException('Dossier non trouvé. Vérifiez votre code de suivi et email.');
         }
 
-        return $inscription->dossier->historiques()
-            ->orderBy('created_at', 'desc')
-            ->get();
+        // Vérifie que l'inscriptions a bien un dossier
+        $dossier = $inscription->dossier;
+
+        // Accède à la relation 'historiques' sur le modèle Dossier
+        return $dossier->historiques()->orderBy('created_at', 'desc')->get();
     }
+
+
+    /**
+     * Vérifie le statut des documents d'un dossier
+     */
     public function verifierStatutDocuments(Dossier $dossier)
     {
-        $documents = $dossier->documents;
+        if (!$dossier->relationLoaded('documents')) {
+            $dossier->load('documents');
+        }
+
+        $documents = $dossier->documents ?? collect();
 
         return [
             'total_documents' => $documents->count(),
