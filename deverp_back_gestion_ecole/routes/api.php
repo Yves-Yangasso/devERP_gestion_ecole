@@ -1,54 +1,79 @@
 <?php
 
-use App\Http\Controllers\API\Document\DocumentController;
-use App\Http\Controllers\API\Dossier\DossierController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Etudiant\InscriptionEtudiantController;
 use App\Http\Controllers\API\Tuteur\TuteurController;
+use App\Http\Controllers\API\Dossier\DossierController;
+use App\Http\Controllers\API\Dossier\ValidationDossierController;
+use App\Http\Controllers\API\Dossier\TraitementDossierController;
+use App\Http\Controllers\API\Dossier\DocumentController;
+use App\Http\Controllers\API\Dossier\SuiviDossierController;
 
-// Route::post('/inscription_etudiant', [InscriptionEtudiantController::class, 'store']);
-// Route::get('/inscriptions', [InscriptionEtudiantController::class, 'index']);
-// Route::get('/inscription/{id}', [InscriptionEtudiantController::class, 'show']);
+// Route::prefix('v1')->group(function () {
+    
+    /*** 📌 Routes d'inscription des étudiants ***/
+    Route::prefix('inscriptions')->group(function () {
+        Route::get('/', [InscriptionEtudiantController::class, 'index']);
+        Route::get('/{id}', [InscriptionEtudiantController::class, 'show']);
+        Route::post('/', [InscriptionEtudiantController::class, 'store']);
+    });
 
+    /*** 📌 Routes des tuteurs ***/
 
-Route::prefix('/inscription')->group(function () {
-    // Liste des inscription
-    Route::get('/', [InscriptionEtudiantController::class, 'index']);
+    Route::prefix('/tuteurs')->group(function () {
+        // Liste des tuteurs
+        Route::get('/', [TuteurController::class, 'index']);
+    
+        // Détails d'un tuteur
+        Route::get('/{id}', [TuteurController::class, 'show']);
+    
+        // Créer un tuteur
+        Route::post('/', [TuteurController::class, 'creer']);
+    
+        // Modifier un tuteur
+        Route::put('/{id}', [TuteurController::class, 'modifier']);
+    
+        // Supprimer un tuteur
+        Route::delete('/{id}', [TuteurController::class, 'supprimer']);
+    });
 
-    // Détails d'un tuteur
-    Route::get('/{id}', [InscriptionEtudiantController::class, 'show']);
+    /*** 📌 Routes pour la gestion des dossiers ***/
+    Route::prefix('dossiers')->group(function () {
+        Route::post('/', [DossierController::class, 'store']);
+        Route::get('/{codeSuivi}', [DossierController::class, 'show']);
+        Route::post('/{codeSuivi}/documents', [DossierController::class, 'soumettreDocument']);
+        Route::get('/etudiant/{etudiantId}', [DossierController::class, 'getDossiersEtudiant']);
+    });
 
-    // Créer un tuteur
-    Route::post('/', [InscriptionEtudiantController::class, 'store']);
+    /*** 📌 Routes pour le suivi des dossiers ***/
+    Route::prefix('suivi-dossier')->group(function () {
+        Route::post('/verifier', [SuiviDossierController::class, 'suivreDossier']);
+        Route::post('/historique', [SuiviDossierController::class, 'getHistorique']);
+    });
 
-    // Modifier un tuteur
-    //Route::put('/{id}', [InscriptionEtudiantController::class, 'modifier']);
+    /*** 🔒 Routes protégées par middleware 'auth:sanctum' ***/
+    Route::middleware(['auth:sanctum'])->group(function () {    
 
-    // Supprimer un tuteur
-    //Route::delete('/{id}', [InscriptionEtudiantController::class, 'supprimer']);
-});
-Route::prefix('/tuteurs')->group(function () {
-    // Liste des tuteurs
-    Route::get('/', [TuteurController::class, 'index']);
+        /*** 📌 Routes pour la validation des dossiers ***/
+        Route::prefix('dossiers')->group(function () {
+            Route::get('/en-attente', [ValidationDossierController::class, 'getDossiersEnAttente']);
+            Route::post('/{dossierId}/valider', [ValidationDossierController::class, 'validerDossier']);
+            Route::get('/{dossierId}/documents', [ValidationDossierController::class, 'getDocuments']);
+            Route::post('/documents/{documentId}/valider', [ValidationDossierController::class, 'validerDocument']);
+        });
 
-    // Détails d'un tuteur
-    Route::get('/{id}', [TuteurController::class, 'show']);
+        /*** 📌 Routes pour le traitement des dossiers ***/
+        Route::prefix('dossiers')->group(function () {
+            Route::get('/a-traiter', [TraitementDossierController::class, 'getDossiersATraiter']);
+            Route::get('/{dossierId}', [TraitementDossierController::class, 'getDossierDetails']);
+            Route::post('/documents/{documentId}/traiter', [TraitementDossierController::class, 'traiterDocument']);
+            Route::post('/documents/upload', [DocumentController::class, 'uploadDocument']);
+        });
 
-    // Créer un tuteur
-    Route::post('/', [TuteurController::class, 'creer']);
+    });
+    Route::prefix('api/documents')->group(function () {
+        Route::post('/', [DocumentController::class, 'store']);
+    });
 
-    // Modifier un tuteur
-    Route::put('/{id}', [TuteurController::class, 'modifier']);
-
-    // Supprimer un tuteur
-    Route::delete('/{id}', [TuteurController::class, 'supprimer']);
-});
-
-Route::prefix('api/dossiers')->group(function () {
-    Route::post('/', [DossierController::class, 'store']);
-});
-
-Route::prefix('api/documents')->group(function () {
-    Route::post('/', [DocumentController::class, 'store']);
-});
+// });

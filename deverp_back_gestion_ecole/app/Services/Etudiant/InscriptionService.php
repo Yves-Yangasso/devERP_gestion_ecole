@@ -5,7 +5,7 @@ namespace App\Services\Etudiant;
 use App\Events\Etudiant\EtudiantInscrit;
 use App\Notifications\Etudiant\Confirmation;
 use App\Repositories\Eloquent\AssociationEtudiantTuteurRepository;
-use App\Repositories\Eloquent\Document\DocumentsRepository;
+use App\Repositories\Eloquent\Document\DocumentRepository;
 use App\Repositories\Eloquent\Dossier\DossierRepository;
 use App\Repositories\Eloquent\InscriptionRepository;
 use App\Repositories\Eloquent\TuteurRepository;
@@ -26,7 +26,7 @@ class InscriptionService
         InscriptionRepository $inscriptionRepository,
         TuteurRepository $tuteurRepository,
         DossierRepository $dossierRepository,
-        DocumentsRepository $documentRepository,
+        DocumentRepository $documentRepository,
         AssociationEtudiantTuteurRepository $associationEtudiant
     ) {
         $this->inscriptionRepository = $inscriptionRepository;
@@ -54,7 +54,7 @@ class InscriptionService
             }
 
             //  Créer un dossier pour l'étudiant
-            $dossier = $this->dossierRepository->creer([
+            $dossier = $this->dossierRepository->create([
                 'inscription_id' => $etudiant->id,
                 'nom' => 'Dossier de ' . $etudiant->nom,
                 'description' => 'Dossier contenant les documents de l\'étudiant'
