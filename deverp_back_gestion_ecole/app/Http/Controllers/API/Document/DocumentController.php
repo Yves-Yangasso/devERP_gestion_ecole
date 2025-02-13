@@ -4,7 +4,7 @@ namespace App\Http\Controllers\API\Dossier;
 
 use App\Http\Controllers\Controller;
 use App\Services\Storage\CloudinaryStorageService;
-use App\Services\Dossier\DocumentService;
+use App\Services\Document\DocumentService;
 use Illuminate\Http\Request;
 
 class DocumentController extends Controller
@@ -13,7 +13,7 @@ class DocumentController extends Controller
     protected DocumentService $documentService;
 
     public function __construct(
-        CloudinaryStorageService $cloudinaryService, 
+        CloudinaryStorageService $cloudinaryService,
         DocumentService $documentService
     ) {
         $this->cloudinaryService = $cloudinaryService;

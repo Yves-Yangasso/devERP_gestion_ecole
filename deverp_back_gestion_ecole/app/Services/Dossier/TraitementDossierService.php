@@ -4,7 +4,7 @@
 namespace App\Services\Dossier;
 
 use App\Events\Document\DocumentTraite;
-use App\Repositories\Eloquent\Document\DocumentRepository;
+use App\Repositories\Eloquent\Document\DocumentsRepository;
 use App\Repositories\Eloquent\Dossier\DossierRepository;
 use App\Enums\Dossier\StatutDocument;
 use App\Enums\Dossier\StatutDossier;
@@ -17,7 +17,7 @@ class TraitementDossierService
     protected $dossierRepository;
 
     public function __construct(
-        DocumentRepository $documentRepository,
+        DocumentsRepository $documentRepository,
         DossierRepository $dossierRepository
     ) {
         $this->documentRepository = $documentRepository;

@@ -2,13 +2,14 @@
 // app/Repositories/Eloquent/Document/DocumentsRepository.php
 namespace App\Repositories\Eloquent\Document;
 
+use App\Contracts\Repositories\Document\DocumentRepositoryInterface;
 use App\Models\Document;
 use App\Enums\Dossier\StatutDocument;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Storage;
 use Exception;
 
-class DocumentRepository
+class DocumentRepository implements DocumentRepositoryInterface
 {
     protected $model;
 
