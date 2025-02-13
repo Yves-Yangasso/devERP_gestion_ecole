@@ -19,8 +19,10 @@ class CloudinaryStorageService
                 'cloud_name' => config('cloudinary.cloud_name'),
                 'api_key' => config('cloudinary.api_key'),
                 'api_secret' => config('cloudinary.api_secret'),
-                'secure' => config('cloudinary.secure'),
             ],
+            'url' => [
+                'secure' => config('cloudinary.secure')
+            ]
         ]);
     }
 
@@ -58,8 +60,8 @@ class CloudinaryStorageService
     public function deleteDocument(string $publicId): bool
     {
         try {
-            $this->cloudinary->uploadApi()->destroy($publicId);
-            return true;
+            $result = $this->cloudinary->uploadApi()->destroy($publicId);            
+            return $result['result'] === 'ok';
         } catch (\Exception $e) {
             Log::error('Erreur lors de la suppression sur Cloudinary: ' . $e->getMessage());
             return false;

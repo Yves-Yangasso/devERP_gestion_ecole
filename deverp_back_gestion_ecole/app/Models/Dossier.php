@@ -15,25 +15,22 @@ class Dossier extends Model
     protected $table = 'dossiers';
 
     protected $fillable = [
-        'etudiant_id',
-        'code_suivi',
-        'statut',
-        'commentaire',
-        'mode_validation',
-        'date_soumission',
+        'inscription_id',
+        'nom',
+        'description',
+        'statut'
     ];
 
     protected $casts = [
         'statut' => StatutDossier::class,
         'date_soumission' => 'datetime',
-        'etudiant_id' => 'integer',
+        'inscription_id' => 'integer',
     ];
 
-    protected $dates = ['deleted_at'];
 
     protected $attributes = [
         'statut' => StatutDossier::EN_ATTENTE,
-        'mode_validation' => 'manuel',
+        //'mode_validation' => 'manuel',
     ];
 
     protected static function boot()
@@ -47,9 +44,9 @@ class Dossier extends Model
         });
     }
 
-    public function etudiant(): BelongsTo
+    public function inscription(): BelongsTo
     {
-        return $this->belongsTo(Etudiant::class);
+        return $this->belongsTo(Inscription::class);
     }
 
     public function documents(): HasMany

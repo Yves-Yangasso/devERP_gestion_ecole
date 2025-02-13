@@ -33,7 +33,7 @@ class DocumentService
             }
 
             // Création du document
-            $document = $this->documentRepository->create([
+            $document = $this->documentRepository->creer([
                 'dossier_id' => $data['dossier_id'],
                 'type' => $data['type'],
                 'chemin' => $uploadResult['url'],
@@ -83,7 +83,7 @@ class DocumentService
 
     public function getDocumentsByDossier(int $dossierId): array
     {
-        return $this->documentRepository->findByDossierId($dossierId)->toArray();
+        return $this->documentRepository->trouverParDossierId($dossierId)->toArray();
     }
 
 
@@ -98,7 +98,7 @@ class DocumentService
 
     public function getDocument(int $documentId): ?Document
     {
-        return $this->documentRepository->findById($documentId);
+        return $this->documentRepository->trouverParId($documentId);
     }
 
     public function soumettreDocument(string $codeDossier, array $data): Document

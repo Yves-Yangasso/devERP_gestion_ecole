@@ -8,7 +8,6 @@ return new class extends Migration {
     {
         Schema::create('inscriptions', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('id_users');
             $table->string('prenom', 255);
             $table->string('nom', 255);
             $table->date('date_naissance');
@@ -25,7 +24,6 @@ return new class extends Migration {
             $table->timestamps();
 
             // Clés étrangères
-            $table->foreign('id_users')->references('id')->on('users')->onDelete('cascade');
             $table->foreign('id_tuteur')->references('id')->on('tuteurs')->onDelete('set null');
         });
     }

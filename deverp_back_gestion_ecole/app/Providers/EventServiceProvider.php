@@ -12,5 +12,13 @@ class EventServiceProvider extends ServiceProvider{
         EtudiantInscrit::class => [
             EnvoyerEmailBienvenue::class,
         ],
+        'App\Events\Dossier\DossierValide' => [
+            'App\Listeners\Dossier\EnvoyerNotificationValidation',
+            'App\Listeners\Dossier\EnregistrerHistoriqueValidation',
+        ],
+        'App\Events\Dossier\DossierInvalide' => [
+            'App\Listeners\Dossier\EnvoyerNotificationInvalidation',
+            'App\Listeners\Dossier\EnregistrerHistoriqueInvalidation',
+        ],
     ];
 }

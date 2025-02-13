@@ -14,7 +14,7 @@ class CreerDossierRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'etudiant_id' => ['required', 'integer', 'exists:etudiants,id'],
+            'inscription_id' => ['required', 'integer', 'exists:inscriptions,id'],
             'commentaire' => ['nullable', 'string', 'max:500'],
             'mode_validation' => ['nullable', 'string', 'in:manuel,automatique'],
         ];
