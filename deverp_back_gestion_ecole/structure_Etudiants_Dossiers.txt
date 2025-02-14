@@ -1,0 +1,206 @@
+-------------------------Inscription-----------------------
+
+app/
+│
+├── Http/
+│   ├── Controllers/
+│   │   └── API/
+│   │       └── Etudiant/
+│   │           ├── EtudiantController.php
+│   │           ├── InscriptionEtudiantController.php
+│   │           └── ProfilEtudiantController.php
+│   │
+│   ├── Requests/
+│   │   └── Etudiant/
+│   │       ├── CreerEtudiantRequest.php
+│   │       ├── ModifierEtudiantRequest.php
+│   │       └── InscrireEtudiantRequest.php
+│   │
+│   ├── Resources/
+│   │   └── Etudiant/
+│   │       ├── EtudiantResource.php
+│   │       ├── EtudiantCollection.php
+│   │       └── DetailsEtudiantResource.php
+│   │
+│   └── Middleware/
+│       └── VerifierStatutEtudiant.php
+│
+├── Models/
+│   ├── Etudiant.php
+│   ├── ProfilEtudiant.php
+│   ├── Tuteur.php
+│   └── Inscription.php
+│
+├── Contracts/
+│   └── Repositories/
+│       └── Etudiant/
+│           ├── EtudiantRepositoryInterface.php
+│           └── InscriptionRepositoryInterface.php
+│
+├── Repositories/
+│   └── Eloquent/
+│       ├── BaseRepository.php
+│       ├── EtudiantRepository.php
+│       └── InscriptionRepository.php
+│
+├── Services/
+│   └── Etudiant/
+│       ├── EtudiantService.php
+│       ├── InscriptionService.php
+│       └── DocumentEtudiantService.php
+│
+├── Events/
+│   └── Etudiant/
+│       ├── EtudiantCree.php
+│       ├── EtudiantModifie.php
+│       └── EtudiantInscrit.php
+│
+├── Listeners/
+│   └── Etudiant/
+│       ├── EnvoyerEmailBienvenue.php
+│       ├── GenererCarteEtudiant.php
+│       └── NotifierAdministration.php
+│
+├── Jobs/
+│   └── Etudiant/
+│       ├── TraiterDocumentEtudiant.php
+│       └── GenererRapportsEtudiant.php
+│
+├── Notifications/
+│   └── Etudiant/
+│       ├── NotificationBienvenue.php
+│       ├── ConfirmationInscription.php
+│       └── ValidationDocument.php
+│
+├── Providers/
+│   └── EtudiantServiceProvider.php
+│
+├── Enums/
+│   └── Etudiant/
+│       ├── StatutEtudiant.php
+│       ├── TypeDocument.php
+│       └── StatutInscription.php
+│
+└── Traits/
+    └── Etudiant/
+        ├── AvoirDocuments.php
+        └── AvoirInscriptions.php
+
+mkdir -p app/Http/Controllers/API/Etudiant
+touch app/Http/Controllers/API/Etudiant/EtudiantController.php
+touch app/Http/Controllers/API/Etudiant/InscriptionEtudiantController.php
+touch app/Http/Controllers/API/Etudiant/ProfilEtudiantController.php
+
+mkdir -p app/Http/Requests/Etudiant
+touch app/Http/Requests/Etudiant/CreerEtudiantRequest.php
+touch app/Http/Requests/Etudiant/ModifierEtudiantRequest.php
+touch app/Http/Requests/Etudiant/InscrireEtudiantRequest.php
+
+mkdir -p app/Http/Resources/Etudiant
+touch app/Http/Resources/Etudiant/EtudiantResource.php
+touch app/Http/Resources/Etudiant/EtudiantCollection.php
+touch app/Http/Resources/Etudiant/DetailsEtudiantResource.php
+
+mkdir -p app/Http/Middleware
+touch app/Http/Middleware/VerifierStatutEtudiant.php
+
+mkdir -p app/Models
+touch app/Models/Etudiant.php
+touch app/Models/ProfilEtudiant.php
+touch app/Models/Tuteur.php
+touch app/Models/Inscription.php
+
+mkdir -p app/Contracts/Repositories/Etudiant
+touch app/Contracts/Repositories/Etudiant/EtudiantRepositoryInterface.php
+touch app/Contracts/Repositories/Etudiant/InscriptionRepositoryInterface.php
+
+mkdir -p app/Repositories/Eloquent
+touch app/Repositories/Eloquent/BaseRepository.php
+touch app/Repositories/Eloquent/EtudiantRepository.php
+touch app/Repositories/Eloquent/InscriptionRepository.php
+
+mkdir -p app/Services/Etudiant
+touch app/Services/Etudiant/EtudiantService.php
+touch app/Services/Etudiant/InscriptionService.php
+touch app/Services/Etudiant/DocumentEtudiantService.php
+
+mkdir -p app/Events/Etudiant
+touch app/Events/Etudiant/EtudiantCree.php
+touch app/Events/Etudiant/EtudiantModifie.php
+touch app/Events/Etudiant/EtudiantInscrit.php
+
+mkdir -p app/Listeners/Etudiant
+touch app/Listeners/Etudiant/EnvoyerEmailBienvenue.php
+touch app/Listeners/Etudiant/GenererCarteEtudiant.php
+touch app/Listeners/Etudiant/NotifierAdministration.php
+
+mkdir -p app/Jobs/Etudiant
+touch app/Jobs/Etudiant/TraiterDocumentEtudiant.php
+touch app/Jobs/Etudiant/GenererRapportsEtudiant.php
+
+mkdir -p app/Notifications/Etudiant
+touch app/Notifications/Etudiant/NotificationBienvenue.php
+touch app/Notifications/Etudiant/ConfirmationInscription.php
+touch app/Notifications/Etudiant/ValidationDocument.php
+
+mkdir -p app/Providers
+touch app/Providers/EtudiantServiceProvider.php
+
+mkdir -p app/Enums/Etudiant
+touch app/Enums/Etudiant/StatutEtudiant.php
+touch app/Enums/Etudiant/TypeDocument.php
+touch app/Enums/Etudiant/StatutInscription.php
+
+mkdir -p app/Traits/Etudiant
+touch app/Traits/Etudiant/AvoirDocuments.php
+touch app/Traits/Etudiant/AvoirInscriptions.php
+
+
+
+----------------- Dossiers Étudiants et mise en place de la gestion des documents avec stockage sur Cloudinary---------
+app/
+├── Models/
+│   ├── Document.php
+│   └── TypeDocument.php
+│
+├── Services/
+│   └── Document/
+│       ├── CloudinaryService.php
+│       └── DocumentService.php
+│
+├── Http/
+│   ├── Controllers/
+│   │   └── API/
+│   │       └── Document/
+│   │           └── DocumentController.php
+│   │
+│   └── Requests/
+│       └── Document/
+│           ├── StockerDocumentRequest.php
+│           └── ModifierDocumentRequest.php
+│
+├── Contracts/
+│   └── Services/
+│       └── Document/
+│           ├── CloudStorageInterface.php
+│           └── DocumentServiceInterface.php
+
+
+mkdir -p app/Models
+touch app/Models/Document.php
+touch app/Models/TypeDocument.php
+
+mkdir -p app/Services/Document
+touch app/Services/Document/CloudinaryService.php
+touch app/Services/Document/DocumentService.php
+
+mkdir -p app/Http/Controllers/API/Document
+touch app/Http/Controllers/API/Document/DocumentController.php
+
+mkdir -p app/Http/Requests/Document
+touch app/Http/Requests/Document/StockerDocumentRequest.php
+touch app/Http/Requests/Document/ModifierDocumentRequest.php
+
+mkdir -p app/Contracts/Services/Document
+touch app/Contracts/Services/Document/CloudStorageInterface.php
+touch app/Contracts/Services/Document/DocumentServiceInterface.php
