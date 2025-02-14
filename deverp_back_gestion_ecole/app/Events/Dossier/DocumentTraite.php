@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Events\Document;
+namespace App\Events\Dossier;
 
 use App\Models\Document;
 use Illuminate\Foundation\Events\Dispatchable;

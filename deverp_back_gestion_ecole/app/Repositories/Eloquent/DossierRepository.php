@@ -23,13 +23,10 @@ class DossierRepository implements DossierRepositoryInterface
     {
         return $this->model->create($data);
     }
-
-    // public function findById(int $id): ?Dossier
-    // {
-    //     return $this->model
-    //         ->with(['documents', 'inscription'])
-    //         ->find($id);
-    // }
+    public function getByStatut(string $statut): Collection
+    {
+        return Dossier::where('statut', $statut)->get();
+    }
 
     public function findByCodeSuivi(string $codeSuivi): ?Dossier
     {

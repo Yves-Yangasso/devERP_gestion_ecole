@@ -17,7 +17,11 @@ class Document extends Model
         'dossier_id',
         'type',
         'chemin',
-        'public_id', // Ajout du public_id Cloudinary
+        'url_secure',
+        'url_public',
+        'folder_path',
+        'public_id',
+        'format',
         'statut',
         'commentaire',
         'date_validation'
@@ -25,7 +29,7 @@ class Document extends Model
 
     protected $casts = [
         'date_validation' => 'datetime',
-        'type' => TypeDocument::class, 
+        'type' => TypeDocument::class,
         'statut' => ResultatValidation::class,
     ];
 

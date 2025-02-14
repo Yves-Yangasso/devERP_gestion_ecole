@@ -2,7 +2,7 @@
 
 namespace App\Services\Dossier;
 
-use App\Events\Document\DocumentTraite;
+use App\Events\Dossier\DocumentTraite;
 use App\Repositories\Eloquent\DocumentRepository;
 use App\Repositories\Eloquent\DossierRepository;
 use App\Enums\Dossier\StatutDocument;

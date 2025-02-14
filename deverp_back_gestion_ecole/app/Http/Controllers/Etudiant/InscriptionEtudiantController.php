@@ -16,6 +16,10 @@ class InscriptionEtudiantController extends Controller
         $this->inscriptionService = $inscriptionService;
     }
 
+    // public function __construct(
+    //     private readonly InscriptionService $inscriptionService
+    // ) {}
+
     public function store(InscrireEtudiantRequest $request): JsonResponse
     {
         try {

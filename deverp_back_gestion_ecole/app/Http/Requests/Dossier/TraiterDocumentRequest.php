@@ -19,7 +19,7 @@ class TraiterDocumentRequest extends FormRequest
             'statut' => ['required', new Enum(StatutDocument::class)],
             'commentaire' => 'nullable|string|max:500',
             'motif_rejet' => 'required_if:statut,invalide|nullable|string|max:500',
-            'validateur_id' => 'required|exists:users,id'
+            // 'validateur_id' => 'required|exists:users,id'
         ];
     }
 
@@ -28,7 +28,7 @@ class TraiterDocumentRequest extends FormRequest
         return [
             'statut.required' => 'Le statut du document est requis',
             'motif_rejet.required_if' => 'Le motif de rejet est requis lorsque le document est invalidé',
-            'validateur_id.required' => 'L\'identifiant du validateur est requis'
+            // 'validateur_id.required' => 'L\'identifiant du validateur est requis'
         ];
     }
 }

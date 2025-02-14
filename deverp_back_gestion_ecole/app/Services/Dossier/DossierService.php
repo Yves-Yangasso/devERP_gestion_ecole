@@ -8,6 +8,7 @@ use App\Events\Dossier\DocumentSoumis;
 use App\Models\Dossier;
 use App\Models\Document;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Database\Eloquent\Collection;
 
 class DossierService
 {
@@ -30,15 +31,15 @@ class DossierService
         }
 
         $dossier = $this->dossierRepository->create($data);
-        
+
         // Récupérer la liste des documents requis depuis la configuration
         $documentsRequis = config('dossier.documents_requis', []);
-        
+
         // Déclencher l'événement avec les bons paramètres
         event(new DossierCree($dossier->code_suivi, $documentsRequis));
-        
+
         return $dossier;
-    }   
+    }
 
     public function ajouterDocument(Dossier $dossier, array $documentData): Document
     {
@@ -49,10 +50,10 @@ class DossierService
 
         // Traiter et stocker le fichier
         $chemin = $this->stockerDocument($documentData['fichier'], $dossier->code_suivi);
-        
+
         // Associer le chemin au document
         $documentData['chemin'] = $chemin;
-        
+
         // Créer le document dans la base de données
         $document = $dossier->documents()->create($documentData);
 
@@ -80,7 +81,7 @@ class DossierService
 
         $nomFichier = uniqid() . '.' . $fichier->getClientOriginalExtension();
         $chemin = "dossiers/{$codeSuivi}/{$nomFichier}";
-        
+
         Storage::disk('public')->putFileAs(
             "dossiers/{$codeSuivi}",
             $fichier,
@@ -88,6 +89,11 @@ class DossierService
         );
 
         return $chemin;
+    }
+
+    public function getDossiersByStatut(string $statut): Collection
+    {
+        return $this->dossierRepository->getByStatut($statut);
     }
 }
 

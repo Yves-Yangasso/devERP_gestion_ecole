@@ -7,9 +7,7 @@ use Illuminate\Database\Eloquent\Collection;
 
 interface DossierRepositoryInterface
 {
-    // public function creer(array $data): Dossier;
-    // public function trouverParId(int $id): ?Dossier;
-    // public function trouverParInscriptionId(int $inscriptionId);
+
     /**
      * Créer un nouveau dossier
      */
@@ -49,4 +47,9 @@ interface DossierRepositoryInterface
      * Mettre à jour le statut d'un dossier
      */
     public function updateStatut(Dossier $dossier, string $statut, ?string $commentaire = null): bool;
+
+    /**
+     * Permet de recuperer tout les dossiers ayant un status specifiques
+     */
+    public function getByStatut(string $statut): Collection;
 }

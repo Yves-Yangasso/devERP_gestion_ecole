@@ -9,6 +9,7 @@ use App\Http\Resources\Dossier\DossierResource;
 use App\Services\Dossier\DossierService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
+use Illuminate\Http\Request;
 
 class DossierController extends Controller
 {
@@ -57,5 +58,16 @@ class DossierController extends Controller
             'message' => 'Document soumis avec succès',
             'data' => new DossierResource($dossier->fresh())
         ]);
+    }
+    public function filter(Request $request)
+    {
+        if (!$request->has('statut')) {
+            return response()->json(['error' => 'Statut requis'], 400);
+        }
+
+        $statut = $request->statut;
+        $dossiers = $this->dossierService->getDossiersByStatut($statut);
+
+        return response()->json($dossiers, 200);
     }
 }

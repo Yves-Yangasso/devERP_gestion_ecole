@@ -27,13 +27,14 @@ Route::get('/test', function () {
 });
 
 Route::prefix('v1')->group(function () {
-    
+
     /*
     |--------------------------------------------------------------------------
     | Routes Publiques
     |--------------------------------------------------------------------------
     */
-    
+    Route::post('/filter', [DossierController::class, 'filter']);
+
     // Inscriptions étudiants
     Route::prefix('inscriptions')->group(function () {
         Route::get('/', [InscriptionEtudiantController::class, 'index']);
@@ -58,13 +59,13 @@ Route::prefix('v1')->group(function () {
     | Routes Protégées (authentification requise)
     |--------------------------------------------------------------------------
     */
-    
+
     Route::middleware(['auth:api'])->group(function () {
         // Informations utilisateur
         Route::get('/user', function (Request $request) {
             return response()->json($request->user());
         });
-        
+
         // Déconnexion
         Route::post('/logout', [AuthController::class, 'logout']);
 
@@ -82,7 +83,7 @@ Route::prefix('v1')->group(function () {
             // Création et modification
             Route::post('/', [DossierController::class, 'store']);
             Route::get('/etudiant/{etudiantId}', [DossierController::class, 'getDossiersEtudiant']);
-            
+
             // Validation des dossiers
             Route::get('/en-attente', [ValidationDossierController::class, 'getDossiersEnAttente']);
             Route::post('/{dossierId}/valider', [ValidationDossierController::class, 'validerDossier']);

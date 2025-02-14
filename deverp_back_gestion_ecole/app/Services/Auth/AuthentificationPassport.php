@@ -19,6 +19,7 @@ class AuthentificationPassport implements AuthentificationServiceInterface
         if ($user && $user->password === $credentials['password']) {
             // Crée un token d'accès pour l'utilisateur
             $token = $user->createToken('auth_token')->accessToken;
+            // dd($token);
 
             // Retourne les informations d'authentification et le token
             return [

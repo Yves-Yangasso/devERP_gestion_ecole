@@ -51,16 +51,5 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
-
-    /**
-     * Assure-toi que l'utilisateur peut créer un token.
-     * 
-     * @param string $name
-     * @return \Laravel\Passport\PersonalAccessTokenResult
-     */
-    public function createToken(string $name)
-    {
-        return $this->createToken($name);
-    }
 }
 

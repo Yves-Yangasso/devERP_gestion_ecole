@@ -1,10 +1,12 @@
 <?php
+
 namespace App\Services\Etudiant;
 
-use App\Models\Inscription;
-use App\Models\Tuteur;
-use App\Models\Dossier;
-use App\Models\Document;
+use App\Models\{Inscription, Tuteur, Dossier, Document};
+use App\Services\Storage\CloudinaryStorageService;
+use App\Services\Dossier\DossierService;
+use App\Repositories\Eloquent\InscriptionRepository;
+use App\Enums\Dossier\StatutDocument;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Exception;
@@ -12,61 +14,161 @@ use Illuminate\Support\Facades\Log;
 
 class InscriptionService
 {
+    public function __construct(
+        private readonly CloudinaryStorageService $cloudinaryStorage,
+        private readonly DossierService $dossierService,
+        private readonly InscriptionRepository $inscriptionRepository
+    ) {}
+
     public function createCompleteInscription(array $data)
     {
+        DB::beginTransaction();
         try {
-            DB::beginTransaction();
+            // 1. Créer les tuteurs
+            $tuteurIds = $this->createTuteurs($data['tuteurs']);
 
-            // Créer les tuteurs
-            $tuteurIds = [];
-            foreach ($data['tuteurs'] as $tuteurData) {
-                $tuteur = Tuteur::create($tuteurData);
-                $tuteurIds[] = $tuteur->id;
-            }
+            // 2. Créer l'inscription
+            $inscription = $this->createInscription($data['etudiant'], $tuteurIds[0]);
 
-            // Créer l'inscription
-            $inscription = Inscription::create(array_merge(
-                $data['etudiant'],
-                ['id_tuteur' => $tuteurIds[0]]
-            ));
+            // 3. Créer le dossier avec les documents
+            $dossier = $this->createDossierWithDocuments(
+                $inscription,
+                $data['dossier']
+            );
 
-            // Créer le dossier
-            $dossier = Dossier::create([
-                'inscription_id' => $inscription->id,
-                'titre' => $data['dossier']['titre'], // Changé de 'nom' à 'titre'
-                'description' => $data['dossier']['description'],
-                'code_suivi' => 'DOS-' . strtoupper(Str::random(12)),
-                'statut' => 'en_attente'
-            ]);
-
-            // Créer les documents
-            foreach ($data['dossier']['documents'] as $documentData) {
-                Document::create([
-                    'dossier_id' => $dossier->id,
-                    'type_document' => $documentData['type_document'],
-                    'chemin_fichier' => $documentData['chemin_fichier']
-                ]);
-            }
+            // 4. Récupérer les URLs de stockage Cloudinary
+            $this->updateCloudinaryUrls($dossier);
 
             DB::commit();
 
-            return $this->getInscriptionComplete($inscription->id);
+            return $this->inscriptionRepository->getWithDossierAndDocuments($inscription->id);
         } catch (Exception $e) {
             DB::rollBack();
-            Log::error('Erreur lors de l\'inscription : ' . $e->getMessage());
-            throw new Exception('Erreur lors de l\'inscription : ' . $e->getMessage());
+            Log::error('Erreur lors de l\'inscription complète: ' . $e->getMessage());
+            throw new Exception('Erreur lors de l\'inscription: ' . $e->getMessage());
         }
+    }
+
+    private function createTuteurs(array $tuteursData): array
+    {
+        return array_map(function ($tuteurData) {
+            $tuteur = Tuteur::create($tuteurData);
+            return $tuteur->id;
+        }, $tuteursData);
+    }
+
+    private function createInscription(array $etudiantData, int $tuteurId): Inscription
+    {
+        return $this->inscriptionRepository->create(array_merge(
+            $etudiantData,
+            ['id_tuteur' => $tuteurId]
+        ));
+    }
+
+    private function createDossierWithDocuments(Inscription $inscription, array $dossierData): Dossier
+    {
+        // Créer le dossier
+        $dossier = Dossier::create([
+            'inscription_id' => $inscription->id,
+            'titre' => $dossierData['titre'],
+            'description' => $dossierData['description'],
+            'code_suivi' => $this->generateCodeSuivi(),
+            'statut' => 'en_attente'
+        ]);
+
+        // Traiter chaque document
+        foreach ($dossierData['documents'] as $documentData) {
+            $this->processDocument($dossier, $documentData);
+        }
+
+        return $dossier;
+    }
+
+    private function updateCloudinaryUrls(Dossier $dossier): void
+    {
+        foreach ($dossier->documents as $document) {
+            $metadata = $this->cloudinaryStorage->getDocumentMetadata($document->public_id);
+            if ($metadata) {
+                $document->update([
+                    'url_secure' => $metadata['secure_url'] ?? null,
+                    'url_public' => $metadata['url'] ?? null,
+                    'folder_path' => $metadata['folder'] ?? null
+                ]);
+            }
+        }
+    }
+    private function processDocument(Dossier $dossier, array $documentData): void
+    {
+        // Upload vers Cloudinary
+        $uploadResult = $this->cloudinaryStorage->uploadDocument(
+            $documentData['fichier'],
+            "dossiers/{$dossier->code_suivi}",
+            [
+                'tags' => [$dossier->code_suivi, $documentData['type_document']],
+                'folder' => config('cloudinary.dossier_folder', 'dossiers_inscription')
+            ]
+        );
+
+        if (!$uploadResult['success']) {
+            throw new Exception('Échec de l\'upload du document: ' . ($uploadResult['error'] ?? 'Erreur inconnue'));
+        }
+
+        // Créer l'enregistrement du document avec le statut invalide par défaut
+        Document::create([
+            'dossier_id' => $dossier->id,
+            'type' => $documentData['type_document'],
+            'chemin' => $uploadResult['url'],
+            'url_secure' => $uploadResult['secure_url'] ?? null,
+            'url_public' => $uploadResult['url'] ?? null,
+            'folder_path' => $uploadResult['folder'] ?? null,
+            'public_id' => $uploadResult['public_id'],
+            'statut' => StatutDocument::INVALIDE,
+            'format' => $uploadResult['format'] ?? null
+        ]);
+    }
+
+    private function generateCodeSuivi(): string
+    {
+        return 'DOS-' . strtoupper(Str::random(12));
     }
 
     public function getInscriptionComplete($id)
     {
-        return Inscription::with(['tuteur', 'dossier.documents'])
-            ->findOrFail($id);
+        return $this->inscriptionRepository->getWithDossierAndDocuments($id);
     }
 
     public function getAllInscriptionsComplete()
     {
-        return Inscription::with(['tuteur', 'dossier.documents'])
-            ->get();
+        return $this->inscriptionRepository->getAll();
+    }
+
+    public function validateInscription(int $inscriptionId): void
+    {
+        DB::beginTransaction();
+        try {
+            $inscription = $this->inscriptionRepository->getWithDossierAndDocuments($inscriptionId);
+
+            if (!$inscription) {
+                throw new Exception('Inscription non trouvée');
+            }
+
+            // Archiver les documents si le dossier est validé
+            if ($inscription->dossier && $inscription->dossier->statut === 'valide') {
+                foreach ($inscription->dossier->documents as $document) {
+                    $this->cloudinaryStorage->archiveDocument(
+                        $document->public_id,
+                        "archives/{$inscription->dossier->code_suivi}"
+                    );
+                }
+            }
+
+            // Mettre à jour le statut de l'inscription
+            $this->inscriptionRepository->updateStatut($inscriptionId, 'validee');
+
+            DB::commit();
+        } catch (Exception $e) {
+            DB::rollBack();
+            throw new Exception('Erreur lors de la validation de l\'inscription: ' . $e->getMessage());
+        }
     }
 }
