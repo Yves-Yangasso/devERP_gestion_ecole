@@ -8,7 +8,7 @@ import AlertService from '../../../services/notifications/AlertService';
 
 const RecapStudent = () => {
   const { formState } = useFormContext();
-  const { create } = useCrud('submit'); // Utilisation du hook pour envoyer les données
+  const { create } = useCrud('Administrateur/add'); // Utilisation du hook pour envoyer les données
   const [isSubmitting, setIsSubmitting] = useState(false); // Ajouter un état de soumission
 
   // Fonction pour envoyer les données
@@ -22,9 +22,9 @@ const RecapStudent = () => {
         demandeur: formState.student,
         documents: formState.documents,
       });
+      console.log('Réponse du serveur:', response);
       console.log('Données envoyées avec succès:', response);
       AlertService.success('Données envoyées avec succès');
-      // Rediriger ou effectuer d'autres actions après l'envoi
     } catch (error) {
       console.error('Erreur lors de l\'envoi des données:', error);
       AlertService.error('Une erreur est survenue, veuillez réessayer.');

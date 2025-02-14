@@ -34,5 +34,10 @@ export const useSpecialtySelection = (maxSpecialties = 3) => {
     setSelectedSpecialties(newSpecialties);
   };
 
-  return { selectedSpecialties, handleSpecialtyChange, removeSpecialty, error };
+  // Ajouter la fonction clearSpecialties pour vider la liste des spécialités
+  const clearSpecialties = () => {
+    setSelectedSpecialties([]);
+  };
+
+  return { selectedSpecialties, handleSpecialtyChange, removeSpecialty, clearSpecialties, error };
 };

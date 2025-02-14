@@ -27,3 +27,19 @@
   scrollbar-color: #3b82f6 #e5f1ff;
   scrollbar-width: thin;
 }
+
+.react-confirm-alert-button-group button {
+  padding: 10px 20px;
+  border-radius: 5px;
+  font-size: 16px;
+}
+
+.react-confirm-alert-button-group button:first-child {
+  background-color: #dc2626;
+  color: white;
+}
+
+.react-confirm-alert-button-group button:last-child {
+  background-color: #4b5563;
+  color: white;
+}
