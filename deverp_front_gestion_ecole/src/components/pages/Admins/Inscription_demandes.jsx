@@ -1,3 +1,4 @@
+// Importation des dépendances nécessaires
 import { useEffect, useState } from "react";
 import useCrud from "../../../hooks/useCrudAxios";
 import PageContainer from "../Layout/PageContainer";
@@ -6,13 +7,14 @@ import DoubleButton from "../../ui/Button/DoubleButton";
 import Filters from "../../ui/Filters/FiltersDemandes";
 import DownloadButton from "../../ui/Button/DownloadButton";
 import DataTable from "../../section/DataTable";
-import DetailsDemandes from "../../popup/TraiteDemandes";
+import TraiteDemandes from "../../popup/TraiteDemandes";
 import DecisionDemandes from "../../popup/DecisionDemandes";
 import DetailsDemande from "../../popup/DetailsDemande";
 import AlertService from "../../../services/notifications/AlertService";
 import { confirmAlert } from "react-confirm-alert";
 import "react-confirm-alert/src/react-confirm-alert.css";
 
+// Définition des colonnes pour la table
 const columns = [
     { key: "nom", label: "Nom Complet" },
     { key: "code", label: "Code d'accés" },
@@ -24,9 +26,9 @@ const columns = [
     { key: "actions", label: "Actions" },
 ];
 
+// Actions disponibles pour chaque ligne
 const actions = ["Voir détails", "Traité", "Supprimé"];
 
-// Données de démonstration selon le format spécifié
 const mockData = {
     etudiant: {
         prenom: "Jean",
@@ -69,28 +71,34 @@ const mockData = {
         description: "Dossier contenant les documents de l'étudiant",
         documents: [
             {
+                id: "1",
                 type_document: "Carte d'identité",
-                chemin_fichier: "/uploads/documents/ci_jean_dupont.pdf"
+                chemin_fichier: "https://documents1.worldbank.org/curated/en/099005501312332141/pdf/P173204014bc7b0630bbee0943431d526e2.pdf"
             },
             {
+                id: "2",
                 type_document: "Diplôme Bac",
-                chemin_fichier: "/uploads/documents/diplome_bac.pdf"
+                chemin_fichier: "https://www.ansd.sn/sites/default/files/2023-12/Final%20Senegal%20DHS%20-%20KIR%202023.pdf"
             }
         ]
     }
 };
 
 function InscriptionDemandes() {
+    // Hooks pour la gestion des données et des états
     const { data, get, remove } = useCrud("inscriptions");
     const [selectedDossier, setSelectedDossier] = useState(null);
     const [showDecisionPopup, setShowDecisionPopup] = useState(false);
     const [showDetails, setShowDetails] = useState(false);
     const [selectedData, setSelectedData] = useState(null);
+    const [decisionData, setDecisionData] = useState(null);
 
+    // Chargement initial des données
     useEffect(() => {
         get();
     }, [get]);
 
+    // Formatage des données pour l'affichage dans la table
     const formattedData = data
         ? data.map((item) => ({
             nom: `${item.etudiant.nom} ${item.etudiant.prenom}`,
@@ -115,39 +123,70 @@ function InscriptionDemandes() {
             }
         ];
 
+    // Gestionnaire de clic sur une ligne
     const handleRowClick = (row) => {
         setSelectedDossier(row.fullData);
     };
 
+    // Gestionnaire pour l'ouverture du popup de décision
+    const handleOpenDecisionPopup = (data) => {
+        setDecisionData(data);
+        setShowDecisionPopup(true);
+    };
+
+    // Gestionnaire pour les actions sur une ligne
+
     const handleActionSelect = (action, dossier) => {
-        if (action === "Voir détails") {
-            setSelectedData(dossier.fullData);
-            setShowDetails(true);
-        } else if (action === "Traité") {
-            setSelectedDossier(dossier.fullData);
-        } else if (action === "Supprimé") {
-            confirmAlert({
-                title: "Confirmation",
-                message: "Êtes-vous sûr de vouloir supprimer cette inscription ?",
-                buttons: [
-                    {
-                        label: "Oui",
-                        onClick: async () => {
-                            try {
-                                await remove(dossier.fullData.id);
-                                AlertService.error("La demande de ",  dossier.fullData.etudiant.nom, " supprimer avec success!");
-                                get(); // Rafraîchir la liste après suppression
-                            } catch (error) {
-                                AlertService.error("Erreur lors de la suppression :", error);
-                            }
-                        },
-                    },
-                    {
-                        label: "Non",
-                    },
-                ],
-            });
+        switch (action) {
+            case "Voir détails":
+                setSelectedData(dossier.fullData);
+                setShowDetails(true);
+                break;
+
+            case "Traité":
+                setSelectedDossier(dossier.fullData);
+                break;
+
+            case "Supprimé":
+                handleDeleteConfirmation(dossier);
+                break;
+
+            default:
+                break;
         }
+    };
+
+    // Fonction de confirmation de suppression
+    const handleDeleteConfirmation = (dossier) => {
+        confirmAlert({
+            title: "Confirmation de suppression",
+            message: `Êtes-vous sûr de vouloir supprimer la demande de ${dossier.fullData.etudiant.nom} ?`,
+            buttons: [
+                {
+                    label: "Oui",
+                    onClick: async () => {
+                        try {
+                            await remove(dossier.fullData.id);
+                            AlertService.success(`La demande de ${dossier.fullData.etudiant.nom} a été supprimée avec succès!`);
+                            get(); // Actualisation de la liste
+                        } catch (error) {
+                            AlertService.error("Erreur lors de la suppression : " + error.message);
+                        }
+                    },
+                },
+                {
+                    label: "Non",
+                },
+            ],
+        });
+    };
+
+    // Fonction de fermeture des popups
+    const handleClosePopups = () => {
+        setShowDecisionPopup(false);
+        setSelectedDossier(null);
+        setDecisionData(null);
+        get(); // Actualisation des données après fermeture
     };
 
     return (
@@ -156,11 +195,13 @@ function InscriptionDemandes() {
                 <DoubleButton />
             </InfosPages>
 
+            {/* Filtres et bouton de téléchargement */}
             <div className="flex items-center justify-between gap-4 mb-4">
                 <Filters />
                 <DownloadButton />
             </div>
 
+            {/* Table des demandes */}
             <DataTable
                 columns={columns}
                 data={formattedData}
@@ -169,25 +210,26 @@ function InscriptionDemandes() {
                 onActionSelect={handleActionSelect}
             />
 
+            {/* Popup de traitement des demandes */}
             {selectedDossier && !showDecisionPopup && (
-                <DetailsDemandes
+                <TraiteDemandes
                     dossier={selectedDossier}
                     closePopup={() => setSelectedDossier(null)}
-                    openSecondPopup={() => setShowDecisionPopup(true)}
+                    openSecondPopup={handleOpenDecisionPopup}
                 />
             )}
 
+            {/* Popup de décision */}
             {showDecisionPopup && (
                 <DecisionDemandes
                     dossier={selectedDossier}
-                    closePopup={() => {
-                        setShowDecisionPopup(false);
-                        setSelectedDossier(null);
-                    }}
+                    decisionData={decisionData}
+                    closePopup={handleClosePopups}
                     goBack={() => setShowDecisionPopup(false)}
                 />
             )}
 
+            {/* Popup de détails */}
             {showDetails && (
                 <DetailsDemande
                     dossier={selectedData}
