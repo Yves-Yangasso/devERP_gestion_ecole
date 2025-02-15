@@ -91,6 +91,21 @@ class DossierRepository implements DossierRepositoryInterface
             ->with(['documents', 'inscription'])
             ->find($id);
     }
+
+
+    public function modifieStatut(int $id, string $statut): ?Dossier
+    {
+        $dossier = Dossier::find($id);
+        if (!$dossier) {
+            return null;
+        }
+
+        $dossier->statut = $statut;
+        $dossier->save();
+
+        return $dossier;
+    }
+
 }
 // namespace App\Repositories\Eloquent;
 

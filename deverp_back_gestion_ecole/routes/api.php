@@ -10,6 +10,8 @@ use App\Http\Controllers\API\Dossier\TraitementDossierController;
 use App\Http\Controllers\API\Dossier\DocumentController;
 use App\Http\Controllers\API\Dossier\SuiviDossierController;
 use App\Http\Controllers\API\Auth\AuthController;
+use App\Http\Controllers\BlacklistedTokenController;
+use App\Http\Controllers\TypeDocumentController;
 
 /*
 |--------------------------------------------------------------------------
@@ -33,7 +35,14 @@ Route::prefix('v1')->group(function () {
     | Routes Publiques
     |--------------------------------------------------------------------------
     */
-    Route::post('/filter', [DossierController::class, 'filter']);
+
+    Route::prefix('type-documents')->group(function () {
+        Route::get('/', [TypeDocumentController::class, 'index']);
+        Route::get('/{id}', [TypeDocumentController::class, 'show']);
+        Route::post('/', [TypeDocumentController::class, 'store']);
+        Route::put('/{id}', [TypeDocumentController::class, 'update']);
+        Route::delete('/{id}', [TypeDocumentController::class, 'destroy']);
+    });
 
     // Inscriptions étudiants
     Route::prefix('inscriptions')->group(function () {
@@ -60,11 +69,20 @@ Route::prefix('v1')->group(function () {
     |--------------------------------------------------------------------------
     */
 
+     // Middleware de protection contre les attaques de Cross-Site Request Forgery (CSRF)
     Route::middleware(['auth:api'])->group(function () {
+        Route::post('/blacklist', [BlacklistedTokenController::class, 'blacklistToken']);
+        Route::post('/logout', [BlacklistedTokenController::class, 'revokeCurrentToken']);
+    });
+
+    Route::middleware(['auth:api','blacklist'])->group(function () {
         // Informations utilisateur
         Route::get('/user', function (Request $request) {
             return response()->json($request->user());
         });
+
+        // Filtrages des dossiers
+        Route::post('/filter', [DossierController::class, 'filter']);
 
         // Déconnexion
         Route::post('/logout', [AuthController::class, 'logout']);
@@ -84,6 +102,9 @@ Route::prefix('v1')->group(function () {
             Route::post('/', [DossierController::class, 'store']);
             Route::get('/etudiant/{etudiantId}', [DossierController::class, 'getDossiersEtudiant']);
 
+            //Modification du statut du dossier
+            Route::put('/{id}/statut', [DossierController::class, 'modifieStatut']);
+
             // Validation des dossiers
             Route::get('/en-attente', [ValidationDossierController::class, 'getDossiersEnAttente']);
             Route::post('/{dossierId}/valider', [ValidationDossierController::class, 'validerDossier']);
@@ -98,6 +119,7 @@ Route::prefix('v1')->group(function () {
         Route::prefix('documents')->group(function () {
             Route::post('/', [DocumentController::class, 'store']);
             Route::post('/upload', [DocumentController::class, 'uploadDocument']);
+            Route::put('/{id}/statut', [DocumentController::class, 'updateStatut']);
         });
     });
 });

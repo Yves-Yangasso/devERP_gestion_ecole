@@ -1,65 +1,35 @@
 <?php
-
 namespace App\Http\Controllers;
 
-use App\Models\Departement;
+use App\Http\Requests\Departement\StoreDepartementRequest;
+use App\Http\Requests\Departement\UpdateDepartementRequest;
 use Illuminate\Http\Request;
+use App\Services\Departement\DepartementService;
 
-class DepartementController extends Controller
-{
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        //
+class DepartementController extends Controller {
+    protected $departementService;
+
+    public function __construct(DepartementService $departementService) {
+        $this->departementService = $departementService;
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
+    public function index() {
+        return response()->json($this->departementService->getAll());
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
+    public function show($id) {
+        return response()->json($this->departementService->getById($id));
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Departement $departement)
-    {
-        //
+    public function store(StoreDepartementRequest $request) {
+        return response()->json($this->departementService->create($request->validated()), 201);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Departement $departement)
-    {
-        //
+    public function update(UpdateDepartementRequest $request, $id) {
+        return response()->json($this->departementService->update($id, $request->validated()));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Departement $departement)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Departement $departement)
-    {
-        //
+    public function destroy($id) {
+        return response()->json($this->departementService->delete($id));
     }
 }

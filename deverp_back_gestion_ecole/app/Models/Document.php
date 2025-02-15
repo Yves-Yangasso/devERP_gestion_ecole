@@ -15,7 +15,7 @@ class Document extends Model
 
     protected $fillable = [
         'dossier_id',
-        'type',
+        'type_document_id',
         'chemin',
         'url_secure',
         'url_public',
@@ -29,7 +29,7 @@ class Document extends Model
 
     protected $casts = [
         'date_validation' => 'datetime',
-        'type' => TypeDocument::class,
+        //'type' => TypeDocument::class,
         'statut' => ResultatValidation::class,
     ];
 
@@ -59,4 +59,9 @@ class Document extends Model
     {
         return $this->validations()->latest()->first();
     }
+
+    public function typeDocument(): BelongsTo{
+        return $this->belongsTo(TypeDocument::class);
+    }
+
 }

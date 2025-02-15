@@ -4,10 +4,12 @@ namespace App\Services\Dossier;
 
 use App\Models\Document;
 use App\Enums\Dossier\ResultatValidation;
+use App\Enums\Dossier\StatutDocument;
 use App\Repositories\Eloquent\DocumentRepository;
 use App\Services\Storage\CloudinaryStorageService;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 
 class DocumentService
 {
@@ -126,4 +128,17 @@ class DocumentService
 
         return $this->supprimerDocument($document);
     }
+
+
+    public function changeStatut(int $id, string $statut)
+    {
+        if (!in_array($statut, StatutDocument::values())) {
+            throw ValidationException::withMessages(['statut' => 'Statut invalide.']);
+        }
+
+        return $this->documentRepository->updateStatut($id, $statut);
+    }
+
+
+
 }

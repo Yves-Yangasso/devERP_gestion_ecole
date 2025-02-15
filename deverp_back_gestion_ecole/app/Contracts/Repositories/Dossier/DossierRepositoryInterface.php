@@ -52,4 +52,10 @@ interface DossierRepositoryInterface
      * Permet de recuperer tout les dossiers ayant un status specifiques
      */
     public function getByStatut(string $statut): Collection;
+
+
+   /**
+     * Mettre à jour le statut d'un dossier
+     */
+    public function modifieStatut(int $id, string $statut): ?Dossier;
 }

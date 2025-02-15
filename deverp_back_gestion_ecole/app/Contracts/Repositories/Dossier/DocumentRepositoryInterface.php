@@ -11,12 +11,12 @@ interface DocumentRepositoryInterface
     /**
      * Créer un nouveau document
      */
-    public function create(array $data): Document;
+    //public function create(array $data): Document;
 
     /**
      * Trouver un document par son ID
      */
-    public function findById(int $id): ?Document;
+    //public function findById(int $id): ?Document;
 
     /**
      * Récupérer tous les documents d'un dossier
@@ -44,8 +44,11 @@ interface DocumentRepositoryInterface
      * Récupérer les documents manquants pour un dossier
      */
     // public function getDocumentsManquants(string $codeDossier): array;
-    
-    public function findByDossierId(int $dossierId): Collection;
-    
+
+    //public function findByDossierId(int $dossierId): Collection;
+
     // public function findByType(int $dossierId, string $type): ?Document;
+
+    public function updateStatut(int $id, string $statut): ?Document;
+
 }

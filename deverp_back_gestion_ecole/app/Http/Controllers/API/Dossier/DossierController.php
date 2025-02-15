@@ -7,9 +7,8 @@ use App\Http\Requests\Dossier\CreerDossierRequest;
 use App\Http\Requests\Dossier\SoumettreDocumentRequest;
 use App\Http\Resources\Dossier\DossierResource;
 use App\Services\Dossier\DossierService;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Response;
 use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
 
 class DossierController extends Controller
 {
@@ -20,11 +19,11 @@ class DossierController extends Controller
     public function store(CreerDossierRequest $request): JsonResponse
     {
         $dossier = $this->dossierService->creerDossier($request->validated());
-        
+
         return response()->json([
             'message' => 'Dossier créé avec succès',
             'data' => new DossierResource($dossier)
-        ], Response::HTTP_CREATED);
+        ], 201); // HTTP 201 Created
     }
 
     public function show(string $codeSuivi): JsonResponse
@@ -34,12 +33,27 @@ class DossierController extends Controller
         if (!$dossier) {
             return response()->json([
                 'message' => 'Dossier non trouvé'
-            ], Response::HTTP_NOT_FOUND);
+            ], 404); // HTTP 404 Not Found
         }
 
         return response()->json([
             'data' => new DossierResource($dossier)
         ]);
+    }
+
+    public function modifieStatut(Request $request, int $id): JsonResponse
+    {
+        $request->validate([
+            'statut' => 'required|string'
+        ]);
+
+        $dossier = $this->dossierService->changeStatut($id, $request->statut);
+
+        if (!$dossier) {
+            return response()->json(['message' => 'Dossier non trouvé'], 404);
+        }
+
+        return response()->json(['message' => 'Statut mis à jour avec succès', 'dossier' => $dossier], 200);
     }
 
     public function soumettreDocument(SoumettreDocumentRequest $request, string $codeSuivi): JsonResponse
@@ -49,7 +63,7 @@ class DossierController extends Controller
         if (!$dossier) {
             return response()->json([
                 'message' => 'Dossier non trouvé'
-            ], Response::HTTP_NOT_FOUND);
+            ], 404);
         }
 
         $this->dossierService->ajouterDocument($dossier, $request->validated());
@@ -57,8 +71,9 @@ class DossierController extends Controller
         return response()->json([
             'message' => 'Document soumis avec succès',
             'data' => new DossierResource($dossier->fresh())
-        ]);
+        ], 200);
     }
+
     public function filter(Request $request)
     {
         if (!$request->has('statut')) {

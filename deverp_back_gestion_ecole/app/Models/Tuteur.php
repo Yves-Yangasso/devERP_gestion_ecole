@@ -30,13 +30,13 @@ class Tuteur extends Model
         return $this->hasOne(ProfilTuteur::class);
     }
 
-    public function etudiants()
+    public function inscription()
     {
         return $this->belongsToMany(
-            Etudiant::class,
+            Inscription::class,
             'association_etudiant_tuteur',
             'tuteur_id',
-            'etudiant_id'
+            'inscription_id'
         );
     }
 }

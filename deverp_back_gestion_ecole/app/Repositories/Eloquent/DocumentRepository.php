@@ -2,13 +2,14 @@
 // app/Repositories/Eloquent/Document/DocumentsRepository.php
 namespace App\Repositories\Eloquent;
 
+use App\Contracts\Repositories\Dossier\DocumentRepositoryInterface;
 use App\Models\Document;
 use App\Enums\Dossier\StatutDocument;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Storage;
 use Exception;
 
-class DocumentRepository
+class DocumentRepository implements DocumentRepositoryInterface
 {
     protected $model;
 
@@ -95,6 +96,20 @@ class DocumentRepository
     {
         return $document->update($data);
     }
+
+    public function updateStatut(int $id, string $statut): ?Document
+    {
+        $document = Document::find($id);
+        if (!$document) {
+            return null;
+        }
+
+        $document->statut = $statut;
+        $document->save();
+
+        return $document;
+    }
+
 }
 
 // namespace App\Repositories\Eloquent;

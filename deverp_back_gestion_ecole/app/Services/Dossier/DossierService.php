@@ -9,7 +9,8 @@ use App\Models\Dossier;
 use App\Models\Document;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Database\Eloquent\Collection;
-
+use Illuminate\Validation\ValidationException;
+use App\Enums\Dossier\StatutDossier;
 class DossierService
 {
     public function __construct(
@@ -94,6 +95,15 @@ class DossierService
     public function getDossiersByStatut(string $statut): Collection
     {
         return $this->dossierRepository->getByStatut($statut);
+    }
+
+    public function changeStatut(int $id, string $statut)
+    {
+        if (!in_array($statut, StatutDossier::values())) {
+            throw ValidationException::withMessages(['statut' => 'Statut invalide.']);
+        }
+
+        return $this->dossierRepository->modifieStatut($id, $statut);
     }
 }
 

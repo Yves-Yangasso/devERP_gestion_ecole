@@ -18,4 +18,8 @@ class Classe extends Model
     {
         return $this->hasMany(Groupe::class);
     }
+
+    public function filieres(){
+        return $this->belongsTo(Filiere::class);
+    }
 }

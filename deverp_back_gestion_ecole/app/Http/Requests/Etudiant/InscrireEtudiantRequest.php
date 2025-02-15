@@ -40,7 +40,7 @@ class InscrireEtudiantRequest extends FormRequest
             'dossier.description' => 'required|string',
             'dossier.documents' => 'required|array|min:1',
             'dossier.documents.*.type_document' => 'required|string|max:255',
-            'dossier.documents.*.chemin_fichier' => 'required|string|max:255',
+            'dossier.documents.*.fichier' => 'required|file|mimes:pdf,jpg,jpeg,png|max:10240',
         ];
     }
 

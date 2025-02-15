@@ -10,15 +10,15 @@ class Etudiant extends Model
     use HasFactory;
 
     protected $fillable = [
-        'personne_id',
+        'inscription_id',
         'matricule',
         'date_inscription',
     ];
 
-    public function personne()
-    {
-        return $this->belongsTo(Personne::class);
-    }
+    // public function personne()
+    // {
+    //     return $this->belongsTo(Personne::class);
+    // }
 
     public function filiere()
     {
@@ -29,4 +29,9 @@ class Etudiant extends Model
     {
         return $this->belongsTo(Groupe::class);
     }
+
+    public function inscription(){
+        return $this->belongsTo(Inscription::class);
+    }
+
 }

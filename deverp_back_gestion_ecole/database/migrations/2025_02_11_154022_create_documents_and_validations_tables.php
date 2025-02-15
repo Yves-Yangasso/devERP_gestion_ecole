@@ -12,15 +12,16 @@ return new class extends Migration
         Schema::create('documents', function (Blueprint $table) {
             $table->id();
             $table->foreignId('dossier_id')->constrained()->onDelete('cascade');
-            $table->enum('type', [
-                'bulletin_notes',
-                'certificat_residence',
-                'cni_passeport',
-                'diplome',
-                'certificat_scolarite',
-                'casier_judiciaire',
-                'photo_identite'
-            ]);
+            $table->foreignId('type_document_id')->constrained()->onDelete('cascade');
+            // $table->enum('type', [
+            //     'bulletin_notes',
+            //     'certificat_residence',
+            //     'cni_passeport',
+            //     'diplome',
+            //     'certificat_scolarite',
+            //     'casier_judiciaire',
+            //     'photo_identite'
+            // ]);
             $table->string('chemin');
             $table->enum('statut', [
                 'en_attente',
@@ -34,12 +35,12 @@ return new class extends Migration
             $table->softDeletes();
 
             // Index pour améliorer les performances
-            $table->index('type');
+            $table->index('type_document_id');
             $table->index('statut');
-            $table->index(['dossier_id', 'type']);
-            
+            $table->index(['dossier_id', 'type_document_id']);
+
             // Contrainte d'unicité pour éviter les doublons de type de document par dossier
-            $table->unique(['dossier_id', 'type']);
+            $table->unique(['dossier_id', 'type_document_id']);
         });
 
         // Table pour stocker les détails de validation
