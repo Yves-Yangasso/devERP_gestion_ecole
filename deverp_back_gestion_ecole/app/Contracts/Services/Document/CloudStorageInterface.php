@@ -14,7 +14,7 @@ interface CloudStorageInterface
      * @param array $options Options supplémentaires (tags, metadata, etc.)
      * @return array Résultat de l'upload contenant au moins ['success' => bool, 'url' => ?string, 'error' => ?string]
      */
-    public function uploadDocument(UploadedFile $file, string $folder, array $options = []): array;
+    public function uploadDocument(UploadedFile $file, string $folder, array $options, string $prenom, string $nom): array;
 
     /**
      * Supprime un document du stockage cloud

@@ -3,6 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use App\Enums\Dossier\StatutDocument;
 
 // Création de la table documents
 return new class extends Migration
@@ -20,25 +21,19 @@ return new class extends Migration
                 'certificat_scolarite',
                 'casier_judiciaire',
                 'photo_identite'
-            ]);
-            $table->string('chemin');
-            $table->enum('statut', [
-                'en_attente',
-                'valide',
-                'invalide',
-                'a_verifier'
-            ])->default('en_attente');
+            ])->nullable();
+            $table->string('chemin')->nullable();
+            $table->string('url_secure')->nullable();
+            $table->string('url_public')->nullable();
+            $table->string('folder_path')->nullable();
+            $table->string('format')->nullable();
+            $table->string('public_id')->nullable();
+            $table->enum('statut', ['en_attente', 'valide', 'a_verifier'])->default('en_attente');
             $table->text('commentaire')->nullable();
             $table->timestamp('date_validation')->nullable();
             $table->timestamps();
             $table->softDeletes();
 
-            // Index pour améliorer les performances
-            $table->index('type');
-            $table->index('statut');
-            $table->index(['dossier_id', 'type']);
-            
-            // Contrainte d'unicité pour éviter les doublons de type de document par dossier
             $table->unique(['dossier_id', 'type']);
         });
 

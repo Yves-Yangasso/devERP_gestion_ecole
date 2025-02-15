@@ -78,10 +78,42 @@ class InscriptionService
 
         // Traiter chaque document
         foreach ($dossierData['documents'] as $documentData) {
-            $this->processDocument($dossier, $documentData);
+            $this->processDocument($dossier, $documentData, $inscription);
         }
 
         return $dossier;
+    }
+
+    private function processDocument(Dossier $dossier, array $documentData, Inscription $inscription): void
+    {
+        $uploadResult = $this->cloudinaryStorage->uploadDocument(
+            $documentData['fichier'],
+            $dossier->code_suivi,
+            [
+                'tags' => [$dossier->code_suivi, $documentData['type_document']],
+                'pages' => true, // Activer la prévisualisation des pages pour les PDFs
+            ],
+            $inscription->prenom,
+            $inscription->nom
+        );
+
+        if (!$uploadResult['success']) {
+            throw new Exception('Échec de l\'upload du document: ' . ($uploadResult['error'] ?? 'Erreur inconnue'));
+        }
+
+        // Créer l'enregistrement du document avec l'URL de prévisualisation
+        Document::create([
+            'dossier_id' => $dossier->id,
+            'type' => $documentData['type_document'],
+            'chemin' => $uploadResult['url'],
+            'url_secure' => $uploadResult['secure_url'],
+            'url_public' => $uploadResult['url'],
+            // 'preview_url' => $uploadResult['preview_url'], // Stocker l'URL de prévisualisation
+            'folder_path' => $uploadResult['folder'] ?? null,
+            'public_id' => $uploadResult['public_id'],
+            'statut' => StatutDocument::EN_ATTENTE,
+            'format' => $uploadResult['format']
+        ]);
     }
 
     private function updateCloudinaryUrls(Dossier $dossier): void
@@ -96,35 +128,6 @@ class InscriptionService
                 ]);
             }
         }
-    }
-    private function processDocument(Dossier $dossier, array $documentData): void
-    {
-        // Upload vers Cloudinary
-        $uploadResult = $this->cloudinaryStorage->uploadDocument(
-            $documentData['fichier'],
-            "dossiers/{$dossier->code_suivi}",
-            [
-                'tags' => [$dossier->code_suivi, $documentData['type_document']],
-                'folder' => config('cloudinary.dossier_folder', 'dossiers_inscription')
-            ]
-        );
-
-        if (!$uploadResult['success']) {
-            throw new Exception('Échec de l\'upload du document: ' . ($uploadResult['error'] ?? 'Erreur inconnue'));
-        }
-
-        // Créer l'enregistrement du document avec le statut invalide par défaut
-        Document::create([
-            'dossier_id' => $dossier->id,
-            'type' => $documentData['type_document'],
-            'chemin' => $uploadResult['url'],
-            'url_secure' => $uploadResult['secure_url'] ?? null,
-            'url_public' => $uploadResult['url'] ?? null,
-            'folder_path' => $uploadResult['folder'] ?? null,
-            'public_id' => $uploadResult['public_id'],
-            'statut' => StatutDocument::INVALIDE,
-            'format' => $uploadResult['format'] ?? null
-        ]);
     }
 
     private function generateCodeSuivi(): string

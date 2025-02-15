@@ -8,23 +8,20 @@ return new class extends Migration
 {
     public function up()
     {
-        Schema::create('notifications_tuteurs', function (Blueprint $table) {
+        Schema::create('notifications', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('tuteur_id')->constrained()->onDelete('cascade');
-            $table->string('type_notification');
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->string('titre');
             $table->text('message');
+            $table->string('type_notification');
             $table->boolean('est_lu')->default(false);
             $table->timestamp('date_lecture')->nullable();
             $table->timestamps();
-
-            $table->index('est_lu');
-            $table->index('created_at');
         });
     }
 
     public function down()
     {
-        Schema::dropIfExists('notifications_tuteurs');
+        Schema::dropIfExists('notifications');
     }
 };

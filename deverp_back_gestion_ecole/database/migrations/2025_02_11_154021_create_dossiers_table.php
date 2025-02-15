@@ -3,23 +3,22 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-use App\Enums\Dossier\StatutDossier;
-// Création de la table dossiers
+
 return new class extends Migration
 {
+    /**
+     * Run the migrations.
+     */
     public function up(): void
     {
         Schema::create('dossiers', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('inscription_id')->constrained('inscriptions')->onDelete('cascade');
+            $table->foreignId('inscription_id')->constrained()->onDelete('cascade');
             $table->string('code_suivi')->unique();
-            $table->enum('statut', [
-                'en_attente',
-                'en_cours_validation',
-                'valide',
-                'rejete',
-                'incomplet'
-            ])->default(StatutDossier::EN_ATTENTE->value);
+            $table->string('titre')->nullable();
+            $table->text('description')->nullable();
+            $table->enum('statut', ['en_attente', 'en_cours_validation', 'valide', 'rejete', 'incomplet'])
+                ->default('en_attente');
             $table->text('commentaire')->nullable();
             $table->enum('mode_validation', ['manuel', 'automatique'])->default('manuel');
             $table->timestamp('date_soumission')->nullable();
@@ -33,6 +32,9 @@ return new class extends Migration
         });
     }
 
+    /**
+     * Reverse the migrations.
+     */
     public function down(): void
     {
         Schema::dropIfExists('dossiers');

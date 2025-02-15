@@ -13,7 +13,13 @@ return new class extends Migration
     {
         Schema::create('classes', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('filiere_id')->constrained()->onDelete('cascade');
+            $table->string('nom');
+            $table->string('code')->unique();
+            $table->integer('niveau'); // 1, 2, 3, etc.
+            $table->integer('capacite_max');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

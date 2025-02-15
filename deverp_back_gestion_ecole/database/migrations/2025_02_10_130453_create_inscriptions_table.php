@@ -21,6 +21,10 @@ return new class extends Migration {
             $table->string('formation_superieure', 255)->nullable();
             $table->string('specialites', 255)->nullable();
             $table->unsignedBigInteger('id_tuteur')->nullable();
+            $table->enum('statut', ['en_cours', 'validee', 'rejetee', 'annulee'])->default('en_cours');
+            // $table->foreignId('etudiant_id')->constrained()->onDelete('cascade');
+            // $table->foreignId('filiere_id')->constrained()->onDelete('cascade');
+            // $table->foreignId('tuteur_id')->nullable()->constrained()->onDelete('set null');
             $table->timestamps();
 
             // Clés étrangères

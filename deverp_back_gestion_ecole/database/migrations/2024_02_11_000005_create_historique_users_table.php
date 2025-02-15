@@ -9,22 +9,20 @@ return new class extends Migration
 {
     public function up()
     {
-        Schema::create('historique_tuteurs', function (Blueprint $table) {
+        Schema::create('historique_actions', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('tuteur_id')->constrained()->onDelete('cascade');
-            $table->string('type_action'); // création, modification, suppression
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->string('type_action');
+            $table->string('entite');
+            $table->unsignedBigInteger('entite_id');
             $table->json('anciennes_valeurs')->nullable();
             $table->json('nouvelles_valeurs')->nullable();
-            $table->string('effectue_par'); // utilisateur qui a effectué l'action
             $table->timestamps();
-
-            $table->index('type_action');
-            $table->index('created_at');
         });
     }
 
     public function down()
     {
-        Schema::dropIfExists('historique_tuteurs');
+        Schema::dropIfExists('historique_actions');
     }
 };

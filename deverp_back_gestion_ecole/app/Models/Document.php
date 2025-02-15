@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\Dossier\TypeDocument;
+use App\Enums\Dossier\StatutDocument;
 use App\Enums\Dossier\ResultatValidation;
 use App\Services\Storage\CloudinaryStorageService;
 use Illuminate\Database\Eloquent\Model;
@@ -24,15 +25,28 @@ class Document extends Model
         'format',
         'statut',
         'commentaire',
-        'date_validation'
+        'date_validation',
+        'preview_url'
     ];
 
+    // protected $casts = [
+    //     'date_validation' => 'datetime',
+    //     'type' => TypeDocument::class,
+    //     'statut' => ResultatValidation::class,
+    // ];
     protected $casts = [
         'date_validation' => 'datetime',
         'type' => TypeDocument::class,
-        'statut' => ResultatValidation::class,
+        'statut' => StatutDocument::class,
+        // 'statut' => ResultatValidation::class,
     ];
 
+    // protected $attributes = [
+    //     'statut' => StatutDocument::INVALIDE
+    // ];
+    protected $attributes = [
+        'statut' => StatutDocument::EN_ATTENTE
+    ];
     protected static function boot()
     {
         parent::boot();

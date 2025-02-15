@@ -85,7 +85,7 @@ class TraitementDossierService
             });
 
             $documentsInvalides = $documents->contains(function ($doc) {
-                return $doc->statut === StatutDocument::INVALIDE;
+                return $doc->statut === StatutDocument::EN_ATTENTE;
             });
 
             if ($tousDocumentsValides) {

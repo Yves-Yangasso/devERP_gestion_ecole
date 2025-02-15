@@ -13,25 +13,41 @@ class DocumentController extends Controller
     protected DocumentService $documentService;
 
     public function __construct(
-        CloudinaryStorageService $cloudinaryService, 
+        CloudinaryStorageService $cloudinaryService,
         DocumentService $documentService
     ) {
         $this->cloudinaryService = $cloudinaryService;
         $this->documentService = $documentService;
     }
-
     public function uploadDocument(Request $request)
     {
         $request->validate([
             'document' => 'required|file|mimes:pdf,jpg,jpeg,png|max:10240',
             'dossier_id' => 'required|exists:dossiers,id',
-            'type_document' => 'required|string'
+            'type_document' => 'required|string',
+            'prenom' => 'required|string',
+            'nom' => 'required|string'
         ]);
 
         $file = $request->file('document');
-        $dossierPath = "dossier_{$request->dossier_id}/";
+        $dossierPath = "dossier_{$request->dossier_id}";
 
-        $uploadResult = $this->cloudinaryService->uploadDocument($file, $dossierPath, $request->type_document);
+        // Determine resource type based on file extension
+        $isPDF = strtolower($file->getClientOriginalExtension()) === 'pdf';
+
+        $uploadOptions = [
+            'tags' => [$request->type_document],
+            'resource_type' => $isPDF ? 'image' : 'auto', // Handle PDFs as images for preview
+            'format' => $isPDF ? 'pdf' : null
+        ];
+
+        $uploadResult = $this->cloudinaryService->uploadDocument(
+            $file,
+            $dossierPath,
+            $uploadOptions,
+            $request->prenom,
+            $request->nom
+        );
 
         if (!$uploadResult['success']) {
             return response()->json(['error' => $uploadResult['error']], 500);
@@ -43,12 +59,16 @@ class DocumentController extends Controller
             'type' => $request->type_document,
             'chemin' => $uploadResult['url'],
             'public_id' => $uploadResult['public_id'],
+            'url_secure' => $uploadResult['secure_url'],
+            'url_public' => $uploadResult['url'],
+            'folder_path' => $uploadResult['folder'],
             'format' => $uploadResult['format']
         ], $file);
 
         return response()->json([
             'message' => 'Document uploadé avec succès',
-            'document' => $document
+            'document' => $document,
+            'preview_url' => $uploadResult['secure_url']
         ]);
     }
 }
