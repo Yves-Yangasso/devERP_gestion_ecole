@@ -2,21 +2,41 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Enums\Tuteur\StatutTuteur;
+use App\Traits\Tuteur\GestionAssociations;
 
 class Tuteur extends Model
 {
-    use HasFactory;
+    use HasFactory, GestionAssociations;
 
     protected $fillable = [
-        'personne_id',
-        'fonction',
-        'status',
+        'prenom',
+        'nom',
+        'email',
+        'telephone',
+        'adresse',
+        'fonctions',
+        'statut'
     ];
 
-    public function personne()
+    protected $casts = [
+        'statut' => StatutTuteur::class
+    ];
+
+    public function profilTuteur()
     {
-        return $this->belongsTo(Personne::class);
+        return $this->hasOne(ProfilTuteur::class);
+    }
+
+    public function etudiants()
+    {
+        return $this->belongsToMany(
+            Etudiant::class,
+            'association_etudiant_tuteur',
+            'tuteur_id',
+            'etudiant_id'
+        );
     }
 }

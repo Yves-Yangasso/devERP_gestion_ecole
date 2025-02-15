@@ -2,21 +2,75 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Enums\Dossier\TypeDocument;
+use App\Enums\Dossier\StatutDocument;
+use App\Enums\Dossier\ResultatValidation;
+use App\Services\Storage\CloudinaryStorageService;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\{HasMany, BelongsTo};
 
 class Document extends Model
 {
-    use HasFactory;
+    use SoftDeletes;
 
     protected $fillable = [
-        'type_document',
-        'date_creation',
-        'chemin_acces',
+        'dossier_id',
+        'type',
+        'chemin',
+        'url_secure',
+        'url_public',
+        'folder_path',
+        'public_id',
+        'format',
+        'statut',
+        'commentaire',
+        'date_validation',
+        'preview_url'
     ];
 
-    public function dossier()
+    // protected $casts = [
+    //     'date_validation' => 'datetime',
+    //     'type' => TypeDocument::class,
+    //     'statut' => ResultatValidation::class,
+    // ];
+    protected $casts = [
+        'date_validation' => 'datetime',
+        'type' => TypeDocument::class,
+        'statut' => StatutDocument::class,
+        // 'statut' => ResultatValidation::class,
+    ];
+
+    // protected $attributes = [
+    //     'statut' => StatutDocument::INVALIDE
+    // ];
+    protected $attributes = [
+        'statut' => StatutDocument::EN_ATTENTE
+    ];
+    protected static function boot()
+    {
+        parent::boot();
+
+        // Suppression du fichier sur Cloudinary lors de la suppression du modèle
+        static::deleting(function ($document) {
+            if ($document->public_id) {
+                app(CloudinaryStorageService::class)->deleteDocument($document->public_id);
+            }
+        });
+    }
+
+    public function dossier(): BelongsTo
     {
         return $this->belongsTo(Dossier::class);
+    }
+
+    public function validations(): HasMany
+    {
+        return $this->hasMany(ValidationDocument::class);
+    }
+
+    public function dernierResultatValidation()
+    {
+        return $this->validations()->latest()->first();
     }
 }

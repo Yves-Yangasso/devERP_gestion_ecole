@@ -13,7 +13,14 @@ return new class extends Migration
     {
         Schema::create('filieres', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('departement_id')->constrained()->onDelete('cascade');
+            $table->string('nom');
+            $table->string('code')->unique();
+            $table->text('description')->nullable();
+            $table->integer('duree_formation');
+            $table->string('niveau_formation');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
