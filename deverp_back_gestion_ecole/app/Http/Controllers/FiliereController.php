@@ -2,64 +2,35 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Filiere;
+use App\Http\Requests\Filieres\StoreFiliereRequest;
+use App\Http\Requests\Filieres\UpdateFiliereRequest;
 use Illuminate\Http\Request;
+use App\Services\Filieres\FiliereService;
 
-class FiliereController extends Controller
-{
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        //
+class FiliereController extends Controller {
+    protected $filiereService;
+
+    public function __construct(FiliereService $filiereService) {
+        $this->filiereService = $filiereService;
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
+    public function index() {
+        return response()->json($this->filiereService->getAll());
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
+    public function show($id) {
+        return response()->json($this->filiereService->getById($id));
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Filiere $filiere)
-    {
-        //
+    public function store(StoreFiliereRequest $request) {
+        return response()->json($this->filiereService->create($request->validated()), 201);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Filiere $filiere)
-    {
-        //
+    public function update(UpdateFiliereRequest $request, $id) {
+        return response()->json($this->filiereService->update($id, $request->validated()));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Filiere $filiere)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Filiere $filiere)
-    {
-        //
+    public function destroy($id) {
+        return response()->json($this->filiereService->delete($id));
     }
 }
