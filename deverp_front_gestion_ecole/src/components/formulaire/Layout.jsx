@@ -2,19 +2,18 @@ import React from 'react';
 
 const Layout = ({ leftText, formComponent, StepIndicator }) => {
     return (
-        <div className="relative min-h-screen flex bg-center bg-cover"
+        <div 
+            className="relative min-h-screen flex bg-center bg-cover"
             style={{
                 backgroundImage: 'url("https://suptech.info/sup1/public/template/assets/img/banner/425345739_902874121534077_4802009755757595986_n.jpg")'
             }}
         >
             {/* Arrière-plan avec overlay */}
-            <div
-                className="absolute top-0 left-0 w-full h-full bg-blue-400 bg-opacity-70"
-            >
-            </div>
+            <div className="absolute top-0 left-0 w-full h-full bg-blue-400 bg-opacity-70"></div>
 
-            {/* Contenu */}
+            {/* Contenu principal */}
             <div className="relative flex w-full">
+                
                 {/* Section gauche */}
                 <div className="flex-1 flex flex-col p-12">
                     <div className="mb-auto">
@@ -31,9 +30,9 @@ const Layout = ({ leftText, formComponent, StepIndicator }) => {
                     </div>
                 </div>
 
-                {/* Section droite */}
-                <div className="w-1/2 bg-white bg-opacity-85 min-h-screen shadow-2xl flex flex-col justify-center items-center">
-                    <div className="h-full w-full flex flex-col px-12 py-8">
+                {/* Section droite scrollable avec scrollbar personnalisée */}
+                <div className="w-1/2 bg-white shadow-2xl flex flex-col justify-center items-center">
+                    <div className="h-screen w-full flex flex-col px-12 py-8 overflow-y-auto custom-scrollbar">
                         {StepIndicator}
                         {formComponent}
                     </div>
@@ -41,6 +40,6 @@ const Layout = ({ leftText, formComponent, StepIndicator }) => {
             </div>
         </div>
     );
-}
+};
 
 export default Layout;

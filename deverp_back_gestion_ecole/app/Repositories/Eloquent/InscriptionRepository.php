@@ -16,6 +16,8 @@ class InscriptionRepository
     public function create(array $data): Inscription
     {
         try {
+            // dd($data);
+            var_dump($data);
             $inscription = Inscription::create($data);
             $this->clearCache();
             return $inscription;

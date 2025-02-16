@@ -1,3 +1,45 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Scrollbar personnalisée */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 10px; /* Épaisseur */
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #e5f1ff; /* Couleur du fond */
+  border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #052a64; /* Bleu Tailwind */
+  border-radius: 10px;
+  transition: background 0.3s ease-in-out;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #2563eb; /* Bleu plus foncé au hover */
+}
+
+/* Firefox */
+.custom-scrollbar {
+  scrollbar-color: #3b82f6 #e5f1ff;
+  scrollbar-width: thin;
+}
+
+.react-confirm-alert-button-group button {
+  padding: 10px 20px;
+  border-radius: 5px;
+  font-size: 16px;
+}
+
+.react-confirm-alert-button-group button:first-child {
+  background-color: #dc2626;
+  color: white;
+}
+
+.react-confirm-alert-button-group button:last-child {
+  background-color: #4b5563;
+  color: white;
+}

@@ -3,7 +3,7 @@ import Layout from '../../formulaire/Layout'; // Assure-toi d'importer correctem
 import StudentForm from '../../formulaire/StudentForm'; // Assure-toi d'importer le formulaire que tu veux afficher
 import StepIndicator from '../../formulaire/StepIndicator';
 
-const InformationStudentPage = () => {
+const InformationStudent = () => {
   return (
     <Layout
       leftText="Veuillez compléter les informations concernant l'étudiant en suivant les instructions ci-dessous." 
@@ -13,4 +13,4 @@ const InformationStudentPage = () => {
   );
 }
 
-export default InformationStudentPage;
+export default InformationStudent;

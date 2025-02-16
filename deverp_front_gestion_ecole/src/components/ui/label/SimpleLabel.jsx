@@ -1,11 +1,12 @@
-import React from 'react';
+import React from "react";
+import clsx from "clsx";
 
-const SimpleLabel = ({ text, className }) => (
-  <div className="mb-1 text-left">
-    <label className={className}>
+const SimpleLabel = ({ text, className }) => {
+  return (
+    <label className={clsx("block", className)}>
       {text}
     </label>
-  </div>
-);
+  );
+};
 
 export default SimpleLabel;
