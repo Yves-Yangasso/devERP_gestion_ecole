@@ -1,3 +1,4 @@
+// DetailsDemande.jsx
 import React, { useState } from 'react';
 import { X, User, Users, FileText, MapPin, Phone, Mail, Briefcase, Calendar, Flag, Building } from 'lucide-react';
 import DocumentsSection from '../Documents/DocumentsSection';
@@ -5,8 +6,6 @@ import DocumentsSection from '../Documents/DocumentsSection';
 const DetailsDemande = ({ dossier, onClose }) => {
     const [activeTab, setActiveTab] = useState('student');
     if (!dossier) return null;
-
-    const { etudiant, tuteurs } = dossier;
 
     const tabs = [
         { id: 'student', label: 'Informations Étudiant', icon: <User className="w-5 h-5" /> },
@@ -21,7 +20,7 @@ const DetailsDemande = ({ dossier, onClose }) => {
                 <div className="p-4 border-b flex justify-between items-center bg-gradient-to-r from-blue-600 to-blue-800 rounded-t-xl">
                     <h2 className="text-xl font-bold text-white flex items-center gap-2">
                         <User className="w-5 h-5" />
-                        Dossier de {etudiant.prenom} {etudiant.nom}
+                        Dossier de {dossier.prenom} {dossier.nom}
                     </h2>
                     <button
                         onClick={onClose}
@@ -38,8 +37,7 @@ const DetailsDemande = ({ dossier, onClose }) => {
                             key={tab.id}
                             onClick={() => setActiveTab(tab.id)}
                             className={`flex items-center gap-2 px-6 py-3 font-medium transition-colors relative
-                ${activeTab === tab.id ? 'text-blue-600' : 'text-gray-500 hover:text-blue-600'}
-              `}
+                                ${activeTab === tab.id ? 'text-blue-600' : 'text-gray-500 hover:text-blue-600'}`}
                         >
                             {tab.icon}
                             {tab.label}
@@ -61,26 +59,26 @@ const DetailsDemande = ({ dossier, onClose }) => {
                                     Formation
                                 </h3>
                                 <div className="grid grid-cols-2 gap-4">
-                                    <InfoItem label="Niveau" value={etudiant.niveau} />
-                                    <InfoItem label="Formation" value={etudiant.formation_superieure} />
-                                    <InfoItem label="Spécialité" value={etudiant.specialites} />
-                                    <InfoItem label="Dernier Établissement" value={etudiant.dernier_etablissement} />
+                                    <InfoItem label="Niveau" value={dossier.niveau} />
+                                    <InfoItem label="Formation" value={dossier.formation_superieure} />
+                                    <InfoItem label="Spécialité" value={dossier.specialites} />
+                                    <InfoItem label="Dernier Établissement" value={dossier.dernier_etablissement} />
                                 </div>
                             </div>
 
                             <div className="space-y-4">
                                 <h3 className="text-lg font-semibold text-blue-800">Informations Personnelles</h3>
-                                <InfoItem icon={<User />} label="Nom Complet" value={`${etudiant.prenom} ${etudiant.nom}`} />
-                                <InfoItem icon={<Calendar />} label="Date de Naissance" value={etudiant.date_naissance} />
-                                <InfoItem icon={<MapPin />} label="Lieu de Naissance" value={etudiant.lieu_naissance} />
-                                <InfoItem icon={<Flag />} label="Nationalité" value={etudiant.nationalite} />
+                                <InfoItem icon={<User />} label="Nom Complet" value={`${dossier.prenom} ${dossier.nom}`} />
+                                <InfoItem icon={<Calendar />} label="Date de Naissance" value={dossier.date_naissance} />
+                                <InfoItem icon={<MapPin />} label="Lieu de Naissance" value={dossier.lieu_naissance} />
+                                <InfoItem icon={<Flag />} label="Nationalité" value={dossier.nationalite} />
                             </div>
 
                             <div className="space-y-4">
                                 <h3 className="text-lg font-semibold text-blue-800">Contact</h3>
-                                <InfoItem icon={<MapPin />} label="Adresse" value={etudiant.adresse} />
-                                <InfoItem icon={<Phone />} label="Téléphone" value={etudiant.telephone} />
-                                <InfoItem icon={<Mail />} label="Email" value={etudiant.email} />
+                                <InfoItem icon={<MapPin />} label="Adresse" value={dossier.adresse} />
+                                <InfoItem icon={<Phone />} label="Téléphone" value={dossier.telephone} />
+                                <InfoItem icon={<Mail />} label="Email" value={dossier.email} />
                             </div>
                         </div>
                     )}
@@ -88,19 +86,19 @@ const DetailsDemande = ({ dossier, onClose }) => {
                     {/* Tutors Tab */}
                     {activeTab === 'tutors' && (
                         <div className="grid gap-6">
-                            {tuteurs.map((tuteur, index) => (
-                                <div key={index} className="bg-gray-50 rounded-lg p-6">
-                                    <h3 className="text-lg font-semibold text-blue-800 mb-4">Tuteur {index + 1}</h3>
+                            {dossier.tuteur && (
+                                <div className="bg-gray-50 rounded-lg p-6">
+                                    <h3 className="text-lg font-semibold text-blue-800 mb-4">Tuteur</h3>
                                     <div className="grid grid-cols-2 gap-4">
-                                        <InfoItem icon={<User />} label="Nom Complet" value={`${tuteur.prenom} ${tuteur.nom}`} />
-                                        <InfoItem icon={<Phone />} label="Téléphone" value={tuteur.telephone} />
-                                        <InfoItem icon={<Mail />} label="Email" value={tuteur.email} />
-                                        <InfoItem icon={<MapPin />} label="Adresse" value={tuteur.adresse} />
-                                        <InfoItem icon={<Briefcase />} label="Fonction" value={tuteur.fonctions} />
-                                        <InfoItem icon={<User />} label="Statut" value={tuteur.status} />
+                                        <InfoItem icon={<User />} label="Nom Complet" value={`${dossier.tuteur.prenom} ${dossier.tuteur.nom}`} />
+                                        <InfoItem icon={<Phone />} label="Téléphone" value={dossier.tuteur.telephone} />
+                                        <InfoItem icon={<Mail />} label="Email" value={dossier.tuteur.email} />
+                                        <InfoItem icon={<MapPin />} label="Adresse" value={dossier.tuteur.adresse} />
+                                        <InfoItem icon={<Briefcase />} label="Fonction" value={dossier.tuteur.fonctions} />
+                                        <InfoItem icon={<User />} label="Statut" value={dossier.tuteur.statut} />
                                     </div>
                                 </div>
-                            ))}
+                            )}
                         </div>
                     )}
 
@@ -109,7 +107,9 @@ const DetailsDemande = ({ dossier, onClose }) => {
                         <div className="grid gap-4">
                             <div className="mt-6 p-6 bg-blue-100 rounded-lg shadow-lg">
                                 <h4 className="font-bold text-lg text-blue-600 mb-4">📄 Documents</h4>
-                                <DocumentsSection documents={dossier.dossier.documents} />
+                                {dossier.dossier && dossier.dossier[0] && dossier.dossier[0].documents && (
+                                    <DocumentsSection documents={dossier.dossier[0].documents} />
+                                )}
                             </div>
                         </div>
                     )}

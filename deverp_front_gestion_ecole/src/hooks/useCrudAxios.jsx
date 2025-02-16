@@ -1,14 +1,17 @@
 import { useState, useCallback, useMemo } from 'react';
 import axios from 'axios';
+// import { useTokenService } from '../utils/tokenUtils'; // Assurez-vous que le chemin est correct
 
 const API_BASE_URL = process.env.REACT_APP_API_URL;
 
 const useCrud = (baseURL) => {
+    // const { getToken } = useTokenService(); // Récupérer le token depuis utils
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
     const api = useMemo(() => {
+        // Créer une instance d'axios avec un intercepteur pour ajouter le token
         const instance = axios.create({ 
             baseURL: `${API_BASE_URL}/${baseURL}`,
             headers: {
@@ -18,7 +21,11 @@ const useCrud = (baseURL) => {
 
         instance.interceptors.request.use(
             config => {
-                // Si les données sont FormData, on laisse le navigateur gérer le Content-Type
+                // const token = getToken(); // Obtenir le token
+               // console.log(token);
+                // if (token) {
+                //     config.headers.Authorization = `Bearer ${token}`; // Ajouter le token aux en-têtes
+                // }
                 if (config.data instanceof FormData) {
                     config.headers['Content-Type'] = 'multipart/form-data';
                 } else {
@@ -38,18 +45,12 @@ const useCrud = (baseURL) => {
         setLoading(true);
         setError(null);
         try {
-            const response = await api[method](endpoint, payload, {
-                // Pour le débogage, on peut voir la progression de l'upload
-                onUploadProgress: progressEvent => {
-                    const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
-                    console.log(`Upload Progress: ${percentCompleted}%`);
-                }
-            });
-            setData(response.data.data);
-            return response.data.data;
+            console.log(`Requête ${method.toUpperCase()} vers ${api.defaults.baseURL}${endpoint}`);
+            const response = await api[method](endpoint, payload);
+            setData(response.data);
+            return response.data;
         } catch (err) {
             setError(err);
-            console.error('Request error:', err.response?.data || err.message);
             throw err;
         } finally {
             setLoading(false);

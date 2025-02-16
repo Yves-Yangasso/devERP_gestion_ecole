@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { FileText } from 'lucide-react';
+import { Eye, FileText } from 'lucide-react';
 import DocumentPreview from './DocumentPreview';
 
 const DocumentsSection = ({ documents }) => {
@@ -14,7 +14,7 @@ const DocumentsSection = ({ documents }) => {
 
   return (
     <>
-      <div className="grid gap-4">
+      <div className="grid grid-cols-2 gap-4">
         {docsToShow.map((doc, index) => (
           <div 
             key={index} 
@@ -22,13 +22,13 @@ const DocumentsSection = ({ documents }) => {
           >
             <div className="flex items-center gap-3">
               <FileText className="w-5 h-5 text-blue-600" />
-              <span>{doc.type_document}</span>
+              <span>{doc.type}</span>
             </div>
             <button 
               onClick={() => setSelectedDoc(doc)}
               className="text-blue-600 hover:text-blue-800 font-medium"
             >
-              Voir le document
+              <Eye className="w-5 h-5" />
             </button>
           </div>
         ))}

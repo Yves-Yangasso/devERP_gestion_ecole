@@ -21,8 +21,8 @@ const DocForm = () => {
   // Vérification que tous les fichiers nécessaires sont fournis
   const areAllFilesProvided = () => {
     const requiredFiles = [
-      'cni', 'diplome', 'scolarite', 'casier', 'bulletin', 'residence', 
-      'visite', 'signa', 'adresse', 'ville', 'pays', 'region'
+      'cni/passeport', 'diplome', 'certificat scolarite', 'casier judiciaire', 'bulletin notes', 'certificat residence', 
+      'visite contre visite', 'extrait de naissance', 'certificat domicile', 'certificat de travail', 'visite medicale', 'photo identite'
     ];
     return requiredFiles.every(file => formState.documents[file]);
   };
@@ -38,7 +38,7 @@ const DocForm = () => {
     e.preventDefault();
 
     // Si tous les fichiers ne sont pas fournis, afficher une alerte
-    if (!areAllFilesProvided()) {
+    if (areAllFilesProvided()) {
       AlertService.error('Veuillez télécharger tous les documents requis.');
     } else {
       navigate('/RecapEtudiant');
@@ -56,13 +56,13 @@ const DocForm = () => {
           <FileInput
             label="CNI/passport"
             type="file"
-            name="cni"
+            name="cni/passport"
             accept=".pdf"
-            initialFile={formState.documents.cni}
-            onChange={(e) => handleFileUpload('cni', e.target.files)}
+            initialFile={formState.documents['cni/passeport']}
+            onChange={(e) => handleFileUpload('cni/passeport', e.target.files)}
           />
           <FileInput
-            label="Dernier diplome"
+            label="Dernier diplôme obtenue"
             type="file"
             name="diplome"
             accept=".pdf"
@@ -70,84 +70,84 @@ const DocForm = () => {
             onChange={(e) => handleFileUpload('diplome', e.target.files)}
           />
           <FileInput
-            label="Certificat Scolarite"
+            label="Certificat de Scolarite"
             type="file"
-            name="scolarite"
+            name="certificat scolarite"
             accept=".pdf"
-            initialFile={formState.documents.scolarite}
-            onChange={(e) => handleFileUpload('scolarite', e.target.files)}
+            initialFile={formState.documents['certificat scolarite']}
+            onChange={(e) => handleFileUpload('certificat scolarite', e.target.files)}
           />
           <FileInput
             label="Casier Judiciaire"
             type="file"
-            name="casier"
+            name="casier judiciaire"
             accept=".pdf"
-            initialFile={formState.documents.casier}
-            onChange={(e) => handleFileUpload('casier', e.target.files)}
+            initialFile={formState.documents['casier judiciaire']}
+            onChange={(e) => handleFileUpload('casier judiciaire', e.target.files)}
           />
           <FileInput
             label="Bulletins de Notes"
             type="file"
-            name="bulletin"
+            name="bulletin notes"
             accept=".pdf"
-            initialFile={formState.documents.bulletin}
-            onChange={(e) => handleFileUpload('bulletin', e.target.files)}
+            initialFile={formState.documents['bulletin notes']}
+            onChange={(e) => handleFileUpload('bulletin notes', e.target.files)}
           />
           <FileInput
-            label="Certificat residence"
+            label="Certificat de residence"
             type="file"
-            name="residence"
+            name="certificat residence"
             accept=".pdf"
-            initialFile={formState.documents.residence}
-            onChange={(e) => handleFileUpload('residence', e.target.files)}
+            initialFile={formState.documents['certificat residence']}
+            onChange={(e) => handleFileUpload('certificat residence', e.target.files)}
           />
           <FileInput
             label="Visite contre visite"
             type="file"
-            name="visite"
+            name="visite contre visite"
             accept=".pdf"
-            initialFile={formState.documents.visite}
-            onChange={(e) => handleFileUpload('visite', e.target.files)}
+            initialFile={formState.documents['visite contre visite']}
+            onChange={(e) => handleFileUpload('visite contre visite', e.target.files)}
           />
           <FileInput
-            label="Certificat signa"
+            label="extrait de naissance"
             type="file"
-            name="signa"
+            name="extrait de naissance"
             accept=".pdf"
-            initialFile={formState.documents.signa}
-            onChange={(e) => handleFileUpload('signa', e.target.files)}
+            initialFile={formState.documents['extrait de naissance']}
+            onChange={(e) => handleFileUpload('extrait de naissance', e.target.files)}
           />
           <FileInput
-            label="Certificat adresse"
+            label="certificat de domicile"
             type="file"
-            name="adresse"
+            name="certificat domicile"
             accept=".pdf"
-            initialFile={formState.documents.adresse}
-            onChange={(e) => handleFileUpload('adresse', e.target.files)}
+            initialFile={formState.documents['certificat domicile']}
+            onChange={(e) => handleFileUpload('certificat domicile', e.target.files)}
           />
           <FileInput
-            label="Certificat ville"
+            label="certificat de travail"
             type="file"
-            name="ville"
+            name="certificat travail"
             accept=".pdf"
-            initialFile={formState.documents.ville}
-            onChange={(e) => handleFileUpload('ville', e.target.files)}
+            initialFile={formState.documents['certificat travail']}
+            onChange={(e) => handleFileUpload('certificat travail', e.target.files)}
           />
           <FileInput
-            label="Certificat pays"
+            label="visite medicale"
             type="file"
-            name="pays"
+            name="visite medicale"
             accept=".pdf"
-            initialFile={formState.documents.pays}
-            onChange={(e) => handleFileUpload('pays', e.target.files)}
+            initialFile={formState.documents['visite medicale']}
+            onChange={(e) => handleFileUpload('visite medicale', e.target.files)}
           />
           <FileInput
-            label="Certificat region"
+            label="photo d'identite"
             type="file"
-            name="region"
+            name="photo identite"
             accept=".pdf"
-            initialFile={formState.documents.region}
-            onChange={(e) => handleFileUpload('region', e.target.files)}
+            initialFile={formState.documents['photo identite']}
+            onChange={(e) => handleFileUpload('photo identite', e.target.files)}
           />
         </div>
 

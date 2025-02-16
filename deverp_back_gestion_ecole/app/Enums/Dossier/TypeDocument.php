@@ -4,19 +4,16 @@ namespace App\Enums\Dossier;
 
 enum TypeDocument: string
 {
-    case BULLETIN_NOTES = 'bulletin_notes';
-    case CERTIFICAT_RESIDENCE = 'certificat_residence';
-    case CNI = 'Carte nationale d\'identité';
-    // case CNI = 'cni';
+    case BULLETIN_NOTES = 'bulletin notes';
+    case CERTIFICAT_RESIDENCE = 'certificat residence';
+    case CNI_PASSEPORT = 'cni/passeport';
     case DIPLOME = 'diplome';
-    case DIPLOME_BAC = 'diplome_bac'; // Nouveau cas ajouté
-    case CERTIFICAT_SCOLARITE = 'certificat_scolarite';
-    case CASIER_JUDICIAIRE = 'casier_judiciaire';
-    case PHOTO_IDENTITE = 'photo_identite';
-    case CERTIFICAT_SIGNA = 'certificat_signa';
-    case CERTIFICAT_VISITE = 'certificat_visite';
-    case CERTIFICAT_ADRESSE = 'certificat_adresse';
-    case CERTIFICAT_VILLE = 'certificat_ville';
-    case CERTIFICAT_REGION = 'certificat_region';
-    case CERTIFICAT_PAYS = 'certificat_pays';
+    case CERTIFICAT_SCOLARITE = 'certificat scolarite';
+    case CASIER_JUDICIAIRE = 'casier judiciaire';
+    case PHOTO_IDENTITE = 'photo identite';
+    case EXTRAIT_NAISSANCE = 'extrait de naissance';
+    case VISITE_CONTRE_VISITE = 'visite contre visite';
+    case CERTIFICAT_DOMICILE = 'certificat domicile';
+    case CERTIFICAT_TRAVAIL = 'certificat travail';
+    case VISITE_MEDICALE = 'visite medicale';
 }

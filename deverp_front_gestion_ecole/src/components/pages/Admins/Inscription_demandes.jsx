@@ -28,61 +28,6 @@ const columns = [
 // Actions disponibles pour chaque ligne
 const actions = ["Voir détails", "Traité", "Supprimé"];
 
-const mockData = {
-    etudiant: {
-        prenom: "Jean",
-        nom: "Dupont",
-        date_naissance: "2001-05-20",
-        lieu_naissance: "Paris",
-        adresse: "123 Rue de l'Université, Paris",
-        telephone: "+33612345678",
-        email: "jean.dupns@example.com",
-        nationalite: "Française",
-        dernier_etablissement: "Lycée Saint-Louis",
-        niveau: "Bac+1",
-        formation_superieure: "Informatique",
-        specialites: "Développement Web",
-        statut: "En Cours",
-        code: "DEM-JEDU2001"
-    },
-    tuteurs: [
-        {
-            nom: "Martin",
-            prenom: "Claude",
-            telephone: "+33698765432",
-            email: "clau.martin@example.com",
-            adresse: "1234",
-            fonctions: "milliardaire",
-            status: "marier"
-        },
-        {
-            nom: "Martin",
-            prenom: "Claude",
-            telephone: "+33698765432",
-            email: "clau.martin@example.com",
-            adresse: "1234",
-            fonctions: "milliardaire",
-            status: "marier"
-        }
-    ],
-    dossier: {
-        nom: "Dossier de Jean Dupont",
-        description: "Dossier contenant les documents de l'étudiant",
-        documents: [
-            {
-                id: "1",
-                type_document: "Carte d'identité",
-                chemin_fichier: "https://documents1.worldbank.org/curated/en/099005501312332141/pdf/P173204014bc7b0630bbee0943431d526e2.pdf"
-            },
-            {
-                id: "2",
-                type_document: "Diplôme Bac",
-                chemin_fichier: "https://www.ansd.sn/sites/default/files/2023-12/Final%20Senegal%20DHS%20-%20KIR%202023.pdf"
-            }
-        ]
-    }
-};
-
 function InscriptionDemandes() {
     // Hooks pour la gestion des données et des états
     const { data, get, remove } = useCrud("inscriptions");
@@ -91,36 +36,97 @@ function InscriptionDemandes() {
     const [showDetails, setShowDetails] = useState(false);
     const [selectedData, setSelectedData] = useState(null);
     const [decisionData, setDecisionData] = useState(null);
+
+    // console.log("Données reçues :", data);
+
     // Chargement initial des données
     useEffect(() => {
         get();
     }, [get]);
-    
-    console.log(data);
+
+
+
     // Formatage des données pour l'affichage dans la table
     const formattedData = data
         ? data.map((item) => ({
-            nom: `${item.etudiant.nom} ${item.etudiant.prenom}`,
-            code: item.etudiant.code,
-            date: new Date().toLocaleDateString(), // À remplacer par item.created_at
-            formation: item.etudiant.formation_superieure,
-            niveau: item.etudiant.niveau,
-            email: item.etudiant.email,
-            statut: item.etudiant.statut,
-            fullData: item // Données complètes
+            id: item.id,
+            nom: `${item.nom} ${item.prenom}`,
+            code: item.dossier?.[0]?.code_suivi || "N/A",
+            date: new Date(item.created_at).toLocaleDateString(),
+            formation: item.formation_superieure,
+            niveau: item.niveau,
+            email: item.email,
+            statut: item.dossier?.[0]?.statut || "En attente",
+            fullData: {
+                id: item.id,
+                prenom: item.prenom,
+                nom: `${item.nom} ${item.prenom}`,
+                date_naissance: item.date_naissance,
+                lieu_naissance: item.lieu_naissance,
+                adresse: item.adresse,
+                telephone: item.telephone,
+                email: item.email,
+                nationalite: item.nationalite,
+                dernier_etablissement: item.dernier_etablissement,
+                niveau: item.niveau,
+                formation_superieure: item.formation_superieure,
+                specialites: item.specialites,
+                id_tuteur: item.tuteur?.id || null,
+                created_at: item.created_at,
+                updated_at: item.updated_at,
+                tuteur: item.tuteur
+                    ? {
+                        id: item.tuteur.id,
+                        prenom: item.tuteur.prenom,
+                        nom: item.tuteur.nom,
+                        email: item.tuteur.email,
+                        telephone: item.tuteur.telephone,
+                        adresse: item.tuteur.adresse,
+                        fonctions: item.tuteur.fonctions,
+                        statut: item.tuteur.statut,
+                        created_at: item.tuteur.created_at,
+                        updated_at: item.tuteur.updated_at,
+                    }
+                    : null,
+                dossier: item.dossier
+                    ? item.dossier.map((d) => ({
+                        id: d.id,
+                        inscription_id: d.inscription_id,
+                        code_suivi: d.code_suivi,
+                        statut: d.statut,
+                        commentaire: d.commentaire,
+                        mode_validation: d.mode_validation,
+                        date_soumission: d.date_soumission,
+                        created_at: d.created_at,
+                        updated_at: d.updated_at,
+                        deleted_at: d.deleted_at,
+                        titre: d.titre,
+                        description: d.description,
+                        documents: d.documents
+                            ? d.documents.map((doc) => ({
+                                id: doc.id,
+                                dossier_id: doc.dossier_id,
+                                type: doc.type,
+                                chemin: doc.chemin,
+                                statut: doc.statut,
+                                commentaire: doc.commentaire,
+                                date_validation: doc.date_validation,
+                                created_at: doc.created_at,
+                                updated_at: doc.updated_at,
+                                deleted_at: doc.deleted_at,
+                                url_secure: doc.url_secure,
+                                url_public: doc.url_public,
+                                folder_path: doc.folder_path,
+                                public_id: doc.public_id,
+                                format: doc.format,
+                                preview_url: doc.preview_url,
+                            }))
+                            : [],
+                    }))
+                    : [],
+            },
         }))
-        : [
-            {
-                nom: `${mockData.etudiant.nom} ${mockData.etudiant.prenom}`,
-                code: mockData.etudiant.code,
-                date: new Date().toLocaleDateString(),
-                formation: mockData.etudiant.formation_superieure,
-                niveau: mockData.etudiant.niveau,
-                email: mockData.etudiant.email,
-                statut: mockData.etudiant.statut,
-                fullData: mockData
-            }
-        ];
+        : [];
 
     // Gestionnaire de clic sur une ligne
     const handleRowClick = (row) => {
@@ -212,7 +218,7 @@ function InscriptionDemandes() {
             {/* Popup de traitement des demandes */}
             {selectedDossier && !showDecisionPopup && (
                 <TraiteDemandes
-                    dossier={selectedDossier}
+                    dossier={selectedDossier}  // Vous passez le dossier sélectionné ici
                     closePopup={() => setSelectedDossier(null)}
                     openSecondPopup={handleOpenDecisionPopup}
                 />
@@ -231,7 +237,7 @@ function InscriptionDemandes() {
             {/* Popup de détails */}
             {showDetails && (
                 <DetailsDemande
-                    dossier={selectedData}
+                    dossier={selectedData} // Ici vous passez les données détaillées de la demande
                     onClose={() => setShowDetails(false)}
                 />
             )}
