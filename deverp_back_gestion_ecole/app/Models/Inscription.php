@@ -37,8 +37,20 @@ class Inscription extends Model
     {
         return $this->belongsTo(Tuteur::class, 'id_tuteur');
     }
+    // public function dossier()
+    // {
+    //     return $this->hasMany(Dossier::class);
+    // }
     public function dossier()
     {
-        return $this->hasMany(Dossier::class);
+        return $this->hasOne(Dossier::class);
+    }
+
+    /**
+     * Route notifications for the mail channel.
+     */
+    public function routeNotificationForMail(): string
+    {
+        return $this->email;
     }
 }

@@ -18,6 +18,7 @@ class DossierCree
      */
     public function __construct(
         public readonly string $codeDossier,
-        public readonly array $documentsRequis
+        public readonly array $documentsRequis,
+        public readonly DossierCree $dossier
     ) {}
 }

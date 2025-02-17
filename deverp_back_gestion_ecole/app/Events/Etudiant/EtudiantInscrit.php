@@ -10,10 +10,13 @@ class EtudiantInscrit
 {
     use Dispatchable, SerializesModels;
 
-     public $student;
+    /**
+     * @var Inscription
+     */
+    public $inscription;
 
-    public function __construct(Inscription $student)
+    public function __construct(Inscription $inscription)
     {
-        $this->student = $student;
+        $this->inscription = $inscription;
     }
 }

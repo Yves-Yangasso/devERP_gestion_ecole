@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Listeners\Document;
+namespace App\Listeners\Dossier;
 
-use App\Events\Document\DocumentTraite;
+use App\Events\Dossier\DocumentTraite;
 use App\Notifications\Document\ResultatTraitementDocument;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
