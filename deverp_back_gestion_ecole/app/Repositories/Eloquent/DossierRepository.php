@@ -8,7 +8,7 @@ use App\Contracts\Repositories\Dossier\DossierRepositoryInterface;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
 use App\Enums\Dossier\StatutDossier;
-
+use Illuminate\Support\Facades\Log;
 
 class DossierRepository implements DossierRepositoryInterface
 {
@@ -28,15 +28,21 @@ class DossierRepository implements DossierRepositoryInterface
         return Dossier::where('statut', $statut)->get();
     }
 
-    public function findByCodeSuivi(string $codeSuivi): ?Dossier
-    {
-        return $this->model
-            ->whereHas('inscription', function ($query) use ($codeSuivi) {
-                $query->where('code_suivi', $codeSuivi);
-            })
-            ->with(['documents', 'inscription'])
-            ->first();
+    public function findByCodeSuivi(string $codeSuivi ): ?Dossier
+{
+    Log::info("Recherche dossier avec code_suivi: $codeSuivi "); // Ajouter un log
+    
+    $dossier = $this->model
+        ->where('code_suivi', $codeSuivi)
+        ->with(['documents', 'inscription'])
+        ->first();
+    if (!$dossier) {
+        Log::warning("Aucun dossier trouvé avec ce code_suivi: $codeSuivi");
     }
+
+    return $dossier;
+}
+
 
     public function update(Dossier $dossier, array $data): bool
     {

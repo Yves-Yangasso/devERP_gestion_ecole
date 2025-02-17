@@ -20,7 +20,7 @@ const options = {
 
 const StudentForm = () => {
   const { selectedSpecialties, handleSpecialtyChange, removeSpecialty, clearSpecialties } = useSpecialtySelection();
-  const { updateStudent, formState, resetForm } = useFormContext();
+  const { updateStudent, formState } = useFormContext();
   const navigate = useNavigate();
   const [filteredSpecialties, setFilteredSpecialties] = useState([]);
 
@@ -33,7 +33,7 @@ const StudentForm = () => {
   }, [formState.student.formation]);
 
   useEffect(() => {
-    resetForm();
+    // resetForm();
     localStorage.removeItem("selectedSpecialties");
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

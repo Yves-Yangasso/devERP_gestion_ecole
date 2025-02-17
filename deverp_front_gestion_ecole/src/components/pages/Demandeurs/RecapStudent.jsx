@@ -5,17 +5,44 @@ import StepIndicator from '../../formulaire/StepIndicator';
 import { useFormContext } from '../../../context/FormContext';
 import useCrud from '../../../hooks/useCrudAxios'; // Importation du hook personnalisé
 import AlertService from '../../../services/notifications/AlertService';
+import { useNavigate } from 'react-router-dom';
+import { confirmAlert } from "react-confirm-alert";
+import "react-confirm-alert/src/react-confirm-alert.css";
 
 const RecapStudent = () => {
   const { formState } = useFormContext();
   const { create } = useCrud('inscriptions'); // Utilisation du hook pour envoyer les données
   const [isSubmitting, setIsSubmitting] = useState(false); // Ajouter un état de soumission
+  const navigate = useNavigate();
 
   // Fonction pour envoyer les données
+
+  const handleConfirmation = (response) => {
+    confirmAlert({
+      title: "Redirection vers Suivie de demandes",
+      message: `Chére ${response.prenom} ${response.nom}, Votre Demande a été envoyé, Veuillez vous rendre sur la page Suivie de demandes en cliquant sur le button oui ?`,
+      buttons: [
+        {
+          label: "Oui",
+          onClick: async () => {
+            try {
+              navigate('/SuivieDossier')
+            } catch (error) {
+              AlertService.error("Error loading");
+            }
+          },
+        },
+        {
+          label: "Non",
+        },
+      ],
+    });
+  };
+
   const handleSubmit = async () => {
     setIsSubmitting(true);
     const formData = new FormData();
-  
+
     try {
       // Données étudiant
       formData.append('etudiant[prenom]', formState.student.prenom);
@@ -30,7 +57,7 @@ const RecapStudent = () => {
       formData.append('etudiant[niveau]', formState.student.niveau);
       formData.append('etudiant[formation_superieure]', formState.student.formation);
       formData.append('etudiant[specialites]', formState.student.specialites.join(', '));
-  
+
       // Données tuteurs
       formState.tutors.forEach((tuteur, index) => {
         formData.append(`tuteurs[${index}][nom]`, tuteur.nom);
@@ -41,7 +68,7 @@ const RecapStudent = () => {
         formData.append(`tuteurs[${index}][fonctions]`, tuteur.relation);
         formData.append(`tuteurs[${index}][status]`, 'actif');
       });
-  
+
       // Données documents
       Object.entries(formState.documents).forEach(([type, file], index) => {
         if (file instanceof File) {
@@ -49,18 +76,19 @@ const RecapStudent = () => {
           formData.append(`dossier[documents][${index}][fichier]`, file);
         }
       });
-  
+
       formData.append('dossier[titre]', `Dossier de ${formState.student.prenom} ${formState.student.nom}`);
       formData.append('dossier[description]', 'Dossier contenant les documents de l\'étudiant');
-  
+
       // Debug: afficher les données qui seront envoyées
       for (let [key, value] of formData.entries()) {
         console.log(`${key}: ${value instanceof File ? value.name : value}`);
       }
-  
+
       const response = await create(formData);
       console.log('Réponse du serveur:', response);
       AlertService.success('Données envoyées avec succès');
+      handleConfirmation(response);
     } catch (error) {
       console.error('Erreur lors de l\'envoi des données:', error);
       if (error.response) {
@@ -71,7 +99,7 @@ const RecapStudent = () => {
       setIsSubmitting(false);
     }
   };
-
+  
   return (
     <Layout
       leftText="Voici le récapitulatif de vos données pour plus de contrôle, Veuillez revérifier vos données avant de l’envoyer. Une fois envoyées vous ne pourrez plus les modifier."

@@ -26,17 +26,15 @@ class SuiviDossierController extends Controller
         try {
             $request->validate([
                 'code_suivi' => 'required|string|regex:/^DOS-\w{6,}$/',
-                'email' => 'required|email'
             ]);
 
             $dossier = $this->suiviService->getDossierParCodeSuivi(
                 $request->code_suivi,
-                $request->email
             );
-
             return response()->json([
                 'success' => true,
-                'dossier' => new SuiviDossierResource($dossier)
+                // 'dossier' => new SuiviDossierResource($dossier)
+                'data' => $dossier
             ]);
         } catch (ModelNotFoundException $e) {
             return response()->json([

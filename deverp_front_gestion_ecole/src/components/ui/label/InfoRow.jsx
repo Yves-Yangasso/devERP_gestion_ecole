@@ -1,8 +1,8 @@
 import React from 'react';
 
-const InfoRow = ({ label, value }) => (
-    <div className="info">
-      <span className="label">{label}:</span>
+const InfoRow = ({ label, value, className }) => (
+    <div className={className}>
+      <span className="">{label}:</span>
       <span>{value}</span>
     </div>
 );

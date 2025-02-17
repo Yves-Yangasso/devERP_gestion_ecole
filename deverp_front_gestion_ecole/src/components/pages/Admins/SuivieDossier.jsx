@@ -1,8 +1,8 @@
 import React from 'react';
-import Layout from '../../formulaire/Layout'; // Assure-toi d'importer correctement le Layout
-import StudentTrackingForm from '../../formulaire/SuivieDossierForm'; // Assure-toi d'importer le formulaire que tu veux afficher
+import Layout from '../../formulaire/Layout';
+import StudentTrackingForm from '../../formulaire/SuivieDossierForm'; 
 
-const InformationStudentPage = () => {
+const InformationStudentPage = () => {  
   return (
     <Layout
       leftText=" Votre dossier a été envoyé avec succès. Vous recevrez un e-mail

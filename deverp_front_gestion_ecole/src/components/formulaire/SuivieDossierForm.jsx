@@ -2,35 +2,45 @@ import React, { useState } from "react";
 import Input from "../ui/Input/InputField";
 import Button from "../ui/Button/Button";
 import InfoRow from "../ui/label/InfoRow";
-import { CheckCircle, XCircle } from "lucide-react";
+import { CheckCircle, XCircle, Hourglass, AlertTriangle, FileText } from "lucide-react"; // Ajout de nouvelles icônes
 import AlertService from "../../services/notifications/AlertService";
-
-const dossierData = {
-    nom: "Mariama Ndiaye",
-    email: "ndiayemama868@gmail.com",
-    telephone: "772600714",
-    nationalite: "Sénégalaise",
-    documents: {
-        "CIN/Passport": true,
-        "Casier Judiciaire": true,
-        "Certificat de Scolarité": true,
-        "Certificat de Résidence": true,
-        "Dernier Diplôme": true,
-    },
-    decision: "Approuvés",
-    motif: "Il manque le document Dernier Diplôme",
-};
+import useCrud from '../../hooks/useCrudAxios'; 
 
 const StudentTrackingForm = () => {
-    const [email, setEmail] = useState(""); // L'email de suivi
+    const [codeSuivi, setCodeSuivi] = useState(""); // L'email de suivi
     const [showDecision, setShowDecision] = useState(false); // Pour afficher la décision
+    const [dossierData, setDossierData] = useState(null); // Pour stocker les données du dossier
+    const { create } = useCrud('suivi-dossier/verifier'); // Utilisation du hook pour envoyer les données
 
-    const handleEmailSubmit = () => {
-        // Logique pour vérifier l'email (par exemple, une API ou recherche dans les données)
-        if (email === dossierData.email) {
-            setShowDecision(true); // Afficher la décision si l'email est valide
-        } else {
-            AlertService.error("Email non trouvé. Veuillez entrer un email valide.");
+    const handleEmailSubmit = async () => {
+        const requestPayload = { code_suivi: codeSuivi }; // Créez l'objet avec le code de suivi
+        try {
+            const response = await create(requestPayload); // Passez l'objet au hook `create`
+            if (response && response.data.code_suivi === codeSuivi) {
+                setDossierData(response.data); // Stocker la réponse dans l'état
+                setShowDecision(true); // Afficher la décision si le code de suivi est valide
+            } else {
+                AlertService.error("Code de suivi non trouvé. Veuillez entrer un code valide.");
+            }
+        } catch (error) {
+            AlertService.error("Une erreur s'est produite lors de la vérification du code de suivi.");
+        }
+    };    
+
+    const renderStatusIcon = (statut) => {
+        switch (statut) {
+            case 'en_attente':
+                return <Hourglass className="text-yellow-500" />;
+            case 'en_cours_validation':
+                return <FileText className="text-blue-500" />;
+            case 'valide':
+                return <CheckCircle className="text-green-500" />;
+            case 'rejete':
+                return <XCircle className="text-red-500" />;
+            case 'incomplet':
+                return <AlertTriangle className="text-orange-500" />;
+            default:
+                return null;
         }
     };
 
@@ -41,13 +51,13 @@ const StudentTrackingForm = () => {
                     Suivi de Dossier
                 </h2>
 
-                {/* Entrée de l'email */}
+                {/* Entrée du code de suivi */}
                 {!showDecision && (
                     <div className="mb-6 flex justify-between w-full">
                         <Input
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            placeholder="Entrez votre email"
+                            value={codeSuivi}
+                            onChange={(e) => setCodeSuivi(e.target.value)}
+                            placeholder="Entrez votre code de suivi"
                             className=""
                         />
                         <Button
@@ -59,28 +69,24 @@ const StudentTrackingForm = () => {
                     </div>
                 )}
 
-                {/* Affichage de la décision si l'email est trouvé */}
-                {showDecision && (
-                    <div className="bg-white p-6 rounded-lg shadow">
+                {/* Affichage de la décision si le code est trouvé */}
+                {showDecision && dossierData && (
+                    <div className="bg-white p-6 rounded-lg shadow w-full">
                         <h3 className="text-lg font-semibold text-gray-700 mb-4">Informations du demandeur</h3>
-                        <div className="grid grid-cols-2 gap-4">
-                            <InfoRow label="Nom Complet" value={dossierData.nom} />
-                            <InfoRow label="Nationalité" value={dossierData.nationalite} />
-                            <InfoRow label="Email" value={dossierData.email} />
-                            <InfoRow label="Téléphone" value={dossierData.telephone} />
+                        <div className="grid grid-cols-2 gap-4 w-full border">
+                            <InfoRow label="Nom Complet" className={"w-full"} value={`${dossierData.inscription.prenom} ${dossierData.inscription.nom}`}/>
+                            <InfoRow label="Nationalité" value={dossierData.inscription.nationalite} />
+                            <InfoRow label="Email" value={dossierData.inscription.email} />
+                            <InfoRow label="Téléphone" value={dossierData.inscription.telephone} />
                         </div>
 
                         <div className="bg-white p-6 mt-6 rounded-lg shadow">
                             <h3 className="text-lg font-semibold text-gray-700 mb-4">Dossier</h3>
                             <div className="grid grid-cols-2 gap-4">
-                                {Object.entries(dossierData.documents).map(([doc, valid]) => (
+                                {Object.entries(dossierData.documents).map(([doc, details]) => (
                                     <div key={doc} className="flex items-center justify-between border-b py-2 last:border-none">
-                                        <span>{doc}</span>
-                                        {valid ? (
-                                            <CheckCircle className="text-green-500" />
-                                        ) : (
-                                            <XCircle className="text-red-500" />
-                                        )}
+                                        <span>{details.type}</span>
+                                        {renderStatusIcon(details.statut)} {/* Affichage dynamique de l'icône selon le statut */}
                                     </div>
                                 ))}
                             </div>
@@ -90,7 +96,7 @@ const StudentTrackingForm = () => {
                             <div className="bg-gray-50 shadow-lg px-10 py-2 rounded-3xl items-center flex justify-between">
                                 <h3 className="text-lg font-semibold text-gray-700">Décision</h3>
                                 <p className={`font-bold text-lg ${dossierData.decision === "Rejeté" ? "text-red-500" : "text-green-500"}`}>
-                                    {dossierData.decision}
+                                    {dossierData.status}
                                 </p>
                             </div>
                             {dossierData.motif && <p className="mt-6 text-gray-600 text-left">Motif : {dossierData.motif}</p>}

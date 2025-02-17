@@ -18,6 +18,7 @@ const useCrud = (baseURL) => {
                 'Accept': 'application/json'
             }
         });
+        
 
         instance.interceptors.request.use(
             config => {

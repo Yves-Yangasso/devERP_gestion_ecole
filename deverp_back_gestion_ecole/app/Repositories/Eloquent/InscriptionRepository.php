@@ -41,15 +41,14 @@ class InscriptionRepository
         });
     }
 
-    public function findByCodeSuiviAndEmail(string $codeSuivi, string $email): ?Inscription
+    public function findByCodeSuiviAndEmail(string $codeSuivi): ?Inscription
     {
-        $cacheKey = $this->cachePrefix . "code_{$codeSuivi}_email_{$email}";
+        $cacheKey = $this->cachePrefix . "code_{$codeSuivi}";
 
-        return Cache::remember($cacheKey, $this->cacheDuration, function () use ($codeSuivi, $email) {
+        return Cache::remember($cacheKey, $this->cacheDuration, function () use ($codeSuivi) {
             return Inscription::whereHas('dossier', function ($query) use ($codeSuivi) {
                 $query->where('code_suivi', $codeSuivi);
             })
-                ->where('email', $email)
                 ->with(['dossier.documents', 'tuteur'])
                 ->first();
         });

@@ -3,6 +3,7 @@
 namespace App\Services\Dossier;
 
 use App\Models\Dossier;
+use App\Repositories\Eloquent\DossierRepository;
 use App\Repositories\Eloquent\InscriptionRepository;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
@@ -10,7 +11,7 @@ class SuiviDossierService
 {
     protected $inscriptionRepository;
 
-    public function __construct(InscriptionRepository $inscriptionRepository)
+    public function __construct(DossierRepository $inscriptionRepository)
     {
         $this->inscriptionRepository = $inscriptionRepository;
     }
@@ -18,19 +19,15 @@ class SuiviDossierService
     /**
      * Récupère un dossier par son code de suivi et l'email de l'utilisateur
      */
-    public function getDossierParCodeSuivi(string $codeSuivi, string $email)
+    public function getDossierParCodeSuivi(string $codeSuivi)
     {
-        $inscription = $this->inscriptionRepository->findByCodeSuiviAndEmail($codeSuivi, $email);
-
-        if (!$inscription || !$inscription->dossier) {
-            throw new ModelNotFoundException('Dossier non trouvé. Vérifiez votre code de suivi et email.');
+        $inscription = $this->inscriptionRepository->findByCodeSuivi($codeSuivi);
+        
+        if (!$inscription) {
+            throw new ModelNotFoundException('Dossier non trouvé. Vérifiez votre code de suivi.');
         }
 
-        return $inscription->dossier()->with([
-            'documents' => function ($query) {
-                $query->orderBy('updated_at', 'desc');
-            }
-        ])->firstOrFail();
+        return $inscription;
     }
 
     /**
@@ -38,7 +35,7 @@ class SuiviDossierService
      */
     public function getHistoriqueDossier(string $codeSuivi, string $email)
     {
-        $inscription = $this->inscriptionRepository->findByCodeSuiviAndEmail($codeSuivi, $email);
+        $inscription = $this->inscriptionRepository->findByCodeSuivi($codeSuivi );
 
         if (!$inscription) {
             throw new ModelNotFoundException('Dossier non trouvé. Vérifiez votre code de suivi et email.');
