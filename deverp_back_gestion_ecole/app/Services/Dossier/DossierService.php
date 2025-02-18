@@ -35,8 +35,8 @@ class DossierService
         // Récupérer la liste des documents requis depuis la configuration
         $documentsRequis = config('dossier.documents_requis', []);
 
-        // Déclencher l'événement avec les bons paramètres
-        event(new DossierCree($dossier->code_suivi, $documentsRequis));
+        // Déclencher l'événement avec les trois paramètres requis
+        event(new DossierCree($dossier->code_suivi, $documentsRequis, $dossier));
 
         return $dossier;
     }

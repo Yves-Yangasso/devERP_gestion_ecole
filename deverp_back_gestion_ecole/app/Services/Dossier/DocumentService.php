@@ -25,7 +25,9 @@ class DocumentService
             $uploadResult = $this->cloudinaryStorage->uploadDocument(
                 $fichier,
                 $data['dossier_code'],
-                $data['type']
+                ['type' => $data['type']], // Options dans un tableau
+                $data['prenom'],          // Ajout du prénom
+                $data['nom']             // Ajout du nom
             );
 
             if (!$uploadResult['success']) {
