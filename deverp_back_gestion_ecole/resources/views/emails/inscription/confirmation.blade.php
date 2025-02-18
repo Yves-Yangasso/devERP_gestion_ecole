@@ -137,9 +137,9 @@
 
             <h3>📌 Que se passe-t-il ensuite ?</h3>
             <ul style="text-align: left; display: inline-block; margin: 0 auto; color: #555;">
-                <li>🔹 Votre dossier est en cours de traitement.</li>
-                <li>🔹 Vous recevrez des notifications par email.</li>
-                <li>🔹 Vous pouvez suivre votre dossier en ligne 24/7.</li>
+                <li style="none">🔹 Votre dossier est en cours de traitement.</li>
+                <li style="none">🔹 Vous recevrez des notifications par email.</li>
+                <li style="none">🔹 Vous pouvez suivre votre dossier en ligne 24/7.</li>
             </ul>
 
             <h3>💡 Besoin d'aide ?</h3>
@@ -150,15 +150,11 @@
             </div>
 
             <p>Merci de votre confiance !</p>
-
-            <p>Cordialement,<br>
-                <strong>gestion_ecole_erp</strong>
-            </p>
         </div>
 
         <!-- Pied de page avec icônes FontAwesome -->
         <div class="email-footer">
-            © 2025 gestion_ecole_erp. Tous droits réservés.
+            © 2025 Gestion_Ecole_ERP. Tous droits réservés.
         </div>
     </div>
 
