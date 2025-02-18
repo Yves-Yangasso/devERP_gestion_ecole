@@ -6,7 +6,6 @@ const TraiteDemandes = ({ dossier, closePopup, openSecondPopup }) => {
     const [checkedDocs, setCheckedDocs] = useState({});
     const [previewDoc, setPreviewDoc] = useState(null);
     
-    // Récupération des documents depuis la nouvelle structure
     const documentsRequis = dossier.dossier && dossier.dossier[0] && dossier.dossier[0].documents
         ? dossier.dossier[0].documents.map(doc => ({
             id: doc.id,
@@ -18,10 +17,13 @@ const TraiteDemandes = ({ dossier, closePopup, openSecondPopup }) => {
         : [];
 
     const handleCheckDocument = (docId) => {
-        setCheckedDocs(prev => ({
-            ...prev,
-            [docId]: !prev[docId]
-        }));
+        setCheckedDocs(prev => {
+            const newCheckedDocs = {
+                ...prev,
+                [docId]: !prev[docId]
+            };
+            return newCheckedDocs;
+        });
     };
 
     const areAllDocsChecked = () => {
@@ -29,12 +31,14 @@ const TraiteDemandes = ({ dossier, closePopup, openSecondPopup }) => {
     };
 
     const handleOpenDecision = () => {
-        const checkedDocIds = Object.entries(checkedDocs)
-            .filter(([_, isChecked]) => isChecked)
-            .map(([docId]) => docId);
+        const checkedDocumentsStatus = documentsRequis.map(doc => ({
+            id: doc.id,
+            type: doc.type,
+            status: checkedDocs[doc.id] ? "Valide" : "Incomplet"
+        }));
 
         openSecondPopup({
-            checkedDocuments: checkedDocIds,
+            checkedDocuments: checkedDocumentsStatus,
             allDocsChecked: areAllDocsChecked(),
             dossierId: dossier.id
         });
@@ -90,6 +94,7 @@ const TraiteDemandes = ({ dossier, closePopup, openSecondPopup }) => {
                     )}
                 </div>
 
+
                 <div className="mt-6 p-6 bg-blue-100 rounded-lg shadow-lg">
                     <h4 className="font-bold text-lg text-blue-600 mb-4">📄 Documents Requis</h4>
                     <div className="grid grid-cols-3 gap-4">
@@ -106,7 +111,9 @@ const TraiteDemandes = ({ dossier, closePopup, openSecondPopup }) => {
                                     htmlFor={`doc-${doc.id}`}
                                     className="flex-1 text-sm font-medium text-gray-700 cursor-pointer"
                                 >
-                                    {doc.type}
+                                    {doc.type} - <span className={checkedDocs[doc.id] ? "text-green-600" : "text-red-600"}>
+                                        {checkedDocs[doc.id] ? "Valide" : "Incomplet"}
+                                    </span>
                                 </label>
                                 <button 
                                     onClick={() => setPreviewDoc(doc)}

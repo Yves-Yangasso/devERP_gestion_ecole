@@ -35,7 +35,7 @@ const Decision = () => {
                   id="statut"
                   className="block w-full border border-gray-400 rounded-lg px-4 py-3 focus:ring-blue-500 focus:border-blue-500"
                 >
-                  <option value="">Veuillez saisir le prénom(s)</option>
+                  <option value="">Veuillez saisir le statut du dossier</option>
                   <option value="approved">Approuvé</option>
                   <option value="rejected">Rejeté</option>
                 </select>

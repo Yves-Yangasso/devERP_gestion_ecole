@@ -48,6 +48,7 @@ const useCrud = (baseURL) => {
         try {
             console.log(`Requête ${method.toUpperCase()} vers ${api.defaults.baseURL}${endpoint}`);
             const response = await api[method](endpoint, payload);
+            console.log(response.data);
             setData(response.data);
             return response.data;
         } catch (err) {
