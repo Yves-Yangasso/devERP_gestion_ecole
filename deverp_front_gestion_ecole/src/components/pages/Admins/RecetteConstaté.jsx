@@ -1,28 +1,8 @@
-import React from 'react';
-import PopupLayout from '../../formulaire/PopupLayout';
-// Exemple d'utilisation
+import React from "react";
+
 const RecetteConstaté = () => {
-    const tabs = [
-      "Etudiants",
-      "Frais & mensualités",
-      "Paiements",
-      "Recettes constatés"
-    ];
- 
-    return (
-      <PopupLayout
-        title="Ajouter une nouvelle inscription"
-        activeTab={4}
-        tabs={tabs}
-        onClose={() => console.log('Fermer')}
-        onPrevClick={() => console.log('Précédent')}
-        onNextClick={() => console.log('Suivant')}
-        prevText="Précédent"
-        nextText="Suivant"
-        buttonType="button"
-      >
-        {/* Contenu du popup */}
-        
+  return (
+    <div className="p-6 bg-white rounded-lg shadow-lg">
       {/* Header */}
       <div className="flex items-center space-x-4 mb-6 shadow-lg p-4 rounded-md">
         <img
@@ -30,7 +10,7 @@ const RecetteConstaté = () => {
           alt="Profil utilisateur"
           className="w-16 h-16 rounded-full object-cover"
         />
-        <div className="">
+        <div>
           <h1 className="text-xl font-bold text-gray-800">Mariama NDIAYE</h1>
           <p className="text-gray-600">ISI - MAND2001</p>
         </div>
@@ -72,13 +52,13 @@ const RecetteConstaté = () => {
               <span className="text-purple-600 bg-purple-100 p-2 rounded-full text-sm">
                 CNI/Passport
               </span>
-              <span className="text-purple-600 bg-purple-100 p-2 py-1 rounded-full text-sm">
+              <span className="text-purple-600 bg-purple-100 p-2 rounded-full text-sm">
                 Diplôme
               </span>
-              <span className="text-purple-600 bg-purple-100 p-2 py-1 rounded-full text-sm">
+              <span className="text-purple-600 bg-purple-100 p-2 rounded-full text-sm">
                 Certificat
               </span>
-              <span className="text-purple-600 bg-purple-100 p-2 py-1 rounded-full text-sm">
+              <span className="text-purple-600 bg-purple-100 p-2 rounded-full text-sm">
                 Photo
               </span>
             </div>
@@ -95,9 +75,8 @@ const RecetteConstaté = () => {
           </div>
         </div>
       </div>
-    
-      </PopupLayout>
-    );
-  };
-  
-  export default RecetteConstaté;
+    </div>
+  );
+};
+
+export default RecetteConstaté;

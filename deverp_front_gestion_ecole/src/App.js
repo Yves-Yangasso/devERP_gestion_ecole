@@ -11,13 +11,14 @@ import RecapStudents from './components/pages/Demandeurs/RecapStudent';
 import Decision_admin from './components/pages/Admins/Decision_admin';
 import Paiement from './components/pages/Admins/Paiement';
 import RecetteConstaté from './components/pages/Admins/RecetteConstaté';
+import PopupLayout from './components/formulaire/PopupLayout';
 
 function App() {
   return (
     <FormProvider>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Navigate to="/RecetteConstaté" />} />
+          <Route path="/" element={<Navigate to="/PopupLayout" />} />
           <Route path="/StudentInfos" element={<InformationStudent />} />
           <Route path="/TuteurInfos" element={<InformationTuteur />} />
           <Route path="/DocAFournir" element={<DocAFournir />} />
@@ -25,6 +26,7 @@ function App() {
           <Route path="/Decision_admin" element={<Decision_admin />} />
           <Route path="/Paiement" element={<Paiement />} />
           <Route path="/RecetteConstaté" element={<RecetteConstaté />} />
+          <Route path="/PopupLayout" element={<PopupLayout />} />
         </Routes>
       </BrowserRouter>
     </FormProvider>
