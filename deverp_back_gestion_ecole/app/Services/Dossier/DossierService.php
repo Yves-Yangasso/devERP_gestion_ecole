@@ -95,88 +95,16 @@ class DossierService
     {
         return $this->dossierRepository->getByStatut($statut);
     }
+
+    public function mettreAJourStatutDocuments(array $donnees): bool
+    {
+        $dossierId = $donnees['id']; // L'ID du dossier
+        $documents = $donnees['documents']; // Liste des documents
+
+        foreach ($documents as $document) {
+            $this->dossierRepository->updateStatusDocument($dossierId, $document['id'], $document['status']);
+        }
+
+        return true;
+    }
 }
-
-
-// namespace App\Services\Dossier;
-
-// use App\Contracts\Repositories\Dossier\DossierRepositoryInterface;
-// use App\Events\Dossier\{DossierCree, DocumentSoumis, DossierValide};
-// use App\Models\Dossier;
-// use App\Services\Storage\CloudinaryStorageService;
-// use App\Jobs\Dossier\{AnalyserDocumentIA, GenererRapportConformite};
-// use Illuminate\Support\Facades\DB;
-
-// class DossierService
-// {
-//     public function __construct(
-//         private readonly DossierRepositoryInterface $dossierRepository,
-//         private readonly ValidationService $validationService,
-//         private readonly CloudinaryStorageService $cloudinaryStorage
-//     ) {}
-
-//     /**
-//      * Créer un nouveau dossier
-//      */
-//     public function creerDossier(array $data): Dossier
-//     {
-//         $dossier = DB::transaction(function () use ($data) {
-//             $dossier = $this->dossierRepository->create($data);
-//             event(new DossierCree($dossier));
-//             return $dossier;
-//         });
-
-//         return $dossier;
-//     }
-
-//     /**
-//      * Ajouter un document au dossier
-//      */
-//     public function ajouterDocument(Dossier $dossier, array $documentData): void
-//     {
-//         DB::transaction(function () use ($dossier, $documentData) {
-//             // Upload sur Cloudinary
-//             $uploadResult = $this->cloudinaryStorage->uploadDocument(
-//                 $documentData['fichier'],
-//                 $dossier->code_suivi,
-//                 $documentData['type']
-//             );
-
-//             if (!$uploadResult['success']) {
-//                 throw new \Exception('Échec du téléchargement du document');
-//             }
-
-//             // Préparation et sauvegarde du document
-//             $documentData['chemin'] = $uploadResult['url'];
-//             $documentData['public_id'] = $uploadResult['public_id'];
-//             $document = $this->dossierRepository->ajouterDocument($dossier, $documentData);
-
-//             // Événement et validation
-//             event(new DocumentSoumis($dossier, $documentData['type']));
-
-//             // Lancer la validation selon le mode configuré
-//             if (config('dossier.mode_validation') === 'automatique') {
-//                 AnalyserDocumentIA::dispatch($document);
-//             }
-
-//             // Mise à jour du statut du dossier
-//             $dossier->mettreAJourStatut();
-//         });
-//     }
-
-//     /**
-//      * Valider un dossier complet
-//      */
-//     public function validerDossier(Dossier $dossier): void
-//     {
-//         if ($dossier->documentsComplets() && $dossier->documentsValides()) {
-//             DB::transaction(function () use ($dossier) {
-//                 $dossier->update(['statut' => 'valide']);
-//                 GenererRapportConformite::dispatch($dossier);
-//                 event(new DossierValide($dossier));
-//             });
-//         }
-//     }
-
-//     // ... autres méthodes précédemment définies ...
-// }

@@ -81,6 +81,7 @@ Route::prefix('v1')->group(function () {
         // Gestion des dossiers
         Route::prefix('dossiers')->group(function () {
             // Création et modification
+            Route::post('/update-status', [DossierController::class, 'mettreAJourStatut']);
             Route::post('/', [DossierController::class, 'store']);
             Route::get('/etudiant/{etudiantId}', [DossierController::class, 'getDossiersEtudiant']);
 
