@@ -1,38 +1,42 @@
 <?php
 
-namespace App\Services\Tuteur;
+namespace App\Services\Paiement;
 
+use App\Contracts\Repositories\Paiement\ModePaiementRepositoryInterface;
 use App\Models\ModePaiement;
-use App\Repositories\Eloquent\ModePaiementRepository;
-use App\Events\Paiement\ModePaiementCreer;
-use App\Events\Paiement\ModePaiementModifie;
+use Illuminate\Support\Collection;
 
 class ModePaiementService
 {
-    public function __construct(
-        private ModePaiementRepository $modePaiementRepository
-    ) {}
+    protected ModePaiementRepositoryInterface $modePaiementRepository;
 
-    public function creer(array $donnees)
+    public function __construct(ModePaiementRepositoryInterface $modePaiementRepository)
     {
-        $modePaiement = $this->modePaiementRepository->creer($donnees);
-
-        event(new ModePaiementCreer($modePaiement));
-
-        return $modePaiement;
+        $this->modePaiementRepository = $modePaiementRepository;
     }
 
-    public function modifier($id, array $donnees)
+    public function creer(array $donnees): ModePaiement
     {
-       // $modePaiement = $this->modePaiementRepository>modifier($id, $donnees);
-
-      //  event(new ModePaiementModifie($modePaiement));
-
-      //  return $modePaiement;
+        return $this->modePaiementRepository->creer($donnees);
     }
 
-    public function supprimer($id)
+    public function modifier(int $id, array $donnees): ModePaiement
+    {
+        return $this->modePaiementRepository->modifier($id, $donnees);
+    }
+
+    public function supprimer(int $id): void
     {
         $this->modePaiementRepository->supprimer($id);
+    }
+
+    public function trouverParId(int $id): ?ModePaiement
+    {
+        return $this->modePaiementRepository->trouverParId($id);
+    }
+
+    public function tous(): Collection
+    {
+        return $this->modePaiementRepository->tous();
     }
 }

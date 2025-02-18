@@ -1,17 +1,23 @@
 <?php
-
 namespace App\Http\Requests\Paiement;
 
 use Illuminate\Foundation\Http\FormRequest;
-use App\Enums\Tuteur\ModePaiementEnums;
 
-class CreePaiementRequest extends FormRequest
+class creerPaiementRequest extends FormRequest
 {
-    public function rules()
+    public function authorize(): bool
+    {
+        return true;
+    }
+
+    public function rules(): array
     {
         return [
-            'montant' => 'required|float',
-            'id_mode' => 'required|integer',
+            'montant_paiement' => 'sometimes|numeric|min:0',
+            'etudiant_id' => 'sometimes|exists:etudiants,id',
+            'mode_paiement_id' => 'sometimes|exists:mode_paiements,id',
+            'lignes_paiement' => 'sometimes|array',
+            'lignes_paiement.*.montant' => 'sometimes|numeric|min:0',
         ];
     }
 }

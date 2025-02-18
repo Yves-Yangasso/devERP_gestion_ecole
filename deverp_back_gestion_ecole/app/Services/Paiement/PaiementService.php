@@ -1,38 +1,50 @@
 <?php
-
-namespace App\Services\Tuteur;
+namespace App\Services\Paiement;
 
 use App\Models\Paiement;
-use App\Repositories\Eloquent\PaiementRepository;
-use App\Events\Paiement\PaiementCreer;
-use App\Events\Paiement\PaiementModifie;
+use App\Models\LignePaiement;
+use Illuminate\Support\Facades\DB;
 
-class ModePaiementService
+class PaiementService
 {
-    public function __construct(
-        private PaiementRepository $PaiementRepository
-    ) {}
-
-    public function creer(array $donnees)
+    public function creerPaiement(array $donnees)
     {
-        $paiement = $this->PaiementRepository->creer($donnees);
+        return DB::transaction(function () use ($donnees) {
+            $paiement = Paiement::create([
+                'montant_paie' => $donnees['montant_paie'],
+                'date_paie' => now(),
+                'etudiant_id' => $donnees['etudiant_id'],
+                'mode_paiement_id' => $donnees['mode_paiement_id'],
+            ]);
 
-        event(new PaiementCreer($paiement));
+            foreach ($donnees['lignes_paiement'] as $ligne) {
+                LignePaiement::create([
+                    'paiement_id' => $paiement->id,
+                    'montant' => $ligne['montant'],
+                    'date_paiement' => now(),
+                    'status' => 'en attente',
+                ]);
+            }
 
+            return $paiement;
+        });
+    }
+
+    public function modifierPaiement(int $id, array $donnees)
+    {
+        $paiement = Paiement::findOrFail($id);
+        $paiement->update($donnees);
         return $paiement;
     }
 
-    public function modifier($id, array $donnees)
+    public function trouverPaiement(int $id)
     {
-       // $modePaiement = $this->modePaiementRepository>modifier($id, $donnees);
-
-      //  event(new ModePaiementModifie($modePaiement));
-
-      //  return $modePaiement;
+        return Paiement::with('lignePaiements')->findOrFail($id);
     }
 
-    public function supprimer($id)
+    public function supprimerPaiement(int $id)
     {
-        $this->PaiementRepository->supprimer($id);
+        $paiement = Paiement::findOrFail($id);
+        $paiement->delete();
     }
 }

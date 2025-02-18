@@ -36,7 +36,7 @@ class DossierService
         $documentsRequis = config('dossier.documents_requis', []);
 
         // Déclencher l'événement avec les bons paramètres
-        event(new DossierCree($dossier->code_suivi, $documentsRequis));
+        //event(new DossierCree($dossier->code_suivi, $documentsRequis));
 
         return $dossier;
     }

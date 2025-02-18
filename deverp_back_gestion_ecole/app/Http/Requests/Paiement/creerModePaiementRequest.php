@@ -3,14 +3,19 @@
 namespace App\Http\Requests\Paiement;
 
 use Illuminate\Foundation\Http\FormRequest;
-use App\Enums\Tuteur\ModePaiementEnums;
 
-class CreerModePaiementRequest extends FormRequest
+class creerModePaiementRequest extends FormRequest
 {
-    public function rules()
+    public function authorize(): bool
+    {
+        return true;
+    }
+
+    public function rules(): array
     {
         return [
-            'typeMode' => 'required|string|max:100',
+            'typemode' => 'required|string|unique:mode_paiements,typemode,' . ($this->route('id') ?? 'NULL'),
+            'status' => 'required|string|max:50',
         ];
     }
 }

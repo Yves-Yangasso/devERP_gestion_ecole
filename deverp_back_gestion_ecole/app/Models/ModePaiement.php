@@ -10,7 +10,7 @@ class ModePaiement extends Model
     use HasFactory;
 
     protected $fillable = [
-        'type_mode',
+        'typemode',
         'status',
     ];
 

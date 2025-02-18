@@ -29,4 +29,9 @@ class Etudiant extends Model
     {
         return $this->belongsTo(Groupe::class);
     }
+
+    public function paiements()
+    {
+        return $this->hasMany(Paiement::class);
+    }
 }

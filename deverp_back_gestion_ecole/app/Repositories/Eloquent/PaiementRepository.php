@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Repositories\Eloquent;
 
 use App\Models\Paiement;
@@ -16,20 +15,20 @@ class PaiementRepository implements PaiementRepositoryInterface
 
     public function modifier(int $id, array $donnees): Paiement
     {
-        $tuteur = Paiement::findOrFail($id);
-        $tuteur->update($donnees);
-        return $tuteur;
+        $paiement = Paiement::findOrFail($id);
+        $paiement->update($donnees);
+        return $paiement;
     }
 
     public function supprimer(int $id): void
     {
-        $tuteur = Paiement::findOrFail($id);
-        $tuteur->delete();
+        $paiement = Paiement::findOrFail($id);
+        $paiement->delete();
     }
 
     public function trouverParId(int $id): ?Paiement
     {
-        return Paiement::find($id);
+        return Paiement::with('lignePaiements')->find($id);
     }
 
     public function tous(): Collection

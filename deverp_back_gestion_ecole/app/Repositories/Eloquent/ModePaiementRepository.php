@@ -16,15 +16,15 @@ class ModePaiementRepository implements ModePaiementRepositoryInterface
 
     public function modifier(int $id, array $donnees): ModePaiement
     {
-        $tuteur = ModePaiement::findOrFail($id);
-        $tuteur->update($donnees);
-        return $tuteur;
+        $modePaiement = ModePaiement::findOrFail($id);
+        $modePaiement->update($donnees);
+        return $modePaiement;
     }
 
     public function supprimer(int $id): void
     {
-        $tuteur = ModePaiement::findOrFail($id);
-        $tuteur->delete();
+        $modePaiement = ModePaiement::findOrFail($id);
+        $modePaiement->delete();
     }
 
     public function trouverParId(int $id): ?ModePaiement

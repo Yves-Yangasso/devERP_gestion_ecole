@@ -10,8 +10,9 @@ class Paiement extends Model
     use HasFactory;
 
     protected $fillable = [
-        'montant_paie',
-        'date_paie',
+        'montant_paiement',
+        'date_paiement',
+        'etudiant_id',
     ];
 
     public function lignePaiements()
@@ -22,5 +23,10 @@ class Paiement extends Model
     public function modePaiement()
     {
         return $this->belongsTo(ModePaiement::class);
+    }
+
+    public function etudiant()
+    {
+        return $this->belongsTo(Etudiant::class);
     }
 }
