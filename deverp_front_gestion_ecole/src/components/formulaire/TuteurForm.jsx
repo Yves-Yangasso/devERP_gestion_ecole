@@ -5,144 +5,164 @@ import Button from "../ui/Button/Button";
 import { PlusCircle, Trash2 } from "lucide-react";
 import NavigationButtons from "../ui/Button/NavigationButtons";
 import { useFormContext } from "../../context/FormContext";
-import { validateName, validateEmail, validatePhone, validateRequired } from "../../utils/validators";
+import { validateName, validateEmail, validateRequired } from "../../utils/validators";
 import AlertService from "../../services/notifications/AlertService";
 import SelectInput from "../ui/Input/SelectInput";
+import PhoneInput from 'react-phone-number-input';
+import 'react-phone-number-input/style.css';
+import '../../css/layout.css';
 
+// Relation options for the select input
 const RELATION_OPTIONS = [
-  { value: "pere", label: "Père" },
-  { value: "mere", label: "Mère" },
-  { value: "grand-frere", label: "Grand Frère" },
-  { value: "grand-soeur", label: "Grand Sœur" },
-  { value: "entreprise", label: "Entreprise" },
+    { value: "pere", label: "Père" },
+    { value: "mere", label: "Mère" },
+    { value: "grand-frere", label: "Grand Frère" },
+    { value: "grand-soeur", label: "Grand Sœur" },
+    { value: "entreprise", label: "Entreprise" },
 ];
 
 const TuteurForm = () => {
-  const { formState, updateTutors } = useFormContext();
-  const navigate = useNavigate();
+    const { formState, updateTutors } = useFormContext();
+    const navigate = useNavigate();
 
-  const [tuteurs, setTuteurs] = React.useState(() => {
-    return formState.tutors && formState.tutors.length > 0
-      ? formState.tutors
-      : [{ prenom: "", nom: "", adresse: "", telephone: "", email: "", relation: "" }];
-  });
-
-  const [ajoutPossible, setAjoutPossible] = React.useState(false);
-
-  const isTuteurComplet = (tuteur) => {
-    return Object.values(tuteur).every((val) => val.trim() !== "");
-  };
-
-  const handleTuteurChange = (index, field, value) => {
-    const newTuteurs = [...tuteurs];
-    newTuteurs[index] = { ...newTuteurs[index], [field]: value };
-
-    // Vérification des doublons d'email et de téléphone
-    if (index === 1) {
-      const premierTuteur = newTuteurs[0];
-      if (field === "email" && value === premierTuteur.email) {
-        AlertService.error("Les emails des deux tuteurs doivent être différents.");
-        return;
-      }
-      if (field === "telephone" && value === premierTuteur.telephone) {
-        AlertService.error("Les numéros de téléphone des deux tuteurs doivent être différents.");
-        return;
-      }
-    }
-
-    setTuteurs(newTuteurs);
-    updateTutors(newTuteurs);
-    if (index === 0) {
-      setAjoutPossible(isTuteurComplet(newTuteurs[0]));
-    }
-  };
-
-  const ajouterTuteur = () => {
-    if (!ajoutPossible) return;
-    const newTuteurs = [...tuteurs, { prenom: "", nom: "", adresse: "", telephone: "", email: "", relation: "" }];
-    setTuteurs(newTuteurs);
-    updateTutors(newTuteurs);
-  };
-
-  const supprimerTuteur = (index) => {
-    if (index === 1) {
-      const newTuteurs = tuteurs.slice(0, 1);
-      setTuteurs(newTuteurs);
-      updateTutors(newTuteurs);
-      setAjoutPossible(true);
-    }
-  };
-
-  const handlePrevClick = () => {
-    navigate("/StudentInfos");
-  };
-
-  const handleNextClick = (e) => {
-    e.preventDefault();
-    const errors = {};
-
-    tuteurs.forEach((tuteur, index) => {
-      if (!tuteur.prenom) errors[`prenom-${index}`] = "Le prénom est requis";
-      if (!tuteur.nom) errors[`nom-${index}`] = "Le nom est requis";
-      if (!tuteur.adresse) errors[`adresse-${index}`] = "L'adresse est requise";
-      if (!tuteur.telephone) errors[`telephone-${index}`] = "Le téléphone est requis";
-      if (!tuteur.email) errors[`email-${index}`] = "L'email est requis";
-      if (!tuteur.relation) errors[`relation-${index}`] = "La relation est requise";
+    const [tuteurs, setTuteurs] = React.useState(() => {
+        return formState.tutors && formState.tutors.length > 0
+            ? formState.tutors
+            : [{ prenom: "", nom: "", adresse: "", telephone: "", email: "", relation: "" }];
     });
 
-    if (Object.keys(errors).length > 0) {
-      AlertService.error("Veuillez remplir tous les champs", errors);
-      updateTutors({ errors });
-    } else {
-      navigate("/DocAFournir");
-    }
-  };
+    const [ajoutPossible, setAjoutPossible] = React.useState(false);
 
-  return (
-    <div className="flex flex-col h-full">
-      <h2 className="relative inline-block text-xl font-bold text-blue-600 mb-8 px-4 py-2 border-2 border-blue-600 rounded-tl-full rounded-br-full bg-white text-center">
-        INFORMATION DU TUTEUR
-      </h2>
+    const isTuteurComplet = (tuteur) => {
+        return Object.values(tuteur).every((val) => val.trim() !== "");
+    };
 
-      <form className="flex-1 flex flex-col">
-        {tuteurs.map((tuteur, index) => (
-          <div key={index} className="border border-gray-300 rounded-lg p-4 mb-6 relative">
-            <h3 className="text-lg font-bold text-gray-700 mb-4">Tuteur {index + 1}</h3>
+    const handleTuteurChange = (index, field, value) => {
+        const newTuteurs = [...tuteurs];
+        newTuteurs[index] = { ...newTuteurs[index], [field]: value };
 
-            {index === 1 && (
-              <button
-                type="button"
-                onClick={() => supprimerTuteur(index)}
-                className="absolute top-3 right-3 text-red-600 hover:text-red-800"
-              >
-                <Trash2 className="w-5 h-5" />
-              </button>
-            )}
+        // Check for duplicate email and phone numbers
+        if (index === 1) {
+            const premierTuteur = newTuteurs[0];
+            if (field === "email" && value === premierTuteur.email) {
+                AlertService.error("Les emails des deux tuteurs doivent être différents.");
+                return;
+            }
+            if (field === "telephone" && value === premierTuteur.telephone) {
+                AlertService.error("Les numéros de téléphone des deux tuteurs doivent être différents.");
+                return;
+            }
+        }
 
-            <div className="grid grid-cols-2 gap-x-8 gap-y-2">
-              <Input label="Prénom" name={`prenom-${index}`} placeholder="Saisir le prénom" value={tuteur.prenom} onChange={(e) => handleTuteurChange(index, "prenom", e.target.value)} validate={(value) => validateName(value, "Prénom")} />
-              <Input label="Nom" name={`nom-${index}`} placeholder="Saisir le nom" value={tuteur.nom} onChange={(e) => handleTuteurChange(index, "nom", e.target.value)} validate={(value) => validateName(value, "Nom")} />
-              <Input label="Adresse" name={`adresse-${index}`} placeholder="Saisir l'adresse" value={tuteur.adresse} onChange={(e) => handleTuteurChange(index, "adresse", e.target.value)} validate={(value) => validateRequired(value, "Adresse")} />
-              <Input label="Téléphone" name={`telephone-${index}`} placeholder="Saisir le numéro de téléphone" value={tuteur.telephone} onChange={(e) => handleTuteurChange(index, "telephone", e.target.value)} validate={(value) => validatePhone(value, "Téléphone")} />
-              <Input label="Email" name={`email-${index}`} placeholder="Saisir l'email" value={tuteur.email} onChange={(e) => handleTuteurChange(index, "email", e.target.value)} validate={(value) => validateEmail(value, "Email")} />
-              <SelectInput label="Relation" name={`relation-${index}`} options={RELATION_OPTIONS} value={tuteur.relation} onChange={(e) => handleTuteurChange(index, "relation", e.target.value)} validate={(value) => validateRequired(value, "Relation")} />
-            </div>
-          </div>
-        ))}
+        setTuteurs(newTuteurs);
+        updateTutors(newTuteurs);
+        if (index === 0) {
+            setAjoutPossible(isTuteurComplet(newTuteurs[0]));
+        }
+    };
 
-        {tuteurs.length < 2 && (
-          <div className="flex justify-end mb-6">
-            <Button onClick={ajouterTuteur} type="button" className={`bg-blue-600 text-white flex items-center ${!ajoutPossible ? "opacity-50 cursor-not-allowed" : ""}`} disabled={!ajoutPossible}>
-              <PlusCircle className="w-5 h-5 mr-2" />
-              Ajouter Tuteur
-            </Button>
-          </div>
-        )}
+    const ajouterTuteur = () => {
+        if (!ajoutPossible) return;
+        const newTuteurs = [...tuteurs, { prenom: "", nom: "", adresse: "", telephone: "", email: "", relation: "" }];
+        setTuteurs(newTuteurs);
+        updateTutors(newTuteurs);
+    };
 
-        <NavigationButtons onPrevClick={handlePrevClick} onNextClick={handleNextClick} prevText="Précédent" nextText="Suivant" />
-      </form>
-    </div>
-  );
+    const supprimerTuteur = (index) => {
+        if (index === 1) {
+            const newTuteurs = tuteurs.slice(0, 1);
+            setTuteurs(newTuteurs);
+            updateTutors(newTuteurs);
+            setAjoutPossible(true);
+        }
+    };
+
+    const handlePrevClick = () => {
+        navigate("/StudentInfos");
+    };
+
+    const handleNextClick = (e) => {
+        e.preventDefault();
+        const errors = {};
+
+        tuteurs.forEach((tuteur, index) => {
+            if (!tuteur.prenom) errors[`prenom-${index}`] = "Le prénom est requis";
+            if (!tuteur.nom) errors[`nom-${index}`] = "Le nom est requis";
+            if (!tuteur.adresse) errors[`adresse-${index}`] = "L'adresse est requise";
+            if (!tuteur.telephone) errors[`telephone-${index}`] = "Le téléphone est requis";
+            if (!tuteur.email) errors[`email-${index}`] = "L'email est requis";
+            if (!tuteur.relation) errors[`relation-${index}`] = "La relation est requise";
+        });
+
+        if (Object.keys(errors).length > 0) {
+            AlertService.error("Veuillez remplir tous les champs", errors);
+            updateTutors({ errors });
+        } else {
+            navigate("/DocAFournir");
+        }
+    };
+
+    return (
+        <div className="flex flex-col h-full">
+            <h2 className="relative inline-block text-xl font-bold text-blue-600 mb-8 px-4 py-2 border-2 border-blue-600 rounded-tl-full rounded-br-full bg-white text-center">
+                INFORMATION DU TUTEUR
+            </h2>
+
+            <form className="flex-1 flex flex-col">
+                {tuteurs.map((tuteur, index) => (
+                    <div key={index} className="border border-gray-300 rounded-lg p-4 mb-6 relative">
+                        <h3 className="text-lg font-bold text-gray-700 mb-4">Tuteur {index + 1}</h3>
+
+                        {index === 1 && (
+                            <button
+                                type="button"
+                                onClick={() => supprimerTuteur(index)}
+                                className="absolute top-3 right-3 text-red-600 hover:text-red-800"
+                            >
+                                <Trash2 className="w-5 h-5" />
+                            </button>
+                        )}
+
+                        <div className="grid grid-cols-2 gap-x-8 gap-y-2">
+                            <Input label="Prénom" name={`prenom-${index}`} placeholder="Saisir le prénom" value={tuteur.prenom} onChange={(e) => handleTuteurChange(index, "prenom", e.target.value)} validate={(value) => validateName(value, "Prénom")} />
+                            <Input label="Nom" name={`nom-${index}`} placeholder="Saisir le nom" value={tuteur.nom} onChange={(e) => handleTuteurChange(index, "nom", e.target.value)} validate={(value) => validateName(value, "Nom")} />
+                            <Input label="Adresse" name={`adresse-${index}`} placeholder="Saisir l'adresse" value={tuteur.adresse} onChange={(e) => handleTuteurChange(index, "adresse", e.target.value)} validate={(value) => validateRequired(value, "Adresse")} />
+
+                            <div className="mb-4">
+                                <label htmlFor={`telephone-${index}`} className="block mb-2 text-[#333] text-sm">
+                                    Téléphone <span className="text-red-500">*</span>
+                                </label>
+                                <PhoneInput
+                                    international
+                                    defaultCountry="FR"
+                                    value={tuteur.telephone}
+                                    onChange={(value) => handleTuteurChange(index, "telephone", value)}
+                                    className="w-full p-3 border border-[#ddd] rounded-lg text-sm"
+                                    name={`telephone-${index}`}
+                                    id={`telephone-${index}`}
+                                    placeholder="Entrez votre numéro de téléphone"
+                                />
+                            </div>
+
+                            <Input label="Email" name={`email-${index}`} placeholder="Saisir l'email" value={tuteur.email} onChange={(e) => handleTuteurChange(index, "email", e.target.value)} validate={(value) => validateEmail(value, "Email")} />
+                            <SelectInput label="Relation" name={`relation-${index}`} options={RELATION_OPTIONS} value={tuteur.relation} onChange={(e) => handleTuteurChange(index, "relation", e.target.value)} validate={(value) => validateRequired(value, "Relation")} />
+                        </div>
+                    </div>
+                ))}
+
+                {tuteurs.length < 2 && (
+                    <div className="flex justify-end mb-6">
+                        <Button onClick={ajouterTuteur} type="button" className={`bg-blue-600 text-white flex items-center ${!ajoutPossible ? "opacity-50 cursor-not-allowed" : ""}`} disabled={!ajoutPossible}>
+                            <PlusCircle className="w-5 h-5 mr-2" />
+                            Ajouter Tuteur
+                        </Button>
+                    </div>
+                )}
+
+                <NavigationButtons onPrevClick={handlePrevClick} onNextClick={handleNextClick} prevText="Précédent" nextText="Suivant" />
+            </form>
+        </div>
+    );
 };
 
 export default TuteurForm;

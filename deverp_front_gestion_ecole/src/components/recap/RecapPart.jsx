@@ -6,14 +6,18 @@ import NavigationButtons from '../ui/Button/NavigationButtons';
 
 const RecapStudents = ({ tuteur, demandeur, document, onSubmit, isSubmitting }) => {
   return (
-    <div className="flex flex-col flex-1">
-      <h2 className="text-2xl font-bold text-center text-blue-600 mb-8">
+    <div className="flex flex-col flex-1 px-4 sm:px-8 md:px-12">
+      <h2 className="text-2xl font-bold text-center text-blue-600 mb-6">
         RÉCAPITULATIF ÉTUDIANT
       </h2>
-      <div className="w-full flex flex-col gap-5 justify-between items-center">
-        <div className="flex gap-8 justify-between w-full h-auto">
-          <InfosTuteur tuteurs={tuteur} />
-          <StudentInfos demandeurs={demandeur} />
+      <div className="flex flex-col gap-5 justify-between items-center">
+        <div className="flex flex-col md:flex-row gap-8 justify-between w-full h-auto">
+          <div className="flex-1">
+            <InfosTuteur tuteurs={tuteur} />
+          </div>
+          <div className="flex-1">
+            <StudentInfos demandeurs={demandeur} />
+          </div>
         </div>
         <DocInfos documents={document} />
       </div>

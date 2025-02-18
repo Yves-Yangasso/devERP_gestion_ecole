@@ -5,23 +5,33 @@ import PropTypes from 'prop-types'; // Importation de PropTypes pour la validati
 
 const NavigationButtons = ({ onPrevClick, onNextClick, prevText, nextText, buttonType = "button" }) => {
   return (
-    <div className="flex flex-row-reverse justify-between items-center mt-auto py-4 px-8 border-t border-gray-300">
-      {/* Bouton Suivant */}
-      {onNextClick && (
-        <Button type={buttonType} className="flex items-center text-blue-600" onClick={onNextClick}>
-          {nextText || "Suivant"}
-          <ArrowRightCircle className="w-6 h-6 ml-2" />
-        </Button>
-      )}
-
-      {/* Bouton Précédent */}
-      {onPrevClick && (
-        <Button type={buttonType} className="flex items-center text-blue-600" onClick={onPrevClick}>
-          <ArrowLeftCircle className="w-6 h-6 mr-2" />
-          {prevText || "Précédent"}
-        </Button>
-      )}
-    </div>
+    <div className="flex flex-col md:flex-row-reverse text-center justify-between items-center mt-auto py-4 px-4 md:px-8 border-t border-gray-300">
+    {/* Bouton Suivant */}
+    {onNextClick && (
+      <Button 
+        type={buttonType} 
+        className="flex items-center text-blue-600 w-auto mb-2 md:mb-0" // Allow auto width and margin for spacing
+        onClick={onNextClick}
+        aria-label={nextText || "Suivant"}
+      >
+        {nextText || "Suivant"}
+        <ArrowRightCircle className="w-4 h-4 ml-2" />
+      </Button>
+    )}
+  
+    {/* Bouton Précédent */}
+    {onPrevClick && (
+      <Button 
+        type={buttonType} 
+        className="flex items-center text-blue-600 w-auto" // w-auto allows for automatic width
+        onClick={onPrevClick}
+        aria-label={prevText || "Précédent"}
+      >
+        <ArrowLeftCircle className="w-4 h-4 mr-2" />
+        {prevText || "Précédent"}
+      </Button>
+    )}
+  </div>
   );
 };
 
