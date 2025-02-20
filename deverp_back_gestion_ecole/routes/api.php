@@ -60,6 +60,22 @@ Route::prefix('v1')->group(function () {
     |--------------------------------------------------------------------------
     */
 
+    Route::prefix('dossiers')->group(function () {
+        // Création et modification
+        Route::post('/', [DossierController::class, 'store']);
+        Route::get('/etudiant/{etudiantId}', [DossierController::class, 'getDossiersEtudiant']);
+
+        Route::post('/traitements', [TraitementDossierController::class, 'traiterDossierEtDocuments']);
+
+        // Validation des dossiers
+        Route::get('/en-attente', [ValidationDossierController::class, 'getDossiersEnAttente']);
+        Route::post('/valider', [ValidationDossierController::class, 'validerDossier']);
+        Route::get('/{dossierId}/documents', [ValidationDossierController::class, 'getDocuments']);
+        Route::post('/documents/{documentId}/valider', [ValidationDossierController::class, 'validerDocument']);
+
+        // Traitement des documents
+        Route::post('/documents/traiter', [TraitementDossierController::class, 'traiterDocument']);
+    });
     Route::middleware(['auth:api'])->group(function () {
         // Informations utilisateur
         Route::get('/user', function (Request $request) {
@@ -79,20 +95,7 @@ Route::prefix('v1')->group(function () {
         });
 
         // Gestion des dossiers
-        Route::prefix('dossiers')->group(function () {
-            // Création et modification
-            Route::post('/', [DossierController::class, 'store']);
-            Route::get('/etudiant/{etudiantId}', [DossierController::class, 'getDossiersEtudiant']);
-
-            // Validation des dossiers
-            Route::get('/en-attente', [ValidationDossierController::class, 'getDossiersEnAttente']);
-            Route::post('/{dossierId}/valider', [ValidationDossierController::class, 'validerDossier']);
-            Route::get('/{dossierId}/documents', [ValidationDossierController::class, 'getDocuments']);
-            Route::post('/documents/{documentId}/valider', [ValidationDossierController::class, 'validerDocument']);
-
-            // Traitement des documents
-            Route::post('/documents/{documentId}/traiter', [TraitementDossierController::class, 'traiterDocument']);
-        });
+        
 
         // Gestion des documents
         Route::prefix('documents')->group(function () {

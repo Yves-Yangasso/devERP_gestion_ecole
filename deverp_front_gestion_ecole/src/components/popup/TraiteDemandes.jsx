@@ -2,8 +2,9 @@ import { useState } from 'react';
 import { CheckCircle, Users, User, Eye } from "lucide-react";
 import DocumentPreview from "../preview/DocumentPreview";
 
-const TraiteDemandes = ({ dossier, closePopup, openSecondPopup }) => {
-    const [checkedDocs, setCheckedDocs] = useState({});
+const TraiteDemandes = ({ dossier, checkedDocs, setCheckedDocs,closePopup, openSecondPopup }) => {
+    
+    
     const [previewDoc, setPreviewDoc] = useState(null);
     
     const documentsRequis = dossier.dossier && dossier.dossier[0] && dossier.dossier[0].documents
@@ -33,16 +34,21 @@ const TraiteDemandes = ({ dossier, closePopup, openSecondPopup }) => {
     const handleOpenDecision = () => {
         const checkedDocumentsStatus = documentsRequis.map(doc => ({
             id: doc.id,
-            type: doc.type,
-            status: checkedDocs[doc.id] ? "Valide" : "Incomplet"
+            statut: checkedDocs[doc.id] ? "valide" : "incomplet"
         }));
-
+        
+        // On suppose que l'ID du dossier est dans dossier.dossier[0].id
+        const dossierId = dossier?.dossier?.[0]?.id;
+        
+        // On passe l'ID dans l'objet envoyé à openSecondPopup
         openSecondPopup({
             checkedDocuments: checkedDocumentsStatus,
             allDocsChecked: areAllDocsChecked(),
-            dossierId: dossier.id
+            dossierId: dossierId  // Ici, c'est bien un nombre (ex: 99 ou 87)
         });
     };
+    
+    
 
     return (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">

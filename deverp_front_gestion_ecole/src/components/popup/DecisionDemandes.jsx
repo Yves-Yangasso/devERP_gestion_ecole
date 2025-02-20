@@ -1,86 +1,104 @@
-import { useState } from 'react';
-import { ArrowLeft, FileText } from 'lucide-react';
+import { useState } from "react";
+import { ArrowLeft, FileText } from "lucide-react";
+import  useCrud  from "../../hooks/useCrudAxios";
+import AlertService from "../../services/notifications/AlertService";
 
-const DecisionDemandes = ({ closePopup, goBack, onSubmit, initialStatus, nom_admin, checkedDocuments }) => {
-  const [decision, setDecision] = useState(initialStatus?.decision || "Accepter");
-  const [status, setStatus] = useState(initialStatus?.status || "Terminé");
-  const [motif, setMotif] = useState(initialStatus?.motif || "");
+const DecisionDemande = ({ closePopup, goBack, initialStatus, nom_admin, checkedDocuments, setCheckedDocs, dossierId }) => {
+  const { create: traiterDossierEtDocuments, loading: loadingTraitement } = useCrud("dossiers/traitements");
 
-  const handleSubmit = () => {
-    onSubmit({
-      decision,
-      status,
-      motif,
-      checkedDocuments // Envoi des documents avec leurs statuts
-    });
+  const [statut, setStatut] = useState(initialStatus?.decision || "valide");
+  const [commentaire, setCommentaire] = useState(initialStatus?.motif || "");
+
+  const handleSubmit = async () => {
+      try {
+          if (!dossierId) {
+            AlertService.error("ID du dossier manquant !");
+              return;
+          }
+
+          const dataToSend = {
+              id: dossierId,
+              statut,
+              commentaire,
+              documents: Object.entries(checkedDocuments).map(([id, doc]) => ({
+                  id: doc.id,
+                  statut: doc.statut,
+              }))
+          };
+
+          console.log("Données envoyées :", dataToSend);
+
+          await traiterDossierEtDocuments(dataToSend);
+
+          // Nettoyer les documents cochés après succès
+          setCheckedDocs({});
+          closePopup();
+          AlertService.success("Dossier traite avec success");
+      } catch (error) {
+        AlertService.error("Erreur lors du traitement du dossier :", error);
+      }
   };
 
+
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="bg-white p-6 rounded-2xl shadow-lg w-[90%] max-w-md">
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center">
-            <ArrowLeft className="w-6 h-6 text-gray-600 mr-2 cursor-pointer" onClick={goBack} />
-            <h3 className="text-xl font-bold">Décisions</h3>
+      <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white p-6 rounded-2xl shadow-lg w-[90%] max-w-md">
+              <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center">
+                      <ArrowLeft className="w-6 h-6 text-gray-600 mr-2 cursor-pointer" onClick={goBack} />
+                      <h3 className="text-xl font-bold">Décisions</h3>
+                  </div>
+                  <button onClick={closePopup} className="text-gray-500 hover:text-gray-700 text-2xl">✕</button>
+              </div>
+
+              <div className="mb-4">
+                  <label className="block font-semibold text-gray-700">Statut du dossier</label>
+                  <select
+                      className="w-full p-3 border rounded-lg bg-gray-100 cursor-pointer"
+                      value={statut}
+                      onChange={(e) => setStatut(e.target.value)}
+                  >
+                      <option value="valide">Valide</option>
+                      <option value="invalide">Invalide</option>
+                  </select>
+              </div>
+
+              <div className="mb-4">
+                  <label className="block font-semibold text-gray-700">Admin en charge du dossier</label>
+                  <input type="text" value={nom_admin} readOnly className="w-full p-3 border rounded-lg bg-gray-100" />
+              </div>
+
+              <div className="mb-4">
+                  <label className="block font-semibold text-gray-700">Commentaire</label>
+                  <textarea
+                      className="w-full h-24 p-3 border rounded-lg resize-none"
+                      value={commentaire}
+                      onChange={(e) => setCommentaire(e.target.value)}
+                      placeholder="Expliquez votre décision..."
+                  />
+              </div>
+
+              <p className="text-sm text-gray-600">
+                  En cliquant sur "Valider", je consens avoir bien vérifié tous les documents requis et avoir donné mon approbation.
+              </p>
+
+              <div className="mt-4">
+                  <button 
+                      onClick={handleSubmit}
+                      className="bg-blue-900 text-white w-full py-3 rounded-lg flex items-center justify-center hover:bg-blue-950 transition"
+                      disabled={loadingTraitement}
+                  >
+                      {loadingTraitement ? "Envoi en cours..." : <>
+                        <FileText className="w-5 h-5 mr-2" /> Valider
+                      </>}
+                  </button>
+              </div>
           </div>
-          <button onClick={closePopup} className="text-gray-500 hover:text-gray-700 text-2xl">✕</button>
-        </div>
-
-        <div className="mb-4">
-          <label className="block font-semibold text-gray-700">Statut de décisions</label>
-          <select
-            className="w-full p-3 border rounded-lg bg-gray-100 cursor-pointer"
-            value={decision}
-            onChange={(e) => setDecision(e.target.value)}
-          >
-            <option value="Accepter">Accepter</option>
-            <option value="Refuser">Refuser</option>
-          </select>
-        </div>
-
-        <div className="mb-4">
-          <label className="block font-semibold text-gray-700">Admin en charge du dossier</label>
-          <input type="text" value={nom_admin} readOnly className="w-full p-3 border rounded-lg bg-gray-100" />
-        </div>
-
-        <div className="mb-4">
-          <label className="block font-semibold text-gray-700">Motif</label>
-          <textarea
-            className="w-full h-24 p-3 border rounded-lg resize-none"
-            value={motif}
-            onChange={(e) => setMotif(e.target.value)}
-            placeholder="Expliquez votre décision..."
-          />
-        </div>
-
-        {/* Affichage des documents et statuts */}
-        <div className="mb-4">
-          <h4 className="font-semibold text-gray-700 mb-2">Documents Vérifiés</h4>
-          <ul className="bg-gray-50 p-3 rounded-lg border">
-            {checkedDocuments?.map((doc) => (
-              <li key={doc.id} className="flex justify-between border-b last:border-b-0 py-2">
-                <span>{doc.type}</span>
-                <span className={doc.status === "Valide" ? "text-green-600" : "text-red-600"}>{doc.status}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        <p className="text-sm text-gray-600">
-          En cliquant sur "Valider", je consens avoir bien vérifié tous les documents requis et avoir donné mon approbation.
-        </p>
-
-        <div className="mt-4">
-          <button 
-            onClick={handleSubmit}
-            className="bg-blue-900 text-white w-full py-3 rounded-lg flex items-center justify-center hover:bg-blue-950 transition"
-          >
-            <FileText className="w-5 h-5 mr-2" /> Valider
-          </button>
-        </div>
       </div>
-    </div>
   );
 };
 
-export default DecisionDemandes;
+export default DecisionDemande;
+
+
+

@@ -36,6 +36,8 @@ function InscriptionDemandes() {
     const [showDetails, setShowDetails] = useState(false);
     const [selectedData, setSelectedData] = useState(null);
     const [decisionData, setDecisionData] = useState(null);
+    const [checkedDocs, setCheckedDocs] = useState({});
+
 
     // console.log("Données reçues :", data);
 
@@ -134,10 +136,13 @@ function InscriptionDemandes() {
     };
 
     // Gestionnaire pour l'ouverture du popup de décision
-    const handleOpenDecisionPopup = (data) => {
-        setDecisionData(data);
-        setShowDecisionPopup(true);
-    };
+    // Gestionnaire pour l'ouverture du popup de décision
+const handleOpenDecisionPopup = (data) => {
+    // data contient { checkedDocuments, allDocsChecked, dossierId }
+    setDecisionData(data);
+    setShowDecisionPopup(true);
+};
+
 
     // Gestionnaire pour les actions sur une ligne
 
@@ -219,6 +224,8 @@ function InscriptionDemandes() {
             {selectedDossier && !showDecisionPopup && (
                 <TraiteDemandes
                     dossier={selectedDossier}  // Vous passez le dossier sélectionné ici
+                    checkedDocs={checkedDocs} // ✅ Conserve les documents cochés
+                    setCheckedDocs={setCheckedDocs}
                     closePopup={() => setSelectedDossier(null)}
                     openSecondPopup={handleOpenDecisionPopup}
                 />
@@ -226,13 +233,18 @@ function InscriptionDemandes() {
 
             {/* Popup de décision */}
             {showDecisionPopup && (
-                <DecisionDemandes
-                    dossier={selectedDossier}
-                    decisionData={decisionData}
-                    closePopup={handleClosePopups}
-                    goBack={() => setShowDecisionPopup(false)}
-                />
-            )}
+    <DecisionDemandes
+        dossier={selectedDossier}
+        decisionData={decisionData}
+        checkedDocs={checkedDocs}
+        setCheckedDocs={setCheckedDocs}
+        checkedDocuments={decisionData?.checkedDocuments}
+        closePopup={handleClosePopups}
+        goBack={() => setShowDecisionPopup(false)}
+        dossierId={decisionData?.dossierId}  // On transmet ici l'ID récupéré
+    />
+)}
+
 
             {/* Popup de détails */}
             {showDetails && (

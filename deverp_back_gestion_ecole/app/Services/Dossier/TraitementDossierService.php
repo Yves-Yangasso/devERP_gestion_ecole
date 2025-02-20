@@ -3,6 +3,8 @@
 namespace App\Services\Dossier;
 
 use App\Events\Dossier\DocumentTraite;
+use App\Events\Dossier\DossierInvalide;
+use App\Events\Dossier\DossierValide;
 use App\Repositories\Eloquent\DocumentRepository;
 use App\Repositories\Eloquent\DossierRepository;
 use App\Enums\Dossier\StatutDocument;
@@ -99,4 +101,66 @@ class TraitementDossierService
             throw new Exception('Erreur lors de la mise à jour du statut du dossier: ' . $e->getMessage());
         }
     }
+
+    public function traiterDossierEtDocuments(array $data)
+{
+    DB::beginTransaction();
+    try {
+        // Récupérer le dossier
+        $dossier = $this->dossierRepository->findById($data["id"]);
+        
+        if (!$dossier) {
+            throw new Exception('Dossier non trouvé');
+        }
+        
+        // Traiter chaque document du dossier
+        foreach ($data['documents'] as $docData) {
+            $document = $this->documentRepository->trouverParId($docData["id"]);
+
+            if (!$document) {
+                throw new Exception("Document avec l'ID {$docData['id']} non trouvé");
+            }
+
+            // Mise à jour du document
+            $document->update([
+                'statut' => $docData['statut'],
+            ]);
+
+            // Émettre un événement pour le document traité
+            event(new DocumentTraite($document));
+        }
+
+        
+        // Vérifier si tous les documents du dossier sont validés
+        $documentsValides = $dossier->documents()
+        ->where('statut', 'valide')
+            ->count() === $dossier->documents()->count();
+
+        // Mise à jour du statut du dossier
+        if ($documentsValides) {
+            $dossier->update([
+                'statut' => StatutDossier::VALIDE,
+                'commentaire' => $data['commentaire'] ?? null
+            ]);
+            event(new DossierValide($dossier));
+        } else {
+            $dossier->update([
+                'statut' => StatutDossier::INVALIDE,
+                'commentaire' => $data['commentaire'] ?? null
+            ]);
+            event(new DossierInvalide($dossier));
+        }
+        
+        DB::commit();
+        
+        return [
+            'dossier' => $dossier,
+            'documents' => $dossier->documents
+        ];
+    } catch (Exception $e) {
+        DB::rollBack();
+        throw new Exception('Erreur lors du traitement: ' . $e->getMessage());
+    }
+}
+
 }

@@ -4,10 +4,12 @@
 namespace App\Http\Controllers\API\Dossier;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\Dossier\DocumentResource;
 use App\Services\Dossier\TraitementDossierService;
 use App\Http\Resources\Dossier\DossierResource;
 use App\Http\Requests\Dossier\TraiterDocumentRequest;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request; // Assurez-vous que cette ligne est bien présente
 
 class TraitementDossierController extends Controller
 {
@@ -79,4 +81,24 @@ class TraitementDossierController extends Controller
             ], 500);
         }
     }
+    public function traiterDossierEtDocuments(Request $request): JsonResponse
+{
+    $data = $request->validate([
+        'id' => 'required|integer',
+        'commentaire' => 'nullable|string',
+        'statut' => 'required|string',
+        'documents' => 'required|array',
+        'documents.*.id' => 'required|integer',
+        'documents.*.statut' => 'required|string',
+    ]);
+
+    $result = $this->traitementService->traiterDossierEtDocuments($data);
+
+    return response()->json([
+        'message' => 'Traitement effectué avec succès',
+        'dossier' => new DossierResource($result['dossier']),
+        'documents' => DocumentResource::collection($result['documents']),
+    ]);
+}
+
 }
