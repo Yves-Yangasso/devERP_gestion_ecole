@@ -8,7 +8,7 @@ function PageContainer({ title, page, children }) {
 
     return (
         <div
-            className="relative min-h-screen flex bg-center bg-cover"
+            className="relative min-h-screen flex overflow-hidden bg-center bg-cover"
             style={{ backgroundImage: 'url("/images/fond_ecran.png")' }}
         >
             {/* Sidebar */}

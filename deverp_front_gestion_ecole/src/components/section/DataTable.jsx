@@ -1,8 +1,15 @@
 import React, { useState } from "react";
 import TableRow from "../ui/Table/TableRow";
+import Pagination from "../ui/Pagination/pagination";
 
 export default function DataTable({ columns, data, actions, onActionSelect }) {
     const [openIndex, setOpenIndex] = useState(null);
+    const [rowsPerPage, setRowsPerPage] = useState(10); // Nombre de lignes par défaut
+    const [currentPage, setCurrentPage] = useState(1);  // Page actuelle
+
+    // Calculer les données visibles
+    const startIndex = (currentPage - 1) * rowsPerPage;
+    const paginatedData = data.slice(startIndex, startIndex + rowsPerPage);
 
     return (
         <div className="overflow-x-auto flex">
@@ -18,8 +25,8 @@ export default function DataTable({ columns, data, actions, onActionSelect }) {
                         </tr>
                     </thead>
                     <tbody>
-                        {data.length > 0 ? (
-                            data.map((row, index) => (
+                        {paginatedData.length > 0 ? (
+                            paginatedData.map((row, index) => (
                                 <TableRow key={index} row={row} columns={columns} index={index} openIndex={openIndex} setOpenIndex={setOpenIndex} actions={actions} onActionSelect={onActionSelect} />
                             ))
                         ) : (
@@ -31,6 +38,13 @@ export default function DataTable({ columns, data, actions, onActionSelect }) {
                         )}
                     </tbody>
                 </table>
+                <Pagination 
+                    total={data.length} 
+                    rowsPerPage={rowsPerPage} 
+                    currentPage={currentPage} 
+                    setCurrentPage={setCurrentPage}
+                    setRowsPerPage={setRowsPerPage}
+                />
             </div>
         </div>
     );

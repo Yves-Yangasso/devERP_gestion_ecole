@@ -38,6 +38,9 @@ function InscriptionDemandes() {
     const [decisionData, setDecisionData] = useState(null);
     const [checkedDocs, setCheckedDocs] = useState({});
 
+    const [searchQuery, setSearchQuery] = useState("");
+    const [selectedLevel, setSelectedLevel] = useState("Filtre par niveau");
+
 
     // console.log("Données reçues :", data);
 
@@ -47,6 +50,7 @@ function InscriptionDemandes() {
     }, [get]);
 
 
+    
 
     // Formatage des données pour l'affichage dans la table
     const formattedData = data
@@ -130,10 +134,19 @@ function InscriptionDemandes() {
         }))
         : [];
 
+        const filteredData = formattedData.filter((row) => {
+            const rowDate = new Date(row.fullData.created_at).toISOString().split("T")[0];
+
+    const matchesDate = searchQuery ? rowDate === searchQuery : true;
+    const matchesLevel = selectedLevel !== "Filtre par niveau" ? row.niveau === selectedLevel : true;
+
+    return matchesDate && matchesLevel;
+        });
+
     // Gestionnaire de clic sur une ligne
-    const handleRowClick = (row) => {
-        setSelectedDossier(row.fullData);
-    };
+    // const handleRowClick = (row) => {
+    //     setSelectedDossier(row.fullData);
+    // };
 
     // Gestionnaire pour l'ouverture du popup de décision
     // Gestionnaire pour l'ouverture du popup de décision
@@ -205,53 +218,35 @@ const handleOpenDecisionPopup = (data) => {
                 <DoubleButton />
             </InfosPages>
 
-            {/* Filtres et bouton de téléchargement */}
+            {/* ✅ Filtres intégrés et connectés à DataTable */}
             <div className="flex items-center justify-between gap-4 mb-4">
-                <Filters />
+                <Filters 
+                    searchQuery={searchQuery} 
+                    setSearchQuery={setSearchQuery} 
+                    selectedLevel={selectedLevel} 
+                    setSelectedLevel={setSelectedLevel} 
+                />
                 <DownloadButton />
             </div>
 
-            {/* Table des demandes */}
+            {/* ✅ Table et pagination avec données filtrées */}
             <DataTable
                 columns={columns}
-                data={formattedData}
+                data={filteredData}  // 🔥 On passe les données filtrées
                 actions={actions}
-                onRowClick={handleRowClick}
+                onRowClick={setSelectedDossier}
                 onActionSelect={handleActionSelect}
             />
 
-            {/* Popup de traitement des demandes */}
+            {/* Popups */}
             {selectedDossier && !showDecisionPopup && (
-                <TraiteDemandes
-                    dossier={selectedDossier}  // Vous passez le dossier sélectionné ici
-                    checkedDocs={checkedDocs} // ✅ Conserve les documents cochés
-                    setCheckedDocs={setCheckedDocs}
-                    closePopup={() => setSelectedDossier(null)}
-                    openSecondPopup={handleOpenDecisionPopup}
-                />
+                <TraiteDemandes dossier={selectedDossier} checkedDocs={checkedDocs} setCheckedDocs={setCheckedDocs} closePopup={() => setSelectedDossier(null)} openSecondPopup={handleOpenDecisionPopup} />
             )}
-
-            {/* Popup de décision */}
             {showDecisionPopup && (
-    <DecisionDemandes
-        dossier={selectedDossier}
-        decisionData={decisionData}
-        checkedDocs={checkedDocs}
-        setCheckedDocs={setCheckedDocs}
-        checkedDocuments={decisionData?.checkedDocuments}
-        closePopup={handleClosePopups}
-        goBack={() => setShowDecisionPopup(false)}
-        dossierId={decisionData?.dossierId}  // On transmet ici l'ID récupéré
-    />
-)}
-
-
-            {/* Popup de détails */}
+                <DecisionDemandes dossier={selectedDossier} decisionData={decisionData} closePopup={handleClosePopups} goBack={() => setShowDecisionPopup(false)} />
+            )}
             {showDetails && (
-                <DetailsDemande
-                    dossier={selectedData} // Ici vous passez les données détaillées de la demande
-                    onClose={() => setShowDetails(false)}
-                />
+                <DetailsDemande dossier={selectedData} onClose={() => setShowDetails(false)} />
             )}
         </PageContainer>
     );

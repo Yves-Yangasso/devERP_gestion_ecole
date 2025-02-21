@@ -21,6 +21,8 @@ function FiltersDemandes({ searchQuery, setSearchQuery, selectedLevel, setSelect
                     <option>Licence 1</option>
                     <option>Licence 2</option>
                     <option>Licence 3</option>
+                    <option>Master 1</option>
+                    <option>Master 2</option>
                 </select>
                 <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
             </div>
