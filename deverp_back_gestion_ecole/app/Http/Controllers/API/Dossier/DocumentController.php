@@ -30,20 +30,23 @@ class DocumentController extends Controller
         ]);
 
         $file = $request->file('document');
-        $dossierPath = "dossier_{$request->dossier_id}";
+
+        // Format standard pour tous les documents d'un même dossier
+        $dossierCode = "dossier_{$request->dossier_id}";
 
         // Determine resource type based on file extension
         $isPDF = strtolower($file->getClientOriginalExtension()) === 'pdf';
 
         $uploadOptions = [
-            'tags' => [$request->type_document],
-            'resource_type' => $isPDF ? 'image' : 'auto', // Handle PDFs as images for preview
-            'format' => $isPDF ? 'pdf' : null
+            'tags' => [$request->type_document, "dossier_{$request->dossier_id}"],
+            'resource_type' => $isPDF ? 'raw' : 'auto',
+            'format' => $isPDF ? 'pdf' : null,
+            'type' => $request->type_document // Ajout du type pour nommer le fichier
         ];
 
         $uploadResult = $this->cloudinaryService->uploadDocument(
             $file,
-            $dossierPath,
+            $dossierCode, // Utilisez le même code de dossier pour tous les documents
             $uploadOptions,
             $request->prenom,
             $request->nom
@@ -62,13 +65,48 @@ class DocumentController extends Controller
             'url_secure' => $uploadResult['secure_url'],
             'url_public' => $uploadResult['url'],
             'folder_path' => $uploadResult['folder'],
-            'format' => $uploadResult['format']
+            'format' => $uploadResult['format'],
+            'preview_url' => $uploadResult['preview_url'],
+            'dossier_code' => $dossierCode,
+            'prenom' => $request->prenom,
+            'nom' => $request->nom
         ], $file);
 
         return response()->json([
             'message' => 'Document uploadé avec succès',
             'document' => $document,
-            'preview_url' => $uploadResult['secure_url']
+            'preview_url' => $uploadResult['preview_url']
         ]);
+    }
+
+    /**
+     * Prévisualisation d'un document dans le navigateur
+     */
+    public function previewDocument($documentId)
+    {
+        $document = $this->documentService->getDocument($documentId);
+
+        if (!$document) {
+            return response()->json(['error' => 'Document introuvable'], 404);
+        }
+
+        $isPDF = pathinfo($document->chemin, PATHINFO_EXTENSION) === 'pdf';
+
+        if ($isPDF) {
+            // Utiliser le viewer Google Docs pour une compatibilité maximale
+            $viewerUrl = "https://docs.google.com/viewer?url=" . urlencode($document->url_secure) . "&embedded=true";
+
+            return view('documents.pdf-preview', [
+                'viewerUrl' => $viewerUrl,
+                'downloadUrl' => $document->url_secure,
+                'documentName' => $document->type
+            ]);
+        } else {
+            // Pour les images, utiliser une vue simple
+            return view('documents.image-preview', [
+                'imageUrl' => $document->url_secure,
+                'documentName' => $document->type
+            ]);
+        }
     }
 }

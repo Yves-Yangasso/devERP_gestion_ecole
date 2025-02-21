@@ -31,29 +31,37 @@ class CloudinaryStorageService implements CloudStorageInterface
         $this->baseFolder = config('cloudinary.dossier_folder', 'dossiers-inscription');
     }
 
+    /**
+     * Modifiez la méthode uploadDocument pour garantir que les PDFs sont correctement gérés
+     */
     public function uploadDocument(UploadedFile $file, string $folder, array $options = [], string $prenom, string $nom): array
     {
         try {
             // Nettoyer le nom pour le dossier
             $studentName = $this->cleanName($prenom . '_' . $nom);
 
-            // Générer l'horodatage au format souhaité
+            // Générer l'horodatage une seule fois par dossier/inscription
+            // Utiliser un identifiant unique pour le dossier d'inscription plutôt que pour chaque document
             $timestamp = now()->format('Y-m-d_H-i-s');
 
-            // Construire le chemin final avec le code de suivi et l'horodatage
-            $finalFolder = config('cloudinary.dossier_folder') . '/' . $folder . '-' . $timestamp . '/' . $studentName;
+            // On utilise le même dossier pour tous les documents liés à cette inscription
+            // Le format sera : dossiers-inscription/CODEDOSSIER/NOM_PRENOM
+            $finalFolder = $this->baseFolder . '/' . $folder . '/' . $studentName;
 
             // Détecter si c'est un PDF
             $isPDF = strtolower($file->getClientOriginalExtension()) === 'pdf';
 
+            // On génère un nom de fichier basé sur le type de document
+            $documentType = $options['type'] ?? 'document';
+            $cleanDocumentType = $this->cleanName($documentType);
+
             $uploadOptions = array_merge([
                 'folder' => $finalFolder,
-                'resource_type' => $isPDF ? 'image' : 'raw',
+                'resource_type' => $isPDF ? 'raw' : 'image',
                 'use_filename' => true,
                 'unique_filename' => true,
-                'format' => $isPDF ? 'pdf' : null,
-                'flags' => $isPDF ? 'attachment' : null,
-                'public_id' => Str::random(20)
+                // Utiliser un nom basé sur le type de document plutôt qu'un ID aléatoire
+                'public_id' => $cleanDocumentType . '-' . Str::random(8)
             ], $options);
 
             if (!empty($options['tags'])) {
@@ -65,16 +73,28 @@ class CloudinaryStorageService implements CloudStorageInterface
                 $uploadOptions
             );
 
-            $previewUrl = $isPDF
-                ? "https://res.cloudinary.com/" . config('cloudinary.cloud_name') . "/image/upload/fl_attachment/" . $result['public_id'] . ".pdf"
-                : $result['secure_url'];
+            // Créer des URLs adaptées au type de document
+            if ($isPDF) {
+                // L'URL directe du PDF pour la prévisualisation dans le navigateur
+                $directUrl = $result['secure_url'];
+
+                // URL de prévisualisation avec Google Docs Viewer
+                $previewUrl = "https://docs.google.com/viewer?url=" . urlencode($directUrl) . "&embedded=true";
+
+                // URL de téléchargement
+                $downloadUrl = $directUrl;
+            } else {
+                $previewUrl = $result['secure_url'];
+                $downloadUrl = $result['secure_url'];
+            }
 
             return [
                 'success' => true,
                 'public_id' => $result['public_id'],
-                'url' => $result['secure_url'],
+                'url' => $downloadUrl,
                 'secure_url' => $result['secure_url'],
                 'preview_url' => $previewUrl,
+                'direct_url' => $isPDF ? $directUrl : null,
                 'resource_type' => $result['resource_type'],
                 'format' => $isPDF ? 'pdf' : $file->getClientOriginalExtension(),
                 'folder' => $finalFolder,
@@ -191,6 +211,68 @@ class CloudinaryStorageService implements CloudStorageInterface
             return true;
         } catch (\Exception $e) {
             return false;
+        }
+    }
+    /**
+     * Génère un URL de prévisualisation optimisé pour un document
+     * Cette version permet de prévisualiser les PDFs directement
+     */
+    public function generatePreviewUrl(string $publicId, string $format = 'pdf'): string
+    {
+        $cloudName = config('cloudinary.cloud_name');
+
+        if (strtolower($format) === 'pdf') {
+            // URL directe pour le PDF sans transformation en image
+            return "https://res.cloudinary.com/{$cloudName}/image/upload/{$publicId}.pdf";
+        } else if (in_array(strtolower($format), ['jpg', 'jpeg', 'png', 'gif'])) {
+            // Pour les images, ajouter des transformations d'optimisation
+            return "https://res.cloudinary.com/{$cloudName}/image/upload/q_auto,f_auto/{$publicId}";
+        }
+
+        // Fallback pour autres formats
+        return "https://res.cloudinary.com/{$cloudName}/image/upload/{$publicId}";
+    }
+
+    /**
+     * Génère une URL pour la visionneuse PDF complète
+     */
+    public function generatePdfViewerUrl(string $publicId): string
+    {
+        $cloudName = config('cloudinary.cloud_name');
+        $pdfUrl = "https://res.cloudinary.com/{$cloudName}/image/upload/{$publicId}.pdf";
+
+        // Créer une URL pour une visionneuse PDF intégrée
+        return "https://docs.google.com/viewer?url=" . urlencode($pdfUrl) . "&embedded=true";
+    }
+
+    /**
+     * Génère un chemin de dossier cohérent pour tous les documents d'une inscription
+     */
+    public function generateInscriptionFolderPath(string $dossierCode, string $prenom, string $nom): string
+    {
+        $studentName = $this->cleanName($prenom . '_' . $nom);
+        return $this->baseFolder . '/' . $dossierCode . '/' . $studentName;
+    }
+
+    /**
+     * Récupère tous les documents stockés dans un dossier d'inscription spécifique
+     */
+    public function getDocumentsByFolder(string $dossierCode, string $prenom, string $nom): array
+    {
+        try {
+            $folderPath = $this->generateInscriptionFolderPath($dossierCode, $prenom, $nom);
+
+            // Recherche tous les fichiers dans ce dossier
+            $result = $this->cloudinary->adminApi()->assets([
+                'type' => 'upload',
+                'prefix' => $folderPath,
+                'max_results' => 500
+            ]);
+
+            return $result['resources'];
+        } catch (\Exception $e) {
+            Log::error('Erreur lors de la récupération des documents du dossier: ' . $e->getMessage());
+            return [];
         }
     }
 }

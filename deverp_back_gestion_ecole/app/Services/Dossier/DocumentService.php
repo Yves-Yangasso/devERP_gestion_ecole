@@ -25,21 +25,23 @@ class DocumentService
             $uploadResult = $this->cloudinaryStorage->uploadDocument(
                 $fichier,
                 $data['dossier_code'],
-                ['type' => $data['type']], // Options dans un tableau
-                $data['prenom'],          // Ajout du prénom
-                $data['nom']             // Ajout du nom
+                ['type' => $data['type']],
+                $data['prenom'],
+                $data['nom']
             );
 
             if (!$uploadResult['success']) {
                 throw new \Exception('Échec du téléchargement: ' . ($uploadResult['error'] ?? 'Erreur inconnue'));
             }
 
-            // Création du document
+            // Création du document avec l'URL de prévisualisation
             $document = $this->documentRepository->creer([
                 'dossier_id' => $data['dossier_id'],
                 'type' => $data['type'],
                 'chemin' => $uploadResult['url'],
                 'public_id' => $uploadResult['public_id'],
+                'url_secure' => $uploadResult['secure_url'],
+                'preview_url' => $uploadResult['preview_url'], // Ajouter cette ligne
                 'statut' => ResultatValidation::EN_ATTENTE,
                 'commentaire' => $data['commentaire'] ?? null,
             ]);
