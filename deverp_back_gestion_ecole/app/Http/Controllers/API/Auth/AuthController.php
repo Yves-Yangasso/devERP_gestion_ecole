@@ -2,12 +2,9 @@
 
 namespace App\Http\Controllers\API\Auth;
 
-use App\Models\User;
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Illuminate\Routing\Controller;
-use App\Models\BlacklistedToken;
 use App\Contracts\Auth\AuthentificationServiceInterface;
-
 
 class AuthController extends Controller
 {
@@ -28,42 +25,34 @@ class AuthController extends Controller
         $result = $this->authService->authenticate($request->only('login', 'password'));
 
         if (!$result) {
-            abort(401, 'Les identifiants sont incorrects');
+            return response()->json([
+                'message' => 'Identifiants incorrects'
+            ], 401);
         }
 
-        return $result;
+        return response()->json($result);
     }
 
     public function refresh(Request $request)
     {
         $request->validate([
-            'refresh_token' => 'required',
+            'refresh_token' => 'required'
         ]);
-    
-        $user = User::where('refresh_token', $request->refresh_token)->first();
-        if (!$user) {
-            abort(401, 'Refresh token invalide');
+
+        $result = $this->authService->refreshToken($request->refresh_token);
+
+        if (!$result) {
+            return response()->json([
+                'message' => 'Refresh token invalide'
+            ], 401);
         }
-    
-        BlacklistedToken::create(['token' => $request->refresh_token, 'type' => 'refresh']);
-    
-        $this->authService->revokeTokens($user);
-        return $this->authService->generateTokens($user);
+
+        return response()->json($result);
     }
 
-    public function logout(Request $request)
+    public function logout()
     {
-        $token = $request->bearerToken();
-        
-        if ($token) {
-            BlacklistedToken::create([
-                'token' => $token,
-                'type' => 'access',
-                'revoked_at' => now(),
-            ]);
-        }
-
         $this->authService->logout();
-        return response(null, 204);
+        return response()->json(['message' => 'Déconnexion réussie']);
     }
 }
