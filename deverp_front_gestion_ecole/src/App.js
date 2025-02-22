@@ -1,7 +1,6 @@
 import { BrowserRouter, Navigate, Routes, Route } from 'react-router-dom';
 import { FormProvider } from './context/FormContext';
-import InformationStudent from './components/pages/Admins/SuivieDossier';
-import InscriptionDemandes from './components/pages/Admins/Inscription_demandes';
+import InscriptionDemandes from './components/pages/Admins/inscription_student';
 import SuivieDossier from './components/pages/Admins/SuivieDossier';
 import InformationTuteur from './components/pages/Demandeurs/InformationTuteur';
 import DocAFournir from './components/pages/Demandeurs/DocAFournir';
