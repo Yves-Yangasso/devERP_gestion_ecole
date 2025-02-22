@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Student from '../pages/Admins/Student';
-import Frais_Mensualites from '../pages/Admins/Frais_Mensualites';
+import Frais_Mensualites from '../pages/Admins/TuteurDocs';
 import Paiement from '../pages/Admins/Paiement';
 import RecetteConstaté from '../pages/Admins/RecetteConstaté';
 import NavigationButtons from '../ui/Button/NavigationButtons';
@@ -38,7 +38,7 @@ const PopupLayout = () => {
         
         <NavigationTabs activeTab={activeTab} onTabChange={setActiveTab} />
         
-        <div className="flex-1">
+        <div className="flex-1 p-6">
           {renderContent()}
         </div>
 
