@@ -12,7 +12,6 @@ import PhoneInput from 'react-phone-number-input';
 import 'react-phone-number-input/style.css';
 import '../../css/layout.css';
 
-// Relation options for the select input
 const RELATION_OPTIONS = [
     { value: "pere", label: "Père" },
     { value: "mere", label: "Mère" },
@@ -25,61 +24,41 @@ const TuteurForm = () => {
     const { formState, updateTutors } = useFormContext();
     const navigate = useNavigate();
 
-    const [tuteurs, setTuteurs] = React.useState(() => {
-        return formState.tutors && formState.tutors.length > 0
-            ? formState.tutors
-            : [{ prenom: "", nom: "", adresse: "", telephone: "", email: "", relation: "" }];
-    });
-
+    const [tuteurs, setTuteurs] = React.useState(() => formState.tutors?.length > 0 ? formState.tutors : [{ prenom: "", nom: "", adresse: "", telephone: "", email: "", relation: "" }]);
     const [ajoutPossible, setAjoutPossible] = React.useState(false);
 
-    const isTuteurComplet = (tuteur) => {
-        return Object.values(tuteur).every((val) => val.trim() !== "");
-    };
+    const isTuteurComplet = (tuteur) => Object.values(tuteur).every((val) => val.trim() !== "");
 
     const handleTuteurChange = (index, field, value) => {
         const newTuteurs = [...tuteurs];
         newTuteurs[index] = { ...newTuteurs[index], [field]: value };
 
-        // Check for duplicate email and phone numbers
-        if (index === 1) {
-            const premierTuteur = newTuteurs[0];
-            if (field === "email" && value === premierTuteur.email) {
-                AlertService.error("Les emails des deux tuteurs doivent être différents.");
-                return;
-            }
-            if (field === "telephone" && value === premierTuteur.telephone) {
-                AlertService.error("Les numéros de téléphone des deux tuteurs doivent être différents.");
+        // Vérification des emails et téléphones en double
+        if (field === "email" || field === "telephone") {
+            const duplicate = newTuteurs.some((t, i) => i !== index && t[field] === value);
+            if (duplicate) {
+                AlertService.error(`Le champ ${field} doit être unique entre les tuteurs.`);
                 return;
             }
         }
 
         setTuteurs(newTuteurs);
         updateTutors(newTuteurs);
-        if (index === 0) {
-            setAjoutPossible(isTuteurComplet(newTuteurs[0]));
-        }
+        setAjoutPossible(isTuteurComplet(newTuteurs[0]));
     };
 
     const ajouterTuteur = () => {
         if (!ajoutPossible) return;
-        const newTuteurs = [...tuteurs, { prenom: "", nom: "", adresse: "", telephone: "", email: "", relation: "" }];
-        setTuteurs(newTuteurs);
-        updateTutors(newTuteurs);
+        setTuteurs([...tuteurs, { prenom: "", nom: "", adresse: "", telephone: "", email: "", relation: "" }]);
+        updateTutors([...tuteurs, { prenom: "", nom: "", adresse: "", telephone: "", email: "", relation: "" }]);
     };
 
     const supprimerTuteur = (index) => {
-        if (index === 1) {
-            const newTuteurs = tuteurs.slice(0, 1);
-            setTuteurs(newTuteurs);
-            updateTutors(newTuteurs);
-            setAjoutPossible(true);
-        }
+        setTuteurs(tuteurs.filter((_, i) => i !== index));
+        updateTutors(tuteurs.filter((_, i) => i !== index));
     };
 
-    const handlePrevClick = () => {
-        navigate("/StudentInfos");
-    };
+    const handlePrevClick = () => navigate("/StudentInfos");
 
     const handleNextClick = (e) => {
         e.preventDefault();
@@ -96,7 +75,6 @@ const TuteurForm = () => {
 
         if (Object.keys(errors).length > 0) {
             AlertService.error("Veuillez remplir tous les champs", errors);
-            updateTutors({ errors });
         } else {
             navigate("/DocAFournir");
         }
@@ -113,7 +91,7 @@ const TuteurForm = () => {
                     <div key={index} className="border border-gray-300 rounded-lg p-4 mb-6 relative">
                         <h3 className="text-lg font-bold text-gray-700 mb-4">Tuteur {index + 1}</h3>
 
-                        {index === 1 && (
+                        {index > 0 && (
                             <button
                                 type="button"
                                 onClick={() => supprimerTuteur(index)}
@@ -151,12 +129,10 @@ const TuteurForm = () => {
                 ))}
 
                 {tuteurs.length < 2 && (
-                    <div className="flex justify-end mb-6">
-                        <Button onClick={ajouterTuteur} type="button" className={`bg-blue-600 text-white flex items-center ${!ajoutPossible ? "opacity-50 cursor-not-allowed" : ""}`} disabled={!ajoutPossible}>
-                            <PlusCircle className="w-5 h-5 mr-2" />
-                            Ajouter Tuteur
-                        </Button>
-                    </div>
+                    <Button onClick={ajouterTuteur} type="button" className={`bg-blue-600 text-white flex items-center ${!ajoutPossible ? "opacity-50 cursor-not-allowed" : ""}`} disabled={!ajoutPossible}>
+                        <PlusCircle className="w-5 h-5 mr-2" />
+                        Ajouter Tuteur
+                    </Button>
                 )}
 
                 <NavigationButtons onPrevClick={handlePrevClick} onNextClick={handleNextClick} prevText="Précédent" nextText="Suivant" />

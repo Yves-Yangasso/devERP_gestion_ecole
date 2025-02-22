@@ -12,7 +12,7 @@ const RecapStudents = ({ tuteur, demandeur, document, onSubmit, isSubmitting }) 
       </h2>
       <div className="flex flex-col gap-5 justify-between items-center">
         <div className="flex flex-col md:flex-row gap-8 justify-between w-full h-auto">
-          <div className="flex-1">
+          <div className="flex-3">
             <InfosTuteur tuteurs={tuteur} />
           </div>
           <div className="flex-1">
