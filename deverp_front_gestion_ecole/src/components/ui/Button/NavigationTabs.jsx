@@ -3,9 +3,9 @@ import React from 'react';
 const NavigationTabs = ({ activeTab, onTabChange }) => {
   const tabs = [
     "Etudiants",
-    "Frais & mensualités",
+    "Tuteur & Documents",
     "Paiements",
-    "Recettes constatés"
+    "Récapitulatif"
   ];
 
   return (

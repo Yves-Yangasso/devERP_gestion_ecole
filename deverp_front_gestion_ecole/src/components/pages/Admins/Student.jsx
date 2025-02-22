@@ -1,27 +1,74 @@
 import React from "react";
 import InputField from "../../ui/Input/InputField";
 import SelectInput from "../../ui/Input/SelectInput";
+import { useNavigate } from "react-router-dom";
+import { useSpecialtySelection } from "../../../utils/useSpecialtySelection";
+import AlertService from "../../../services/notifications/AlertService";
+import { useFormContext } from "../../../context/FormContext";
 
 export const options = {
-    niveau: [
-      { value: "Licence 1", label: "Licence 1" },
-      { value: "Licence 2", label: "Licence 2" },
-      { value: "Licence 3", label: "Licence 3" },
-      { value: "Master 1", label: "Master 1" },
-      { value: "Master 2", label: "Master 2" },
-      { value: "Baccalauréat", label: "Baccalauréat" },
-    ]
-  };
-
+  niveau: [
+    { value: "Licence 1", label: "Licence 1" },
+    { value: "Licence 2", label: "Licence 2" },
+    { value: "Licence 3", label: "Licence 3" },
+    { value: "Master 1", label: "Master 1" },
+    { value: "Master 2", label: "Master 2" },
+    { value: "Baccalauréat", label: "Baccalauréat" },
+  ],
+  formation: [
+    { value: "Informatique", label: "Informatique" },
+    { value: "Mathematics", label: "Mathematics" },
+    { value: "Biologie", label: "Biologie" },
+  ],
+  specialites: [
+    { value: "Web", label: "Web" },
+    { value: "Mobile", label: "Mobile" },
+    { value: "Cloud", label: "Cloud" },
+    { value: "Full Stack", label: "Full Stack" },
+  ],
+};
 
 const StudentForm = () => {
-      
+  const { selectedSpecialties, handleSpecialtyChange, removeSpecialty } = useSpecialtySelection();
+  const { updateStudent, formState } = useFormContext();
+  const navigate = useNavigate();
+
+  const handleChange = (e) => {
+    updateStudent({ [e.target.name]: e.target.value });
+  };
+
+  const handleNextClick = (e) => {
+    e.preventDefault();
+    const errors = {};
+    updateStudent({ specialites: selectedSpecialties });
+
+    // Validation des champs (même logique que précédemment)
+    if (!formState.student.prenom) errors.prenom = "Le prénom est requis";
+    if (!formState.student.nom) errors.nom = "Le nom est requis";
+    if (!formState.student.date) errors.date = "La date de naissance est requise";
+    if (!formState.student.lieu) errors.lieu = "Le lieu de naissance est requis";
+    if (!formState.student.adresse) errors.adresse = "L'adresse est requise";
+    if (!formState.student.email) errors.email = "L'email est requis";
+    if (!formState.student.telephone) errors.telephone = "Le téléphone est requis";
+    if (!formState.student.nationalite) errors.nationalite = "La nationalité est requise";
+    if (!formState.student.universite) errors.universite = "Le dernier établissement est requis";
+    if (!formState.student.niveau) errors.niveau = "Le niveau est requis";
+    if (!formState.student.formation) errors.formation = "La formation est requise";
+    if (selectedSpecialties.length === 0) errors.specialites = "Les spécialités sont requises";
+
+    if (Object.keys(errors).length > 0) {
+      AlertService.error("Veillez remplir tous les champs", errors);
+      updateStudent({ errors });
+    } else {
+      navigate("/TuteurInfos");
+    }
+  };
+
   return (
-    <div className="p-6 bg-white rounded-lg shadow-lg">
-      {/* Informations de l'étudiant */}
-      <h2 className="text-xl font-bold flex items-center gap-2 mb-6">
+    <div className="p-4 bg-white rounded-lg shadow-lg">
+      <h2 className="text-lg font-bold flex items-center gap-2 mb-4">
         <span className="text-blue-600">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
             <circle cx="12" cy="7" r="4" />
           </svg>
@@ -29,84 +76,42 @@ const StudentForm = () => {
         Informations de l'étudiant
       </h2>
 
-      <div className="grid grid-cols-2 gap-6 mb-6">
-        <div className="1">
-        <InputField 
-         label="Nom Complet"
-         name="Nom Complet"
-         type="text"
-         placeholder={"Veuillez saisir le nom complet"}
-        ></InputField>
-
-        </div>
-
-        <div className="space-y-1">
-        <InputField 
-         label="Téléphone"
-         name="Téléphone"
-         type="number"
-         placeholder={"Veuillez saisir le numero de Téléphone"}
-        ></InputField>
-        </div>
-
-        <InputField 
-         label="Date_de_Naissance"
-         name="Date de Naissance"
-         type="date"
-         placeholder={"Veuillez saisir la Date de Naissance"}
-        ></InputField>
-
-        <div className="1">
-        <InputField 
-         label="Adresse"
-         name="Adresse"
-         type="text"
-         placeholder={"Veuillez saisir l'adresse"}
-        ></InputField>
-        </div>
-
-        <div className="1">
-        <InputField 
-         label="Email"
-         name="Email"
-         type="email"
-         placeholder={"Veuillez saisir l'email"}
-        ></InputField>
-        </div>
-
-
-        <div className="1 relative">
-        <SelectInput
-              label="Niveau d'Études"
-              name="Niveau_d_Études"
-              options={options.niveau}
-            />
-        </div>
-    </div>
-
-      {/* Documents Requis */}
-      <div className="mt-6 p-3 bg-blue-100 rounded-lg shadow-lg">
-            <h4 className="font-bold text-lg text-blue-600">📄 Documents Requis</h4>
-            <ul className="grid grid-cols-3 gap-4 mt-2">
-              {[
-                "Certificat de Résidence",
-                "Copie CNI/Passeport Légalisée",
-                "Dernier Diplôme",
-                "Certificat de Scolarité",
-                "Bulletins de notes",
-                "2 Photos d’Identité",
-                "Casier Judiciaire",
-                "Documents",
-                "Documents"
-              ].map((doc, index) => (
-                <li key={index} className="bg-white p-3 rounded-lg shadow flex">
-                  <input type="checkbox" className="mr-2 w-6 h-6"/>
-                  <div className="text-sm"> {doc}</div>
-                </li>
+      <div className="grid grid-cols-4 gap-3">
+        <InputField label="Prenom" name="Prenom" type="text" placeholder="Prenom" />
+        <InputField label="Nom" name="Nom" type="text" placeholder="Nom" />
+        <InputField label="Téléphone" name="Téléphone" type="number" placeholder="Téléphone" />
+        <InputField label="Email" name="Email" type="email" placeholder="Email" />
+        <InputField label="Adresse" name="Adresse" type="text" placeholder="Adresse" />
+        <InputField label="Nationalite" name="Nationalite" type="text" placeholder="Nationalité" />
+        <InputField label="Date Naissance" name="Date_Naissance" type="date" />
+        <InputField label="Lieu Naissance" name="Lieu_Naissance" type="text" placeholder="Lieu" />
+        <InputField label="Dernier Etablissement" name="Dernier_Etablissement" type="text" placeholder="Etablissement" />
+        <SelectInput label="Niveau" name="niveau" options={options.niveau} value={formState.student.niveau} onChange={handleChange} />
+        <SelectInput label="Formation" name="formation" options={options.formation} value={formState.student.formation} onChange={handleChange} />
+        <div>
+          <SelectInput
+            label="Spécialités"
+            name="specialites"
+            options={options.specialites}
+            value={selectedSpecialties}
+            onChange={(e) => {
+              handleSpecialtyChange(e);
+              updateStudent({ specialites: [...selectedSpecialties, e.target.value] });
+            }}
+          />
+          {selectedSpecialties.length > 0 && (
+            <div className="flex flex-wrap gap-1 mt-1">
+              {selectedSpecialties.map((specialty, index) => (
+                <span key={index} className="inline-flex items-center px-2 py-0.5 text-xs bg-blue-100 text-blue-800 rounded-full">
+                  {specialty}
+                  <button type="button" onClick={() => removeSpecialty(index)} className="ml-1">×</button>
+                </span>
               ))}
-            </ul>
-          </div>
+            </div>
+          )}
+        </div>
       </div>
+    </div>
   );
 };
 

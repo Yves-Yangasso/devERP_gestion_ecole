@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import Student from '../pages/Admins/Student';
-import Frais_Mensualites from '../pages/Admins/Frais_Mensualites';
+import Frais_Mensualites from '../pages/Admins/Tuteur_Documents';
 import Paiement from '../pages/Admins/Paiement';
-import RecetteConstaté from '../pages/Admins/RecetteConstaté';
+import RecetteConstaté from '../pages/Admins/Recapitulatif';
 import NavigationButtons from '../ui/Button/NavigationButtons';
 import NavigationTabs from '../ui/Button/NavigationTabs';
 

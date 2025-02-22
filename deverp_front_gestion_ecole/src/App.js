@@ -10,7 +10,7 @@ import DocAFournir from './components/pages/Demandeurs/DocAFournir';
 import RecapStudents from './components/pages/Demandeurs/RecapStudent';
 import Decision_admin from './components/pages/Admins/Decision_admin';
 import Paiement from './components/pages/Admins/Paiement';
-import RecetteConstaté from './components/pages/Admins/RecetteConstaté';
+import RecetteConstaté from './components/pages/Admins/Recapitulatif';
 import PopupLayout from './components/formulaire/PopupLayout';
 
 function App() {
