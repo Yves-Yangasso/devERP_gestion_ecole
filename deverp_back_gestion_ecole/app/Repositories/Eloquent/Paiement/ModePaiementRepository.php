@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Repositories\Eloquent;
+namespace App\Repositories\Eloquent\Paiement;
 
 use App\Models\ModePaiement;
 use App\Contracts\Repositories\Paiement\ModePaiementRepositoryInterface;

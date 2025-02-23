@@ -8,6 +8,9 @@ use App\Contracts\Auth\AuthentificationServiceInterface;
 use App\Contracts\Services\Document\CloudStorageInterface;
 use App\Services\Auth\AuthentificationPassport;
 use App\Services\Storage\CloudinaryStorageService;
+use App\Contracts\Repositories\Paiement\ModePaiementRepositoryInterface;
+use App\Repositories\Eloquent\Paiement\ModePaiementRepository;
+
 class AppServiceProvider extends ServiceProvider
 {
     /**
@@ -17,6 +20,7 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->app->bind(AuthentificationServiceInterface::class, AuthentificationPassport::class);
         $this->app->bind(CloudStorageInterface::class, CloudinaryStorageService::class);
+        $this->app->bind(ModePaiementRepositoryInterface::class, ModePaiementRepository::class);
     }
 
     /**

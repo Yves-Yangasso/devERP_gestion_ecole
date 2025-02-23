@@ -14,14 +14,6 @@ class HistoriqueAction extends Model
         'anciennes_valeurs',
         'nouvelles_valeurs'
     ];
-    // protected $fillable = [
-    //     'admin_id',
-    //     'action',
-    //     'details',
-    //     'dossier_id',
-    //     'document_id',
-    //     'statut_traitement'
-    // ];
 
     protected $casts = [
         'anciennes_valeurs' => 'array',
