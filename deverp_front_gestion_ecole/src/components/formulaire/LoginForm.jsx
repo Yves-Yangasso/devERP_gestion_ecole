@@ -10,12 +10,12 @@ const LoginForm = () => {
   const { login: setUser, logout: clearUser } = useAuth();
   const { setToken, getToken, clearToken } = useToken();
   const navigate = useNavigate();
-  const [credentials, setCredentials] = useState({ email: '', password: '' });
+  const [credentials, setCredentials] = useState({ login: '', password: '' });
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  const { get: getUserProfile } = useCrud('login');
+  const { post} = useCrud('login');
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -38,7 +38,7 @@ const LoginForm = () => {
 
   const loadUserData = async (token) => {
     try {
-      const user = await getUserProfile();
+      const user = await post();
       setUser(user);
       if (user.role !== 'USER') {
       }

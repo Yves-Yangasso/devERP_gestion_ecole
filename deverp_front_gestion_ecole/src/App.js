@@ -27,15 +27,15 @@ import RecapStudents from "./components/pages/Demandeurs/RecapStudent";
 function App() {
   return (
     <>
-      <TokenProvider>
-        <UserProvider>
+      {/* <TokenProvider> */}
+        {/* <UserProvider> */}
           <BrowserRouter>
             <Routes>
               {/* 🔒 Routes protégées pour la connexion */}
-              <Route path="/login" element={<Login />} />
+              {/* <Route path="/login" element={<Login />} /> */}
 
               {/* 🌍 Espace ADMIN */}
-              <Route path="/" element={<Connexion />}>
+              {/* <Route path="/" element={<Connexion />}> */}
                 <Route path="/" element={<Navigate to="/dashboard" />} />
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/inscription" element={<InscriptionPage />} />
@@ -46,11 +46,11 @@ function App() {
                 <Route path="/administrative" element={<GestionAdministrative />} />
                 <Route path="/discussion" element={<Discussion />} />
                 <Route path="/classeGroupe" element={<Classes />} />
-              </Route>
+              {/* </Route> */}
             </Routes>
           </BrowserRouter>
-        </UserProvider>
-      </TokenProvider>
+        {/* </UserProvider> */}
+      {/* </TokenProvider> */}
       <FormProvider>
         <BrowserRouter>
           <Routes>

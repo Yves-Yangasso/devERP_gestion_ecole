@@ -20,9 +20,6 @@ use App\Http\Controllers\API\Paiement\LignePaiementController;
 |--------------------------------------------------------------------------
 */
 
-// Routes d'authentification (publiques)
-Route::post('/login', [AuthController::class, 'login']);
-Route::post('/refresh', [AuthController::class, 'refresh']);
 
 // Routes de test et debug
 Route::get('/test', function () {
@@ -30,6 +27,9 @@ Route::get('/test', function () {
 });
 
 Route::prefix('v1')->group(function () {
+    // Routes d'authentification (publiques)
+    Route::post('/login', [AuthController::class, 'login']);
+    Route::post('/refresh', [AuthController::class, 'refresh']);
 
     /*
     |--------------------------------------------------------------------------
