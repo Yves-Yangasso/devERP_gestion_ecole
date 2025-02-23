@@ -1,16 +1,9 @@
 // Importation des dépendances nécessaires
-import { useEffect, useState } from "react";
-import useCrud from "../../../hooks/useCrudAxios";
-import PageContainer from "../Layout/PageContainer";
-import InfosPages from "../../ui/Infos/InfosPages";
-import DoubleButton from "../../ui/Button/DoubleButton";
-import Filters from "../../ui/Filters/FiltersDemandes";
-import DownloadButton from "../../ui/Button/DownloadButton";
-import DataTable from "../../section/DataTable";
-import TraiteDemandes from "../../popup/TraiteDemandes";
-import DecisionDemandes from "../../popup/DecisionDemandes";
-import DetailsDemande from "../../popup/DetailsDemande";
-import AlertService from "../../../services/notifications/AlertService";
+import { useEffect } from "react";
+import useCrud from "../../hooks/useCrudAxios";
+import SearchBar from "../formulaire/SearchBar";
+import DataTable from "./DataTable";
+import AlertService from "../../services/notifications/AlertService";
 import { confirmAlert } from "react-confirm-alert";
 import "react-confirm-alert/src/react-confirm-alert.css";
 
@@ -28,29 +21,16 @@ const columns = [
 // Actions disponibles pour chaque ligne
 const actions = ["Voir détails", "Traité", "Supprimé"];
 
-function InscriptionDemandes() {
+function InscriptionStudent() {
     // Hooks pour la gestion des données et des états
-    const { data, get, remove } = useCrud("inscriptions");
-    const [selectedDossier, setSelectedDossier] = useState(null);
-    const [showDecisionPopup, setShowDecisionPopup] = useState(false);
-    const [showDetails, setShowDetails] = useState(false);
-    const [selectedData, setSelectedData] = useState(null);
-    const [decisionData, setDecisionData] = useState(null);
-    const [checkedDocs, setCheckedDocs] = useState({});
-
-    const [searchQuery, setSearchQuery] = useState("");
-    const [selectedLevel, setSelectedLevel] = useState("Filtre par niveau");
-
-
+    const { data = [], get, remove } = useCrud("inscriptions");
+   
     // console.log("Données reçues :", data);
 
     // Chargement initial des données
     useEffect(() => {
         get();
     }, [get]);
-
-
-    
 
     // Formatage des données pour l'affichage dans la table
     const formattedData = data
@@ -134,40 +114,16 @@ function InscriptionDemandes() {
         }))
         : [];
 
-        const filteredData = formattedData.filter((row) => {
-            const rowDate = new Date(row.fullData.created_at).toISOString().split("T")[0];
-
-    const matchesDate = searchQuery ? rowDate === searchQuery : true;
-    const matchesLevel = selectedLevel !== "Filtre par niveau" ? row.niveau === selectedLevel : true;
-
-    return matchesDate && matchesLevel;
-        });
-
-    // Gestionnaire de clic sur une ligne
-    // const handleRowClick = (row) => {
-    //     setSelectedDossier(row.fullData);
-    // };
-
-    // Gestionnaire pour l'ouverture du popup de décision
-    // Gestionnaire pour l'ouverture du popup de décision
-const handleOpenDecisionPopup = (data) => {
-    // data contient { checkedDocuments, allDocsChecked, dossierId }
-    setDecisionData(data);
-    setShowDecisionPopup(true);
-};
-
-
     // Gestionnaire pour les actions sur une ligne
 
     const handleActionSelect = (action, dossier) => {
         switch (action) {
             case "Voir détails":
-                setSelectedData(dossier.fullData);
-                setShowDetails(true);
+                
                 break;
 
             case "Traité":
-                setSelectedDossier(dossier.fullData);
+               
                 break;
 
             case "Supprimé":
@@ -204,52 +160,22 @@ const handleOpenDecisionPopup = (data) => {
         });
     };
 
-    // Fonction de fermeture des popups
-    const handleClosePopups = () => {
-        setShowDecisionPopup(false);
-        setSelectedDossier(null);
-        setDecisionData(null);
-        get(); // Actualisation des données après fermeture
-    };
-
     return (
-        <PageContainer title="Inscriptions" page="Demandes">
-            <InfosPages title="Inscriptions" page="Demandes">
-                <DoubleButton />
-            </InfosPages>
-
+        <>
             {/* ✅ Filtres intégrés et connectés à DataTable */}
             <div className="flex items-center justify-between gap-4 mb-4">
-                <Filters 
-                    searchQuery={searchQuery} 
-                    setSearchQuery={setSearchQuery} 
-                    selectedLevel={selectedLevel} 
-                    setSelectedLevel={setSelectedLevel} 
-                />
-                <DownloadButton />
+                <SearchBar  />
             </div>
 
             {/* ✅ Table et pagination avec données filtrées */}
             <DataTable
                 columns={columns}
-                data={filteredData}  // 🔥 On passe les données filtrées
+                data={formattedData} // 👈 Ajout de formattedData ici !
                 actions={actions}
-                onRowClick={setSelectedDossier}
                 onActionSelect={handleActionSelect}
             />
-
-            {/* Popups */}
-            {selectedDossier && !showDecisionPopup && (
-                <TraiteDemandes dossier={selectedDossier} checkedDocs={checkedDocs} setCheckedDocs={setCheckedDocs} closePopup={() => setSelectedDossier(null)} openSecondPopup={handleOpenDecisionPopup} />
-            )}
-            {showDecisionPopup && (
-                <DecisionDemandes dossier={selectedDossier} decisionData={decisionData} closePopup={handleClosePopups} goBack={() => setShowDecisionPopup(false)} />
-            )}
-            {showDetails && (
-                <DetailsDemande dossier={selectedData} onClose={() => setShowDetails(false)} />
-            )}
-        </PageContainer>
+            </>
     );
 }
 
-export default InscriptionDemandes;
+export default InscriptionStudent;

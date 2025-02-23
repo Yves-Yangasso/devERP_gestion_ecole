@@ -6,7 +6,7 @@ const SearchBar = () => {
   const [isPopupOpen, setIsPopupOpen] = useState(false);
 
   return (
-    <div className="flex items-center justify-between bg-white p-3 rounded-lg shadow-md w-full">
+    <div className="flex items-center justify-between w-full">
       {/* Search and Filter */}
       <div className="flex gap-2 w-full max-w-md">
         <input

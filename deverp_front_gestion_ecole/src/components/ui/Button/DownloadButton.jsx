@@ -2,9 +2,9 @@ import { Download } from "lucide-react";
 
 function DownloadButton() {
     return (
-        <button className="flex items-center gap-2 px-4 py-2.5 bg-[#2a3547] text-white rounded-md hover:bg-[#222a37]">
+        <button className="flex items-center gap-2 bg-blue-900 text-white px-4 py-2 rounded-lg shadow-md hover:bg-blue-800">
             Télécharger la liste
-            <Download size={20} />
+            <Download className="w-5 h-5" />
         </button>
     );
 }

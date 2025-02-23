@@ -1,32 +1,33 @@
 import { useState, useCallback, useMemo } from 'react';
 import axios from 'axios';
-// import { useTokenService } from '../utils/tokenUtils'; // Assurez-vous que le chemin est correct
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useTokenService } from '../utils/tokenUtils'; // Import du service pour récupérer le token
 
 const API_BASE_URL = process.env.REACT_APP_API_URL;
 
 const useCrud = (baseURL) => {
-    // const { getToken } = useTokenService(); // Récupérer le token depuis utils
+    const { getToken } = useTokenService(); // Utilisation du service pour récupérer le token
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+    const queryClient = useQueryClient();
 
+    // Créer une instance axios avec un intercepteur pour ajouter le token
     const api = useMemo(() => {
-        // Créer une instance d'axios avec un intercepteur pour ajouter le token
         const instance = axios.create({ 
             baseURL: `${API_BASE_URL}/${baseURL}`,
             headers: {
                 'Accept': 'application/json'
             }
         });
-        
 
         instance.interceptors.request.use(
             config => {
-                // const token = getToken(); // Obtenir le token
-               // console.log(token);
-                // if (token) {
-                //     config.headers.Authorization = `Bearer ${token}`; // Ajouter le token aux en-têtes
-                // }
+                const token = getToken(); // Récupère le token depuis le contexte
+                if (token) {
+                    config.headers.Authorization = `Bearer ${token}`; // Ajouter le token aux en-têtes de la requête
+                }
+
                 if (config.data instanceof FormData) {
                     config.headers['Content-Type'] = 'multipart/form-data';
                 } else {
@@ -40,15 +41,14 @@ const useCrud = (baseURL) => {
         );
 
         return instance;
-    }, [baseURL]);
+    }, [baseURL, getToken]);
 
+    // Fonction générique pour envoyer les requêtes
     const request = useCallback(async (method, endpoint = '', payload = null) => {
         setLoading(true);
         setError(null);
         try {
-            console.log(`Requête ${method.toUpperCase()} vers ${api.defaults.baseURL}${endpoint}`);
             const response = await api[method](endpoint, payload);
-            console.log(response.data);
             setData(response.data);
             return response.data;
         } catch (err) {
@@ -59,19 +59,50 @@ const useCrud = (baseURL) => {
         }
     }, [api]);
 
+    // Requête de récupération des données avec React Query
+    const fetchData = async () => {
+        const result = await request('get');
+        return result; 
+    };
+
+    const { data: queryData, isLoading, error: queryError, refetch } = useQuery({
+        queryKey: [baseURL],  // Clé de cache pour cette requête
+        queryFn: fetchData,   // Fonction de récupération des données
+        staleTime: 1000 * 60 * 5, // Cache les données pendant 5 minutes
+        refetchInterval: 10000, // Vérifie les nouvelles données toutes les 10 secondes
+        onSuccess: (data) => {
+            setData(data);  // Met à jour l'état local avec les données mises en cache
+        },
+        onError: (error) => {
+            setError(error);  // Gère l'erreur si nécessaire
+        },
+    });
+
+    // Mutation pour la suppression de données
+    const removeMutation = useMutation({
+        mutationFn: (id) => request('delete', `/${id}`),
+        onSuccess: () => {
+            queryClient.invalidateQueries([baseURL]);  // Actualiser les données après suppression
+        },
+        onError: (error) => {
+            setError(error);  // Gérer l'erreur de suppression
+        },
+    });
+
     const get = useCallback((id = '') => request('get', `/${id}`), [request]);
     const create = useCallback((payload) => request('post', '/', payload), [request]);
     const update = useCallback((id, payload) => request('put', `/${id}`, payload), [request]);
-    const remove = useCallback((id) => request('delete', `/${id}`), [request]);
+    const remove = useCallback((id) => removeMutation.mutate(id), [removeMutation]);
 
     return {
-        data,
-        loading,
-        error,
+        data: queryData || data, // Renvoie soit les données mises en cache, soit les données locales
+        loading: isLoading || loading,  // Combine le loading de React Query et celui local
+        error: queryError || error,    // Combine les erreurs de React Query et locales
         get,
         create,
         update,
         remove,
+        refetch,  // Permet de rafraîchir les données manuellement
     };
 };
 
