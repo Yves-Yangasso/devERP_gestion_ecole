@@ -14,7 +14,7 @@ import "react-confirm-alert/src/react-confirm-alert.css";
 // Définition des colonnes pour la table
 const columns = [
     { key: "nom", label: "Nom Complet" },
-    { key: "code", label: "Code d'accés" },
+    { key: "code", label: "Code Suivi Dossier" },
     { key: "date", label: "Date" },
     { key: "formation", label: "Formation" },
     { key: "niveau", label: "Niveau" },
@@ -22,6 +22,7 @@ const columns = [
     { key: "statut", label: "Statut" },
     { key: "actions", label: "Actions" },
 ];
+
 // Actions disponibles pour chaque ligne
 const actions = ["Voir détails", "Traité", "Supprimé"];
 
@@ -48,12 +49,12 @@ function InscriptionDemandes() {
         ? data.map((item) => ({
             id: item.id,
             nom: `${item.nom} ${item.prenom}`,
-            code: item.dossier?.[0]?.code_suivi || "N/A",
+            code: item.dossier?.code_suivi || "N/A", // ✅ Code de suivi du dossier
             date: new Date(item.created_at).toLocaleDateString(),
             formation: item.formation_superieure,
             niveau: item.niveau,
             email: item.email,
-            statut: item.dossier?.[0]?.statut || "En attente",
+            statut: item.dossier?.statut || "En attente",
             fullData: {
                 id: item.id,
                 prenom: item.prenom,

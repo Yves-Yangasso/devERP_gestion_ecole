@@ -4,13 +4,27 @@ const FormContext = createContext();
 
 export const FormProvider = ({ children }) => {
   const [formState, setFormState] = useState({
-    student: {},
+    student: {
+      nom: "",
+      prenom: "",
+      date: "",
+      lieu: "",
+      adresse: "",
+      email: "",
+      telephone: "",
+      nationalite: "",
+      universite: "",
+      niveau: "",
+      formation: "",
+      dernierDiplome: "",
+      specialites: [],
+    },
     tutors: [],
     documents: {}
   });
 
   const updateStudent = (data) => {
-    setFormState(prev => ({ ...prev, student: { ...prev.student, ...data }}));
+    setFormState(prev => ({ ...prev, student: { ...prev.student, ...data } }));
   };
 
   const updateTutors = (tutors) => {
@@ -22,7 +36,25 @@ export const FormProvider = ({ children }) => {
   };
 
   const resetForm = () => {
-    setFormState({ student: {}, tutors: [], documents: {} });
+    setFormState({
+      student: {
+        nom: "",
+        prenom: "",
+        date: "",
+        lieu: "",
+        adresse: "",
+        email: "",
+        telephone: "",
+        nationalite: "",
+        universite: "",
+        niveau: "",
+        formation: "",
+        dernierDiplome: "",
+        specialites: [],
+      },
+      tutors: [],
+      documents: {},
+    });
   };
 
   return (

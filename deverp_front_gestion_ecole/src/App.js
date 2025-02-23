@@ -1,12 +1,12 @@
-import { BrowserRouter, Routes, Route, Navigate} from "react-router-dom";
-import { PrivateRoute } from './components/routes/PrivateRoute';
-import { PublicRoute } from './components/routes/PublicRoute';
-import { InscriptionRoute } from './components/routes/InscriptionRoute';
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { PrivateRoute } from "./components/routes/PrivateRoute";
+import { PublicRoute } from "./components/routes/PublicRoute";
+import { InscriptionRoute } from "./components/routes/InscriptionRoute";
 import { FormProvider } from "./context/FormContext";
-import { UserProvider } from './context/AuthContext';
-import { TokenProvider } from './context/TokenContext';
-import Login from './components/pages/Login/Login';
-import HomePage from './HomePage';
+import { UserProvider } from "./context/AuthContext";
+import { TokenProvider } from "./context/TokenContext";
+import Login from "./components/pages/Login/Login";
+import HomePage from "./HomePage";
 
 // Importation des pages ADMIN
 import Dashboard from "./components/pages/Admins/Dashboard";
@@ -34,105 +34,89 @@ function App() {
           <BrowserRouter>
             <Routes>
               {/* Routes publiques */}
-              <Route 
-                path="/login" 
-                element={
-                  <PublicRoute 
-                    element={<Login />} 
-                    restricted={true}
-                  />
-                } 
+              <Route
+                path="/login"
+                element={<PublicRoute element={<Login />} restricted={true} />}
               />
-              <Route 
-                path="/home" 
+              <Route
+                path="/home"
                 element={
-                  <PublicRoute 
-                    element={<HomePage />} 
-                    restricted={true}
-                  />
-                } 
+                  <PublicRoute element={<HomePage />} restricted={true} />
+                }
               />
 
               {/* Routes d'inscription */}
-              <Route 
-                path="/inscription-demandes" 
+              <Route
+                path="/StudentInfos"
                 element={
-                  <InscriptionRoute 
+                  <InscriptionRoute
                     element={<InformationStudent />}
                     requiredStep="studentInfo"
                   />
                 }
               />
-              <Route 
-                path="/TuteurInfos" 
+              <Route
+                path="/TuteurInfos"
                 element={
-                  <InscriptionRoute 
+                  <InscriptionRoute
                     element={<InformationTuteur />}
                     requiredStep="tuteurInfo"
                   />
                 }
               />
-              <Route 
-                path="/DocAFournir" 
+              <Route
+                path="/DocAFournir"
                 element={
-                  <InscriptionRoute 
+                  <InscriptionRoute
                     element={<DocAFournir />}
                     requiredStep="documents"
                   />
                 }
               />
-              <Route 
-                path="/RecapEtudiant" 
-                element={
-                  <InscriptionRoute 
-                    element={<RecapStudents />}
-                  />
-                }
+              <Route
+                path="/RecapEtudiant"
+                element={<InscriptionRoute element={<RecapStudents />} />}
               />
-              <Route 
-                path="/SuivieDossier" 
-                element={
-                  <InscriptionRoute 
-                    element={<SuivieDossier />}
-                  />
-                }
+              <Route
+                path="/SuivieDossier"
+                element={<InscriptionRoute element={<SuivieDossier />} />}
               />
 
               {/* Routes privées (administration) */}
-              <Route 
-                path="/dashboard" 
+              <Route
+                path="/dashboard"
                 element={<PrivateRoute element={<Dashboard />} />}
               />
-              <Route 
-                path="/inscription" 
+              <Route
+                path="/inscription"
                 element={<PrivateRoute element={<InscriptionPage />} />}
               />
-              <Route 
-                path="/etudiant" 
+              <Route
+                path="/etudiant"
                 element={<PrivateRoute element={<Etudiants />} />}
               />
-              <Route 
-                path="/professeur" 
+              <Route
+                path="/professeur"
                 element={<PrivateRoute element={<Professeurs />} />}
               />
-              <Route 
-                path="/moduleMatiere" 
+              <Route
+                path="/moduleMatiere"
                 element={<PrivateRoute element={<Modules />} />}
               />
-              <Route 
-                path="/presence" 
+              <Route
+                path="/presence"
                 element={<PrivateRoute element={<Presence />} />}
               />
-              <Route 
-                path="/administrative" 
+              <Route
+                path="/administrative"
                 element={<PrivateRoute element={<GestionAdministrative />} />}
               />
-              <Route 
-                path="/discussion" 
+              <Route
+                path="/discussion"
                 element={<PrivateRoute element={<Discussion />} />}
               />
-               <Route 
-                path="/classeGroupe" 
+              <Route
+                path="/classeGroupe"
                 element={<PrivateRoute element={<Classes />} />}
               />
 

@@ -5,7 +5,7 @@ const HomePage = () => {
   const navigate = useNavigate();
 
   const handleInscriptionClick = () => {
-    navigate('/inscription-demandes'); // Redirige vers la première page d'inscription
+    navigate('/StudentInfos'); // Redirige vers la première page d'inscription
   };
 
   const handleConnexionClick = () => {
