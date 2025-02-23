@@ -16,7 +16,7 @@ class AuthentificationPassport implements AuthentificationServiceInterface
 {
     protected $tokenRepository;
     protected $refreshTokenRepository;
-    
+
     public function __construct(
         TokenRepository $tokenRepository,
         RefreshTokenRepository $refreshTokenRepository
@@ -28,7 +28,7 @@ class AuthentificationPassport implements AuthentificationServiceInterface
     public function authenticate(array $credentials)
     {
         $user = User::where('login', $credentials['login'])->first();
-        
+
         if (!$user || $user->password !== $credentials['password']) {
             return null;
         }
@@ -40,7 +40,7 @@ class AuthentificationPassport implements AuthentificationServiceInterface
 
         $tokenResult = $user->createToken('auth_token');
         $token = $tokenResult->token;
-        
+
         // Définir l'expiration à 1 heure
         $token->expires_at = Carbon::now()->addHour();
         $token->save();
@@ -80,17 +80,19 @@ class AuthentificationPassport implements AuthentificationServiceInterface
     public function revokeTokens($user)
     {
         $tokens = $user->tokens;
-        
+
         foreach ($tokens as $token) {
             $this->tokenRepository->revokeAccessToken($token->id);
             $this->refreshTokenRepository->revokeRefreshTokensByAccessTokenId($token->id);
-            
+
             // Ajouter à la liste noire
-            BlacklistedToken::create([
-                'token' => $token->id,
-                'type' => 'access',
-                'revoked_at' => now()
-            ]);
+            BlacklistedToken::updateOrCreate(
+                ['token' => $token->id],
+                [
+                    'type' => 'access',
+                    'revoked_at' => now()
+                ]
+            );
         }
 
         $this->logAction($user->id, 'REVOKE_TOKENS', 'Révocation des tokens');
@@ -147,7 +149,7 @@ class AuthentificationPassport implements AuthentificationServiceInterface
                 return false;
             }
         }
-        
+
         session(['last_activity' => now()]);
         return true;
     }
