@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { FileText, X, ExternalLink, Download } from 'lucide-react';
 
 const DocumentPreview = ({ document, onClose }) => {
-  const [loading, setLoading] = useState(false);
+  const [loading] = useState(false);
 
   // Fonction pour gérer le type de document
   const getDocumentType = (chemin) => {

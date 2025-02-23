@@ -38,16 +38,10 @@ function InscriptionDemandes() {
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedLevel, setSelectedLevel] = useState("Filtre par niveau");
 
-
-    // console.log("Données reçues :", data);
-
     // Chargement initial des données
     useEffect(() => {
         refetch(); // Rafraîchir les données si nécessaire
     }, [refetch]);
-
-
-
 
     // Formatage des données pour l'affichage dans la table
     const formattedData = data
@@ -92,41 +86,44 @@ function InscriptionDemandes() {
                     }
                     : null,
                 dossier: item.dossier
-                    ? item.dossier.map((d) => ({
-                        id: d.id,
-                        inscription_id: d.inscription_id,
-                        code_suivi: d.code_suivi,
-                        statut: d.statut,
-                        commentaire: d.commentaire,
-                        mode_validation: d.mode_validation,
-                        date_soumission: d.date_soumission,
-                        created_at: d.created_at,
-                        updated_at: d.updated_at,
-                        deleted_at: d.deleted_at,
-                        titre: d.titre,
-                        description: d.description,
-                        documents: d.documents
-                            ? d.documents.map((doc) => ({
-                                id: doc.id,
-                                dossier_id: doc.dossier_id,
-                                type: doc.type,
-                                chemin: doc.chemin,
-                                statut: doc.statut,
-                                commentaire: doc.commentaire,
-                                date_validation: doc.date_validation,
-                                created_at: doc.created_at,
-                                updated_at: doc.updated_at,
-                                deleted_at: doc.deleted_at,
-                                url_secure: doc.url_secure,
-                                url_public: doc.url_public,
-                                folder_path: doc.folder_path,
-                                public_id: doc.public_id,
-                                format: doc.format,
-                                preview_url: doc.preview_url,
-                            }))
-                            : [],
-                    }))
+                    ? Array.isArray(item.dossier)
+                        ? item.dossier.map((d) => ({
+                            id: d.id,
+                            inscription_id: d.inscription_id,
+                            code_suivi: d.code_suivi,
+                            statut: d.statut,
+                            commentaire: d.commentaire,
+                            mode_validation: d.mode_validation,
+                            date_soumission: d.date_soumission,
+                            created_at: d.created_at,
+                            updated_at: d.updated_at,
+                            deleted_at: d.deleted_at,
+                            titre: d.titre,
+                            description: d.description,
+                            documents: d.documents
+                                ? d.documents.map((doc) => ({
+                                    id: doc.id,
+                                    dossier_id: doc.dossier_id,
+                                    type: doc.type,
+                                    chemin: doc.chemin,
+                                    statut: doc.statut,
+                                    commentaire: doc.commentaire,
+                                    date_validation: doc.date_validation,
+                                    created_at: doc.created_at,
+                                    updated_at: doc.updated_at,
+                                    deleted_at: doc.deleted_at,
+                                    url_secure: doc.url_secure,
+                                    url_public: doc.url_public,
+                                    folder_path: doc.folder_path,
+                                    public_id: doc.public_id,
+                                    format: doc.format,
+                                    preview_url: doc.preview_url,
+                                }))
+                                : [],
+                        }))
+                        : [item.dossier] // Convertir l'objet en tableau si ce n'en est pas un
                     : [],
+
             },
         }))
         : [];

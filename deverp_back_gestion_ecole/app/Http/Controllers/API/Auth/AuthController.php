@@ -22,15 +22,19 @@ class AuthController extends Controller
             'password' => 'required',
         ]);
 
-        $result = $this->authService->authenticate($request->only('login', 'password'));
+        $user = $this->authService->authenticate($request->only('login', 'password'));
 
-        if (!$result) {
+        if (!$user) {
             return response()->json([
                 'message' => 'Identifiants incorrects'
             ], 401);
         }
 
-        return response()->json($result);
+        // Retourner toutes les informations de l'utilisateur
+        return response()->json([
+            'message' => 'Connexion réussie',
+            'user' => $user, // Toutes les infos de l'utilisateur
+        ]);
     }
 
     public function refresh(Request $request)

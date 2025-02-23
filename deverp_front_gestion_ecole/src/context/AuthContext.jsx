@@ -1,27 +1,35 @@
-// src/context/AuthContext.js
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 
-const AuthContext = createContext();
+const AuthContext = createContext(null);
 
 export const UserProvider = ({ children }) => {
-    const [user, setUser] = useState(null); // Gérer les données utilisateur manuellement
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [loading, setLoading] = useState(true);
 
-    const login = (userData) => {
-        setUser(userData); // Mettre à jour les données utilisateur
-    };
+  // Vérification initiale du token au chargement de l'application
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      setIsAuthenticated(true);
+    }
+    setLoading(false);
+  }, []);
 
-    const logout = () => {
-        setUser(null); // Réinitialiser l'utilisateur
-    };
+  const login = async (token) => {
+    localStorage.setItem('token', token);
+    setIsAuthenticated(true);
+  };
 
-    return (
-        <AuthContext.Provider value={{ user, setUser, login, logout, isAuthenticated: !!user }}>
-            {children}
-        </AuthContext.Provider>
-    );
+  const logout = () => {
+    localStorage.removeItem('token');
+    setIsAuthenticated(false);
+  };
+
+  return (
+    <AuthContext.Provider value={{ isAuthenticated, loading, login, logout }}>
+      {children}
+    </AuthContext.Provider>
+  );
 };
 
-// Hook pour accéder au contexte utilisateur
-export const useAuth = () => {
-    return useContext(AuthContext);
-};
+export const useAuth = () => useContext(AuthContext);
