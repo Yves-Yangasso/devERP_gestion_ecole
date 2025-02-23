@@ -14,6 +14,14 @@ class HistoriqueAction extends Model
         'anciennes_valeurs',
         'nouvelles_valeurs'
     ];
+    // protected $fillable = [
+    //     'admin_id',
+    //     'action',
+    //     'details',
+    //     'dossier_id',
+    //     'document_id',
+    //     'statut_traitement'
+    // ];
 
     protected $casts = [
         'anciennes_valeurs' => 'array',
@@ -24,4 +32,17 @@ class HistoriqueAction extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    // Relation avec l'administrateur
+    // public function admin()
+    // {
+    //     return $this->belongsTo(User::class, 'admin_id');
+    // }
+
+    // // Relation avec le dossier
+    // public function dossier()
+    // {
+    //     return $this->belongsTo(Dossier::class);
+    // }
+    
 }
