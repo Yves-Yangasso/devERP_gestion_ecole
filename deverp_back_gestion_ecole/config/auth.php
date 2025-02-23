@@ -104,6 +104,11 @@ return [
         ],
     ],
 
+    'passport' => [
+        'token_ttl' => 60, // 1 heure
+        'refresh_ttl' => 20160, // 14 jours
+        'token_cleanup_age' => 24, // Nettoyer les tokens de plus de 24 heures
+    ],
     /*
     |--------------------------------------------------------------------------
     | Password Confirmation Timeout

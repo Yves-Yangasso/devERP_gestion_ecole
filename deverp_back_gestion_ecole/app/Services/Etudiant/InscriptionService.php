@@ -4,6 +4,7 @@ namespace App\Services\Etudiant;
 
 use App\Models\{Inscription, Tuteur, Dossier, Document};
 use App\Services\Storage\CloudinaryStorageService;
+use App\Notifications\Dossier\NotificationInscription;
 use App\Services\Dossier\DossierService;
 use App\Repositories\Eloquent\InscriptionRepository;
 use App\Enums\Dossier\StatutDocument;
@@ -38,6 +39,9 @@ class InscriptionService
 
             // 4. Récupérer les URLs de stockage Cloudinary
             $this->updateCloudinaryUrls($dossier);
+
+            // 5. Envoyer la notification d'inscription
+            $this->sendInscriptionNotification($inscription);
 
             DB::commit();
 
@@ -83,6 +87,37 @@ class InscriptionService
 
         return $dossier;
     }
+    // private function sendInscriptionNotification(Inscription $inscription): void
+    // {
+    //     try {
+    //         // Charger la relation dossier si ce n'est pas déjà fait
+    //         if (!$inscription->relationLoaded('dossier')) {
+    //             $inscription->load('dossier');
+    //         }
+
+    //         // Envoyer la notification de manière asynchrone
+    //         $inscription->notify(new NotificationInscription($inscription));
+    //     } catch (Exception $e) {
+    //         Log::error("Erreur lors de l'envoi de la notification d'inscription: " . $e->getMessage());
+    //         // Ne pas faire échouer l'inscription si l'envoi de l'email échoue
+    //     }
+    // }
+
+    private function sendInscriptionNotification(Inscription $inscription): void
+    {
+        try {
+            // Charger la relation dossier si ce n'est pas déjà fait
+            if (!$inscription->relationLoaded('dossier')) {
+                $inscription->load('dossier');
+            }
+
+            // Envoyer la notification
+            $inscription->notify(new NotificationInscription($inscription));
+        } catch (\Exception $e) {
+            Log::error("Erreur lors de l'envoi de la notification: " . $e->getMessage());
+            // Ne pas faire échouer l'inscription si l'envoi échoue
+        }
+    }
 
     private function processDocument(Dossier $dossier, array $documentData, Inscription $inscription): void
     {
@@ -91,7 +126,7 @@ class InscriptionService
             $dossier->code_suivi,
             [
                 'tags' => [$dossier->code_suivi, $documentData['type_document']],
-                'pages' => true, // Activer la prévisualisation des pages pour les PDFs
+                'pages' => true,
             ],
             $inscription->prenom,
             $inscription->nom
@@ -101,18 +136,18 @@ class InscriptionService
             throw new Exception('Échec de l\'upload du document: ' . ($uploadResult['error'] ?? 'Erreur inconnue'));
         }
 
-        // Créer l'enregistrement du document avec l'URL de prévisualisation
         Document::create([
             'dossier_id' => $dossier->id,
             'type' => $documentData['type_document'],
             'chemin' => $uploadResult['url'],
             'url_secure' => $uploadResult['secure_url'],
             'url_public' => $uploadResult['url'],
-            // 'preview_url' => $uploadResult['preview_url'], // Stocker l'URL de prévisualisation
-            'folder_path' => $uploadResult['folder'] ?? null,
+            'preview_url' => $uploadResult['preview_url'],
+            'folder_path' => $uploadResult['folder'],
             'public_id' => $uploadResult['public_id'],
             'statut' => StatutDocument::EN_ATTENTE,
-            'format' => $uploadResult['format']
+            'format' => $uploadResult['format'],
+            'upload_timestamp' => $uploadResult['timestamp'] // Stocker l'horodatage
         ]);
     }
 

@@ -21,7 +21,8 @@ class Dossier extends Model
         'code_suivi',
         'statut',
         'mode_validation',
-        'date_soumission'
+        'date_soumission',
+        'description',
     ];
 
     protected $casts = [

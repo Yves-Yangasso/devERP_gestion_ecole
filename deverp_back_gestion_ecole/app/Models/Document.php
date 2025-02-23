@@ -26,14 +26,10 @@ class Document extends Model
         'statut',
         'commentaire',
         'date_validation',
-        'preview_url'
+        'preview_url',
+        'upload_timestamp'
     ];
 
-    // protected $casts = [
-    //     'date_validation' => 'datetime',
-    //     'type' => TypeDocument::class,
-    //     'statut' => ResultatValidation::class,
-    // ];
     protected $casts = [
         'date_validation' => 'datetime',
         'type' => TypeDocument::class,
@@ -41,9 +37,6 @@ class Document extends Model
         // 'statut' => ResultatValidation::class,
     ];
 
-    // protected $attributes = [
-    //     'statut' => StatutDocument::INVALIDE
-    // ];
     protected $attributes = [
         'statut' => StatutDocument::EN_ATTENTE
     ];
