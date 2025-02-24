@@ -4,21 +4,7 @@ const FormContext = createContext();
 
 export const FormProvider = ({ children }) => {
   const [formState, setFormState] = useState({
-    student: {
-      nom: "",
-      prenom: "",
-      date: "",
-      lieu: "",
-      adresse: "",
-      email: "",
-      telephone: "",
-      nationalite: "",
-      universite: "",
-      niveau: "",
-      formation: "",
-      dernierDiplome: "",
-      specialites: [],
-    },
+    student: {},
     tutors: [],
     documents: {}
   });
@@ -37,21 +23,7 @@ export const FormProvider = ({ children }) => {
 
   const resetForm = () => {
     setFormState({
-      student: {
-        nom: "",
-        prenom: "",
-        date: "",
-        lieu: "",
-        adresse: "",
-        email: "",
-        telephone: "",
-        nationalite: "",
-        universite: "",
-        niveau: "",
-        formation: "",
-        dernierDiplome: "",
-        specialites: [],
-      },
+      student: {},
       tutors: [],
       documents: {},
     });

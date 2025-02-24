@@ -75,7 +75,12 @@ function App() {
               />
               <Route
                 path="/RecapEtudiant"
-                element={<InscriptionRoute element={<RecapStudents />} />}
+                element={
+                  <InscriptionRoute 
+                    element={<RecapStudents />} 
+                    requiredStep="recap"
+                  />
+                }
               />
               <Route
                 path="/SuivieDossier"
