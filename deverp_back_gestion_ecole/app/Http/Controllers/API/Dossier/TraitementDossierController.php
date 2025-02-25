@@ -9,7 +9,7 @@ use App\Services\Dossier\TraitementDossierService;
 use App\Http\Resources\Dossier\DossierResource;
 use App\Http\Requests\Dossier\TraiterDocumentRequest;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request; // Assurez-vous que cette ligne est bien présente
+use Illuminate\Http\Request;
 
 class TraitementDossierController extends Controller
 {

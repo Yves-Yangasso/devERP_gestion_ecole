@@ -39,7 +39,6 @@ const TraiteDemandes = ({ dossier, checkedDocs, setCheckedDocs,closePopup, openS
         
         // On suppose que l'ID du dossier est dans dossier.dossier[0].id
         const dossierId = dossier?.dossier?.[0]?.id;
-        
         // On passe l'ID dans l'objet envoyé à openSecondPopup
         openSecondPopup({
             checkedDocuments: checkedDocumentsStatus,

@@ -3,29 +3,29 @@ import { ArrowLeft, FileText } from "lucide-react";
 import  useCrud  from "../../hooks/useCrudAxios";
 import AlertService from "../../services/notifications/AlertService";
 
-const DecisionDemande = ({ closePopup, goBack, initialStatus, nom_admin, checkedDocuments, setCheckedDocs, dossierId }) => {
+const DecisionDemande = ({ closePopup, goBack, initialStatus, nom_admin, setCheckedDocs, decisionData }) => {
   const { create: traiterDossierEtDocuments, loading: loadingTraitement } = useCrud("dossiers/traitements");
-
   const [statut, setStatut] = useState(initialStatus?.decision || "valide");
   const [commentaire, setCommentaire] = useState(initialStatus?.motif || "");
 
   const handleSubmit = async () => {
       try {
-          if (!dossierId) {
+        const dossierId = decisionData?.dossierId;
+        const checkedDocument = decisionData?.checkedDocuments;
+        if (!dossierId) {
             AlertService.error("ID du dossier manquant !");
-              return;
-          }
-
+            return;
+        }
+        
           const dataToSend = {
               id: dossierId,
               statut,
               commentaire,
-              documents: Object.entries(checkedDocuments).map(([id, doc]) => ({
+              documents: Object.entries(checkedDocument).map(([id, doc]) => ({
                   id: doc.id,
                   statut: doc.statut,
               }))
-          };
-
+          };        
           console.log("Données envoyées :", dataToSend);
 
           await traiterDossierEtDocuments(dataToSend);
