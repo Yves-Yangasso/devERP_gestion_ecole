@@ -32,9 +32,11 @@ function App() {
           <BrowserRouter>
             <Routes>
               {/* 🔒 Routes protégées pour la connexion */}
+              
               <Route path="/login" element={<Login />} />
 
               {/* 🌍 Espace ADMIN */}
+              
               <Route path="/" element={<Connexion />}>
                 <Route path="/" element={<Navigate to="/dashboard" />} />
                 <Route path="/dashboard" element={<Dashboard />} />

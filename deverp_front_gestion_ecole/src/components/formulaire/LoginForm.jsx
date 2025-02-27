@@ -15,7 +15,7 @@ const LoginForm = () => {
   const [loading, setLoading] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  const { get: getUserProfile } = useCrud('login');
+  const { create } = useCrud('login');
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -38,7 +38,7 @@ const LoginForm = () => {
 
   const loadUserData = async (token) => {
     try {
-      const user = await getUserProfile();
+      const user = await create();
       setUser(user);
       if (user.role !== 'USER') {
       }
