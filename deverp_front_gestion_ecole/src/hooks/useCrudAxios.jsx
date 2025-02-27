@@ -59,21 +59,25 @@ const useCrud = (baseURL) => {
         }
     }, [api]);
 
-    // Requête de récupération des données avec React Query
+    // Requête de récupération des données (uniquement GET)
     const fetchData = async () => {
-        const result = await request('get');
-        return result; 
+        return request('get');
     };
 
     const { data: queryData, isLoading, error: queryError, refetch } = useQuery({
         queryKey: [baseURL],  // Clé de cache pour cette requête
         queryFn: fetchData,   // Fonction de récupération des données
         staleTime: 1000 * 60 * 5, // Cache les données pendant 5 minutes
-        refetchInterval: 10000, // Vérifie les nouvelles données toutes les 10 secondes
+        refetchInterval: 1000 * 60, // Vérifie les nouvelles données toutes les 60 secondes (1 min)
+        refetchIntervalInBackground: true, // Continue à rafraîchir les données en arrière-plan
+        refetchOnWindowFocus: false, // Ne rafraîchit pas lorsque l'utilisateur revient sur l'onglet
+        refetchOnReconnect: false, // Ne rafraîchit pas lors d'une reconnexion internet
+        enabled: !!baseURL, // S'assure que la requête ne s'exécute que si baseURL est défini
         onSuccess: (data) => {
             setData(data);  // Met à jour l'état local avec les données mises en cache
         },
         onError: (error) => {
+            console.error("Erreur lors du fetch des données :", error);
             setError(error);  // Gère l'erreur si nécessaire
         },
     });
@@ -85,10 +89,12 @@ const useCrud = (baseURL) => {
             queryClient.invalidateQueries([baseURL]);  // Actualiser les données après suppression
         },
         onError: (error) => {
+            console.error("Erreur lors de la suppression :", error);
             setError(error);  // Gérer l'erreur de suppression
         },
     });
 
+    // Fonctions CRUD
     const get = useCallback((id = '') => request('get', `/${id}`), [request]);
     const create = useCallback((payload) => request('post', '/', payload), [request]);
     const update = useCallback((id, payload) => request('put', `/${id}`, payload), [request]);

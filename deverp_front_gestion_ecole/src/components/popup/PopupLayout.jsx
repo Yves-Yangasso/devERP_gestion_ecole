@@ -14,6 +14,7 @@ const PopupLayout = ({ onClose }) => {
         case 1:
           return <Student />;
         case 2:
+          // eslint-disable-next-line react/jsx-pascal-case
           return <Tuteur_Documents />;
         case 3:
           return <Paiement />;

@@ -10,7 +10,7 @@ export const FormProvider = ({ children }) => {
   });
 
   const updateStudent = (data) => {
-    setFormState(prev => ({ ...prev, student: { ...prev.student, ...data }}));
+    setFormState(prev => ({ ...prev, student: { ...prev.student, ...data } }));
   };
 
   const updateTutors = (tutors) => {
@@ -22,7 +22,11 @@ export const FormProvider = ({ children }) => {
   };
 
   const resetForm = () => {
-    setFormState({ student: {}, tutors: [], documents: {} });
+    setFormState({
+      student: {},
+      tutors: [],
+      documents: {},
+    });
   };
 
   return (

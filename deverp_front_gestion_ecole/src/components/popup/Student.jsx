@@ -1,9 +1,9 @@
 import React from "react";
 import InputField from "../ui/Input/InputField";
 import SelectInput from "../ui/Input/SelectInput";
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
 import { useSpecialtySelection } from "../../utils/useSpecialtySelection";
-import AlertService from "../../services/notifications/AlertService";
+// import AlertService from "../../services/notifications/AlertService";
 import { useFormContext } from "../../context/FormContext";
 
 export const options = {
@@ -31,38 +31,38 @@ export const options = {
 const StudentForm = () => {
   const { selectedSpecialties, handleSpecialtyChange, removeSpecialty } = useSpecialtySelection();
   const { updateStudent, formState } = useFormContext();
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
   const handleChange = (e) => {
     updateStudent({ [e.target.name]: e.target.value });
   };
 
-  const handleNextClick = (e) => {
-    e.preventDefault();
-    const errors = {};
-    updateStudent({ specialites: selectedSpecialties });
+  // const handleNextClick = (e) => {
+  //   e.preventDefault();
+  //   const errors = {};
+  //   updateStudent({ specialites: selectedSpecialties });
 
-    // Validation des champs (même logique que précédemment)
-    if (!formState.student.prenom) errors.prenom = "Le prénom est requis";
-    if (!formState.student.nom) errors.nom = "Le nom est requis";
-    if (!formState.student.date) errors.date = "La date de naissance est requise";
-    if (!formState.student.lieu) errors.lieu = "Le lieu de naissance est requis";
-    if (!formState.student.adresse) errors.adresse = "L'adresse est requise";
-    if (!formState.student.email) errors.email = "L'email est requis";
-    if (!formState.student.telephone) errors.telephone = "Le téléphone est requis";
-    if (!formState.student.nationalite) errors.nationalite = "La nationalité est requise";
-    if (!formState.student.universite) errors.universite = "Le dernier établissement est requis";
-    if (!formState.student.niveau) errors.niveau = "Le niveau est requis";
-    if (!formState.student.formation) errors.formation = "La formation est requise";
-    if (selectedSpecialties.length === 0) errors.specialites = "Les spécialités sont requises";
+  //   // Validation des champs (même logique que précédemment)
+  //   if (!formState.student.prenom) errors.prenom = "Le prénom est requis";
+  //   if (!formState.student.nom) errors.nom = "Le nom est requis";
+  //   if (!formState.student.date) errors.date = "La date de naissance est requise";
+  //   if (!formState.student.lieu) errors.lieu = "Le lieu de naissance est requis";
+  //   if (!formState.student.adresse) errors.adresse = "L'adresse est requise";
+  //   if (!formState.student.email) errors.email = "L'email est requis";
+  //   if (!formState.student.telephone) errors.telephone = "Le téléphone est requis";
+  //   if (!formState.student.nationalite) errors.nationalite = "La nationalité est requise";
+  //   if (!formState.student.universite) errors.universite = "Le dernier établissement est requis";
+  //   if (!formState.student.niveau) errors.niveau = "Le niveau est requis";
+  //   if (!formState.student.formation) errors.formation = "La formation est requise";
+  //   if (selectedSpecialties.length === 0) errors.specialites = "Les spécialités sont requises";
 
-    if (Object.keys(errors).length > 0) {
-      AlertService.error("Veillez remplir tous les champs", errors);
-      updateStudent({ errors });
-    } else {
-      navigate("/TuteurInfos");
-    }
-  };
+  //   if (Object.keys(errors).length > 0) {
+  //     AlertService.error("Veillez remplir tous les champs", errors);
+  //     updateStudent({ errors });
+  //   } else {
+  //     navigate("/TuteurInfos");
+  //   }
+  // };
 
   return (
     <div className="p-4 bg-white rounded-lg shadow-lg">

@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from 'react';
-import AuthService from '../../services/AuthService';
+import React, { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { useToken } from '../../context/TokenContext';
@@ -7,88 +6,51 @@ import useCrud from '../../hooks/useCrudAxios';
 import AlertService from "../../services/notifications/AlertService";
 
 const LoginForm = () => {
-  const { login: setUser, logout: clearUser } = useAuth();
-  const { setToken, getToken, clearToken } = useToken();
   const navigate = useNavigate();
-  const [credentials, setCredentials] = useState({ email: '', password: '' });
+  const { logout: clearUser } = useAuth();
+  const { setToken } = useToken();
+  const { login } = useAuth();
+  const [credentials, setCredentials] = useState({ login: '', password: '' });
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-
   const { create } = useCrud('login');
 
-  useEffect(() => {
-    const checkAuth = async () => {
-      const token = getToken();
-      if (token && !isAuthenticated) {
-        try {
-          await loadUserData(token);
-          setIsAuthenticated(true);
-          navigate('/');
-          AlertService.success("Vous êtes maintenant connecté");
-        } catch (err) {
-          handleLogout();
-          await AlertService.error("Vous avez été déconnecté");
-        }
-      }
-    };
-    checkAuth();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [getToken, isAuthenticated]);
-
-  const loadUserData = async (token) => {
-    try {
-      const user = await create();
-      setUser(user);
-      if (user.role !== 'USER') {
-      }
-    } catch (error) {
-      throw new Error('Failed to load user data');
-    }
-  };
-
   const handleSubmit = async (e) => {
-    e.preventDefault();  // Empêcher le comportement par défaut du formulaire
-  
+    e.preventDefault();
+    if (loading) return;
+
     setLoading(true);
     setError(null);
-  
+
     try {
-      const data = await AuthService.login(credentials.email, credentials.password);
-      if (data.token) {
-        setToken(data.token);
+      const response = await create(credentials);
+      
+      // Vérification du token dans la réponse
+      if (response?.user?.access_token) {
+        setToken(response.user.access_token);
+        await login(response.user.access_token);
+        AlertService.success("Connexion réussie");
+        navigate('/', { replace: true });
       } else {
-        throw new Error('Le token n\'a pas été fourni');
+        throw new Error('Token non fourni');
       }
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      await loadUserData(data.token);
-      setIsAuthenticated(true);
-      navigate('/');
-      AlertService.success("Connexion réussie");
     } catch (err) {
-      if (err.response && err.response.status === 401) {
-        setError("Email ou mot de passe incorrect");
-      } else {
-        setError("Une erreur est survenue. Veuillez réessayer.");
-      }
-      AlertService.error(error);
+      const errorMessage = err.response?.status === 401
+        ? "Email ou mot de passe incorrect"
+        : "Une erreur est survenue. Veuillez réessayer.";
+      setError(errorMessage);
+      AlertService.error(errorMessage);
+
+      // Si le login échoue, on déconnecte l'utilisateur
+      clearUser();
     } finally {
       setLoading(false);
     }
   };
-  
-
-  const handleLogout = () => {
-    AlertService.success("Déconnexion réussie");
-    clearToken();
-    clearUser();
-    setIsAuthenticated(false);
-    navigate('/login');
-  };
 
   return (
     <div className="flex justify-center items-center w-full h-full">
-      <div className=" p-10 bg-white rounded-[25px] shadow-[8px_8px_0_-3px_blue] w-[380px] relative overflow-hidden">
+      <div className="p-10 bg-white rounded-[25px] shadow-[8px_8px_0_-3px_blue] w-[380px] relative overflow-hidden">
         {/* Effet wave en haut à droite */}
         <div className="absolute top-0 right-0 w-[200px] h-[200px] opacity-10 pointer-events-none">
           <div
@@ -125,13 +87,13 @@ const LoginForm = () => {
               Email Professionnel <span className="text-red-500">*</span>
             </label>
             <input
-              name="email"
+              name="login"
               type="email"
-              autoComplete="email"
+              autoComplete="login"
               placeholder="Entrez votre email professionnel"
               className="w-full p-3 border border-[#ddd] rounded-lg mb-4 text-sm"
-              value={credentials.email}
-              onChange={(e) => setCredentials({ ...credentials, email: e.target.value })}
+              value={credentials.login}
+              onChange={(e) => setCredentials({ ...credentials, login: e.target.value })}
             />
           </div>
           <div className="mb-4">
@@ -141,7 +103,7 @@ const LoginForm = () => {
             <input
               name="password"
               type="password"
-              autoComplete="current-password"
+              autoComplete="password"
               required
               placeholder="Entrez votre mot de passe"
               className="w-full p-3 border border-[#ddd] rounded-lg mb-4 text-sm"
@@ -149,6 +111,10 @@ const LoginForm = () => {
               onChange={(e) => setCredentials({ ...credentials, password: e.target.value })}
             />
           </div>
+          {error && (
+            <div className="text-red-500 text-sm">{error}</div>
+          )}
+
           <button
             type="submit"
             onClick={handleSubmit}
@@ -164,7 +130,7 @@ const LoginForm = () => {
         </form>
       </div>
     </div>
-  )
-}
+  );
+};
 
 export default LoginForm;

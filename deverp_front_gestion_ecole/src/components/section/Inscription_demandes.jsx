@@ -14,7 +14,7 @@ import "react-confirm-alert/src/react-confirm-alert.css";
 // Définition des colonnes pour la table
 const columns = [
     { key: "nom", label: "Nom Complet" },
-    { key: "code", label: "Code d'accés" },
+    { key: "code", label: "Code Suivi Dossier" },
     { key: "date", label: "Date" },
     { key: "formation", label: "Formation" },
     { key: "niveau", label: "Niveau" },
@@ -22,6 +22,7 @@ const columns = [
     { key: "statut", label: "Statut" },
     { key: "actions", label: "Actions" },
 ];
+
 // Actions disponibles pour chaque ligne
 const actions = ["Voir détails", "Traité", "Supprimé"];
 
@@ -38,28 +39,22 @@ function InscriptionDemandes() {
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedLevel, setSelectedLevel] = useState("Filtre par niveau");
 
-
-    // console.log("Données reçues :", data);
-
     // Chargement initial des données
     useEffect(() => {
         refetch(); // Rafraîchir les données si nécessaire
     }, [refetch]);
-
-
-
 
     // Formatage des données pour l'affichage dans la table
     const formattedData = data
         ? data.map((item) => ({
             id: item.id,
             nom: `${item.nom} ${item.prenom}`,
-            code: item.dossier?.[0]?.code_suivi || "N/A",
+            code: item.dossier?.code_suivi || "N/A", // ✅ Code de suivi du dossier
             date: new Date(item.created_at).toLocaleDateString(),
             formation: item.formation_superieure,
             niveau: item.niveau,
             email: item.email,
-            statut: item.dossier?.[0]?.statut || "En attente",
+            statut: item.dossier?.statut || "En attente",
             fullData: {
                 id: item.id,
                 prenom: item.prenom,
@@ -92,41 +87,44 @@ function InscriptionDemandes() {
                     }
                     : null,
                 dossier: item.dossier
-                    ? item.dossier.map((d) => ({
-                        id: d.id,
-                        inscription_id: d.inscription_id,
-                        code_suivi: d.code_suivi,
-                        statut: d.statut,
-                        commentaire: d.commentaire,
-                        mode_validation: d.mode_validation,
-                        date_soumission: d.date_soumission,
-                        created_at: d.created_at,
-                        updated_at: d.updated_at,
-                        deleted_at: d.deleted_at,
-                        titre: d.titre,
-                        description: d.description,
-                        documents: d.documents
-                            ? d.documents.map((doc) => ({
-                                id: doc.id,
-                                dossier_id: doc.dossier_id,
-                                type: doc.type,
-                                chemin: doc.chemin,
-                                statut: doc.statut,
-                                commentaire: doc.commentaire,
-                                date_validation: doc.date_validation,
-                                created_at: doc.created_at,
-                                updated_at: doc.updated_at,
-                                deleted_at: doc.deleted_at,
-                                url_secure: doc.url_secure,
-                                url_public: doc.url_public,
-                                folder_path: doc.folder_path,
-                                public_id: doc.public_id,
-                                format: doc.format,
-                                preview_url: doc.preview_url,
-                            }))
-                            : [],
-                    }))
+                    ? Array.isArray(item.dossier)
+                        ? item.dossier.map((d) => ({
+                            id: d.id,
+                            inscription_id: d.inscription_id,
+                            code_suivi: d.code_suivi,
+                            statut: d.statut,
+                            commentaire: d.commentaire,
+                            mode_validation: d.mode_validation,
+                            date_soumission: d.date_soumission,
+                            created_at: d.created_at,
+                            updated_at: d.updated_at,
+                            deleted_at: d.deleted_at,
+                            titre: d.titre,
+                            description: d.description,
+                            documents: d.documents
+                                ? d.documents.map((doc) => ({
+                                    id: doc.id,
+                                    dossier_id: doc.dossier_id,
+                                    type: doc.type,
+                                    chemin: doc.chemin,
+                                    statut: doc.statut,
+                                    commentaire: doc.commentaire,
+                                    date_validation: doc.date_validation,
+                                    created_at: doc.created_at,
+                                    updated_at: doc.updated_at,
+                                    deleted_at: doc.deleted_at,
+                                    url_secure: doc.url_secure,
+                                    url_public: doc.url_public,
+                                    folder_path: doc.folder_path,
+                                    public_id: doc.public_id,
+                                    format: doc.format,
+                                    preview_url: doc.preview_url,
+                                }))
+                                : [],
+                        }))
+                        : [item.dossier] // Convertir l'objet en tableau si ce n'en est pas un
                     : [],
+
             },
         }))
         : [];
