@@ -10,7 +10,7 @@ class UpdateFiliereRequest extends FormRequest {
 
     public function rules() {
         return [
-            'idepartement' => 'sometimes|exists:departements,id',
+            'idepartement' => 'sometimes|exists:departement,id',
             'nom_filiere' => 'sometimes|string|max:255',
             'description' => 'nullable|string',
             'status' => 'sometimes|in:active,inactive',

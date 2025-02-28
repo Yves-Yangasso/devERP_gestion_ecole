@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -9,30 +8,15 @@ class Filiere extends Model
 {
     use HasFactory;
 
-    // protected $fillable = [
-    //     'nom_filiere',
-    //     'description',
-    //     'status',
-    // ];
-    protected $fillable = [
-        'nom_filiere',
-        'idepartement',
-        'description',
-        'status',
-    ];
-
-    public function etudiants()
-    {
-        return $this->hasMany(Etudiant::class);
-    }
-
-    public function couts()
-    {
-        return $this->hasMany(CoutFiliere::class);
-    }
+    protected $fillable = ['departement_id', 'nom', 'description', 'est_professionnelle'];
 
     public function departement()
     {
         return $this->belongsTo(Departement::class);
+    }
+
+    public function formations()
+    {
+        return $this->hasMany(Formation::class);
     }
 }

@@ -3,30 +3,37 @@ namespace App\Services\Departement;
 
 use App\Contracts\Repositories\Departement\DepartementRepositoryInterface;
 
-class DepartementService {
-    protected $departementRepository;
+class DepartementService
+{
+    protected $repository;
 
-    public function __construct(DepartementRepositoryInterface $departementRepository) {
-        $this->departementRepository = $departementRepository;
+    public function __construct(DepartementRepositoryInterface $repository)
+    {
+        $this->repository = $repository;
     }
 
-    public function getAll() {
-        return $this->departementRepository->getAll();
+    public function getAll()
+    {
+        return $this->repository->getAll();
     }
 
-    public function getById($id) {
-        return $this->departementRepository->getById($id);
+    public function findById($id)
+    {
+        return $this->repository->findById($id);
     }
 
-    public function create(array $data) {
-        return $this->departementRepository->create($data);
+    public function create(array $data)
+    {
+        return $this->repository->create($data);
     }
 
-    public function update($id, array $data) {
-        return $this->departementRepository->update($id, $data);
+    public function update($id, array $data)
+    {
+        return $this->repository->update($id, $data);
     }
 
-    public function delete($id) {
-        return $this->departementRepository->delete($id);
+    public function delete($id)
+    {
+        return $this->repository->delete($id);
     }
 }
