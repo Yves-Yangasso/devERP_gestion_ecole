@@ -2,28 +2,24 @@ import React from 'react';
 
 const NavigationTabs_Detail_inscription = ({ activeTab, onTabChange }) => {
   const tabs = [
-    "Informations_Etudiants",
-    "Frais & mensualités",
-    "Documents",
-    "Paiements"
-  ];
+    { id: 1, label: 'Information étudiants' },
+    { id: 2, label: 'Frais & mensualités' },
+    { id: 3, label: 'Documents' },
+    { id: 4, label: 'Paiements' }
+  ]
 
   return (
-    <div className="flex space-x-4 p-4 border-b">
-      {tabs.map((tab, index) => (
-        <button
-          key={index}
-          onClick={() => onTabChange(index + 1)}
-          className={`px-4 py-2 rounded-md transition-colors ${
-            activeTab === index + 1
-              ? 'bg-blue-100 text-blue-600'
-              : 'text-gray-600 hover:bg-gray-100'
-          }`}
-        >
-          {tab}
-        </button>
-      ))}
-    </div>
+    <div className="flex mt-4 ml-16">
+          {tabs.map(tab => (
+            <button 
+              key={tab.id}
+              className={`px-6 py-3 w-[250px] text-center ${activeTab === tab.id ? 'bg-blue-100 text-blue-800 font-medium' : 'bg-gray-100'}`}
+              onClick={() => onTabChange(tab.id)}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
   );
 };
 

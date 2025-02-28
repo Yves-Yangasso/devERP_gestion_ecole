@@ -6,8 +6,7 @@ const Documents = () => {
     <div className="flex items-center justify-center">
       <div className="w-8 h-8 rounded-full overflow-hidden mr-2">
         <img 
-          src="/api/placeholder/40/40" 
-          alt="Avatar" 
+          src="moi.png" 
           className="w-full h-full object-cover"
         />
       </div>

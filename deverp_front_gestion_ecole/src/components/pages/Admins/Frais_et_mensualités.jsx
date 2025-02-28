@@ -2,7 +2,7 @@ import React from 'react';
 
 const Frais_et_mensualités = () => {
   return (
-    <div className="p-6 bg-white rounded-lg shadow-sm">
+    <div className="p-10 ml-14 mt-10 bg-white rounded-lg shadow-md w-[1000px] h-[250px]">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         {/* Colonne gauche */}
         <div className="space-y-6">
