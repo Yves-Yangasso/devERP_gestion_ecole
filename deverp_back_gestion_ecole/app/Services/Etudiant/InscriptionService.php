@@ -21,24 +21,28 @@ class InscriptionService
         private readonly InscriptionRepository $inscriptionRepository
     ) {}
 
-    public function createCompleteInscription(array $data)
+
+    public function createCompleteInscription(array $data, string $action)
     {
         DB::beginTransaction();
         try {
+
+            // $service->createCompleteInscription($data, 'en_ligne'); 
+            // $service->createCompleteInscription($data, 'presentiel');
+
             // 1. Créer les tuteurs
             $tuteurIds = $this->createTuteurs($data['tuteurs']);
 
             // 2. Créer l'inscription
             $inscription = $this->createInscription($data['etudiant'], $tuteurIds[0]);
 
-            // 3. Créer le dossier avec les documents
-            $dossier = $this->createDossierWithDocuments(
-                $inscription,
-                $data['dossier']
-            );
+            // 3. Créer le dossier seulement si l'inscription est en ligne
+            if ($action === 'en_ligne') {
+                $dossier = $this->createDossierWithDocuments($inscription, $data['dossier']);
 
-            // 4. Récupérer les URLs de stockage Cloudinary
-            $this->updateCloudinaryUrls($dossier);
+                // 4. Mettre à jour les URLs Cloudinary
+                $this->updateCloudinaryUrls($dossier);
+            }
 
             // 5. Envoyer la notification d'inscription
             $this->sendInscriptionNotification($inscription);
@@ -52,6 +56,41 @@ class InscriptionService
             throw new Exception('Erreur lors de l\'inscription: ' . $e->getMessage());
         }
     }
+
+
+    // public function createCompleteInscription(array $data)
+    // {
+    //     DB::beginTransaction();
+    //     try {
+    //         // 1. Créer les tuteurs
+    //         $tuteurIds = $this->createTuteurs($data['tuteurs']);
+
+    //         // 2. Créer l'inscription
+    //         $inscription = $this->createInscription($data['etudiant'], $tuteurIds[0]);
+
+    //         // 3. Créer le dossier avec les documents
+    //         $dossier = $this->createDossierWithDocuments(
+    //             $inscription,
+    //             $data['dossier']
+    //         );
+
+    //         // 4. Récupérer les URLs de stockage Cloudinary
+    //         $this->updateCloudinaryUrls($dossier);
+
+    //         // 5. Envoyer la notification d'inscription
+    //         $this->sendInscriptionNotification($inscription);
+
+    //         DB::commit();
+
+    //         return $this->inscriptionRepository->getWithDossierAndDocuments($inscription->id);
+    //     } catch (Exception $e) {
+    //         DB::rollBack();
+    //         Log::error('Erreur lors de l\'inscription complète: ' . $e->getMessage());
+    //         throw new Exception('Erreur lors de l\'inscription: ' . $e->getMessage());
+    //     }
+    // }
+
+
 
     private function createTuteurs(array $tuteursData): array
     {
