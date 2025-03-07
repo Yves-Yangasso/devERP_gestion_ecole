@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -11,9 +10,8 @@ class LignePaiement extends Model
 
     protected $fillable = [
         'paiement_id',
-        'montant',
-        'date_paiement',
-        'status',
+        'type_frais',
+        'montant'
     ];
 
     public function paiement()

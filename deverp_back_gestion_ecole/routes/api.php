@@ -140,11 +140,7 @@ Route::prefix('v1')->group(function () {
         });
 
         //Route pour le paiement par les étudiant
-        Route::prefix('paiements')->group(function () {
-            Route::post('/', [PaiementController::class, 'store']);
-            Route::get('/{id}', [PaiementController::class, 'show']);
-            Route::delete('/{id}', [PaiementController::class, 'destroy']);
-        });
+
 
 
         // Route permettant aux étudiants d'effectuer un paiement/Modifier/Annuler
@@ -158,6 +154,12 @@ Route::prefix('v1')->group(function () {
 
 
 
+    });
+
+    Route::prefix('paiements')->group(function () {
+        Route::post('/', [PaiementController::class, 'store']);
+        Route::get('/{id}', [PaiementController::class, 'show']);
+        Route::delete('/{id}', [PaiementController::class, 'destroy']);
     });
 
     Route::prefix('formations')->group(function () {

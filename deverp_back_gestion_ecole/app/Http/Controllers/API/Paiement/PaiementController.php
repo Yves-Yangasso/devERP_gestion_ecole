@@ -2,8 +2,7 @@
 namespace App\Http\Controllers\API\Paiement;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Paiement\creerPaiementRequest;
-use App\Http\Requests\Paiement\ModifierPaiementRequest;
+use App\Http\Requests\Paiement\CreerPaiementRequest;
 use App\Services\Paiement\PaiementService;
 use Illuminate\Http\JsonResponse;
 
@@ -16,7 +15,7 @@ class PaiementController extends Controller
         $this->paiementService = $paiementService;
     }
 
-    public function store(creerPaiementRequest $request): JsonResponse
+    public function store(CreerPaiementRequest $request): JsonResponse
     {
         $paiement = $this->paiementService->creerPaiement($request->validated());
         return response()->json($paiement, 201);
@@ -27,7 +26,7 @@ class PaiementController extends Controller
         return response()->json($this->paiementService->trouverPaiement($id));
     }
 
-    public function update(creerPaiementRequest $request, int $id): JsonResponse
+    public function update(CreerPaiementRequest $request, int $id): JsonResponse
     {
         $paiement = $this->paiementService->modifierPaiement($id, $request->validated());
         return response()->json($paiement);
