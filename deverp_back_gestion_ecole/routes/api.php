@@ -166,6 +166,7 @@ Route::prefix('v1')->group(function () {
         Route::post('/', [FormationController::class, 'store']);
         Route::put('/{id}', [FormationController::class, 'update']);
         Route::delete('/{id}', [FormationController::class, 'destroy']);
+        Route::get('/{id}/tarif', [FormationController::class, 'getStructureTarifaire']);
     });
 
     Route::prefix('departements')->group(function () {
@@ -176,7 +177,7 @@ Route::prefix('v1')->group(function () {
         Route::delete('/{id}', [DepartementController::class, 'destroy']);
     });
 
-    Route::prefix('filieres')->group(function () {
+    Route::prefix('filiere')->group(function () {
         Route::get('/', [FiliereController::class, 'index']);
         Route::get('/{id}', [FiliereController::class, 'show']);
         Route::post('/', [FiliereController::class, 'store']);

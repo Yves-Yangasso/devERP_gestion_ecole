@@ -32,7 +32,7 @@ class FiliereController extends Controller
         return response()->json($this->filiereService->create($request->validated()), 201);
     }
 
-    public function update(StoreFiliereRequest $request, $id): JsonResponse
+    public function update(UpdateFiliereRequest $request, $id): JsonResponse
     {
         return response()->json($this->filiereService->update($id, $request->validated()));
     }

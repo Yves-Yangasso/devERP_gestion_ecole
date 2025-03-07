@@ -87,21 +87,6 @@ class InscriptionService
 
         return $dossier;
     }
-    // private function sendInscriptionNotification(Inscription $inscription): void
-    // {
-    //     try {
-    //         // Charger la relation dossier si ce n'est pas déjà fait
-    //         if (!$inscription->relationLoaded('dossier')) {
-    //             $inscription->load('dossier');
-    //         }
-
-    //         // Envoyer la notification de manière asynchrone
-    //         $inscription->notify(new NotificationInscription($inscription));
-    //     } catch (Exception $e) {
-    //         Log::error("Erreur lors de l'envoi de la notification d'inscription: " . $e->getMessage());
-    //         // Ne pas faire échouer l'inscription si l'envoi de l'email échoue
-    //     }
-    // }
 
     private function sendInscriptionNotification(Inscription $inscription): void
     {

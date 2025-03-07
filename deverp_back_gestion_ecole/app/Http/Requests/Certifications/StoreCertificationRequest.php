@@ -14,6 +14,7 @@ class StoreCertificationRequest extends FormRequest
     {
         return [
             'nom' => 'required|string|max:255|unique:certifications,nom',
+            'organisme' => 'required|string|max:255',
             'description' => 'nullable|string|max:500',
         ];
     }

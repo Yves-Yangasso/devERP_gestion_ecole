@@ -14,8 +14,10 @@ class StoreFiliereRequest extends FormRequest
     {
         return [
             'nom' => 'required|string|max:255|unique:filieres,nom',
-            'departement_id' => 'required|exists:departement,id',
+            'code' => 'required|string|max:255|unique:filieres,code',
+            'departement_id' => 'required|exists:departements,id',
             'description' => 'nullable|string|max:500',
+            'est_professionnelle'=> 'required|boolean',
         ];
     }
 }

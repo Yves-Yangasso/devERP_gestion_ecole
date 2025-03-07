@@ -15,8 +15,9 @@ class StoreFormationRequest extends FormRequest
         return [
             'nom' => 'required|string|max:255',
             'description' => 'nullable|string|max:500',
-            'duree' => 'required|integer|min:1',
-            'niveau_entree' => 'required|string|max:255',
+            'filiere_id' => 'required|integer|exists:filieres,id',
+            'niveau_id' => 'required|integer|exists:niveau_etudes,id',
+            'est_en_ligne' => 'required|boolean',
         ];
     }
 }

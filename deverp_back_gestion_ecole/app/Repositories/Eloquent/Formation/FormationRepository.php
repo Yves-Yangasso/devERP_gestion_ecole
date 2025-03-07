@@ -32,5 +32,10 @@ class FormationRepository implements FormationRepositoryInterface
     {
         Formation::destroy($id);
     }
+
+    public function getStructureTarifaireByFormationId($formation_id)
+    {
+        return Formation::with('structureTarifaire')->find($formation_id);
+    }
 }
 

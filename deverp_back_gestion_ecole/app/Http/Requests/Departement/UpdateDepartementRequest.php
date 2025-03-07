@@ -9,8 +9,11 @@ class UpdateDepartementRequest extends FormRequest {
     }
 
     public function rules() {
+        $id = $this->route('departement'); // Assure-toi que le paramètre de la route est bien 'departement'
+
         return [
-            'nom_departement' => 'sometimes|string|max:255|unique:departement,nom_departement,' . $this->route('departement'),
+            'nom' => 'sometimes|string|max:255|unique:departements,nom,' . ($id ?? 'NULL'),
+            'code' => 'sometimes|string|max:255|unique:departements,code,' . ($id ?? 'NULL'),
             'description' => 'nullable|string',
         ];
     }
