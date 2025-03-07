@@ -50,7 +50,7 @@ const LoginForm = () => {
 
   return (
     <div className="flex justify-center items-center w-full h-full">
-      <div className=" p-10 bg-white rounded-[25px] shadow-[8px_8px_0_-3px_blue] w-[380px] relative overflow-hidden">
+      <div className="p-10 bg-white rounded-[25px] shadow-[8px_8px_0_-3px_blue] w-[380px] relative overflow-hidden">
         {/* Effet wave en haut à droite */}
         <div className="absolute top-0 right-0 w-[200px] h-[200px] opacity-10 pointer-events-none">
           <div
