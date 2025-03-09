@@ -9,7 +9,11 @@ const HomePage = () => {
   };
 
   const handleConnexionClick = () => {
-    navigate('/login'); // Redirige vers la page de connexion
+    navigate('/PaiementEnLigne'); // Redirige vers la page de connexion
+  };
+
+  const handle_Paiement_line_Click = () => {
+    navigate('/PaiementEnLigne'); // Redirige vers la page de connexion
   };
 
   return (
@@ -19,6 +23,7 @@ const HomePage = () => {
       <div className="buttons">
         <button onClick={handleInscriptionClick}>Inscription</button>
         <button onClick={handleConnexionClick}>Connexion</button>
+        <button onClick={handle_Paiement_line_Click}>Paiement_en_Ligne</button>
       </div>
     </div>
   );

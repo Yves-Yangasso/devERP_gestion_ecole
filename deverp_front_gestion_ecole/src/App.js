@@ -25,6 +25,8 @@ import SuivieDossier from "./components/pages/Demandeurs/SuivieDossier";
 import InformationTuteur from "./components/pages/Demandeurs/InformationTuteur";
 import DocAFournir from "./components/pages/Demandeurs/DocAFournir";
 import RecapStudents from "./components/pages/Demandeurs/RecapStudent";
+import PaiementEnLigne from "./components/pages/Demandeurs/PaiementEnLigne";
+
 
 function App() {
   return (
@@ -85,6 +87,11 @@ function App() {
               <Route
                 path="/SuivieDossier"
                 element={<InscriptionRoute element={<SuivieDossier />} />}
+              />
+
+              <Route
+                path="/PaiementEnLigne"
+                element={<InscriptionRoute element={<PaiementEnLigne />} />}
               />
 
               {/* Routes privées (administration) */}
