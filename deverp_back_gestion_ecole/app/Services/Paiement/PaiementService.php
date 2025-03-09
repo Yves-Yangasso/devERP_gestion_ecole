@@ -37,6 +37,10 @@ class PaiementService
                 ]);
             }
 
+            if ($paiement->status === 'valide') {  // Assurez-vous de mettre à jour le statut ici
+                $this->validerInscription($donnees['inscription_id']);
+            }
+
             return $paiement;
         });
     }
@@ -55,4 +59,32 @@ class PaiementService
     {
         $this->paiementRepository->supprimer($id);
     }
+
+    public function validerInscription(int $inscriptionId): void
+{
+    DB::transaction(function () use ($inscriptionId) {
+        // Mettre à jour le statut de l'inscription
+        DB::table('inscriptions')
+            ->where('id', $inscriptionId)
+            ->update(['status' => 'valide']);
+    });
+
+
+}
+
+public function validerPaiement(int $paiementId, int $inscriptionId): void
+{
+    DB::transaction(function () use ($paiementId, $inscriptionId) {
+        // Mettre à jour le statut du paiement
+        $paiement = DB::table('paiements')
+            ->where('id', $paiementId)
+            ->update(['status' => 'valide']);
+
+        // Vérifiez si la mise à jour a réussi
+        if ($paiement) {
+            // Valider l'inscription
+            $this->validerInscription($inscriptionId);
+        }
+    });
+}
 }

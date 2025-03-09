@@ -6,19 +6,20 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Etudiant\InscrireEtudiantRequest;
 use App\Services\Etudiant\InscriptionService;
 use Illuminate\Http\JsonResponse;
+use App\Services\Dossier\ValidationDossierService;
 
 class InscriptionEtudiantController extends Controller
 {
     protected $inscriptionService;
+    protected $validationDossierService;
 
-    public function __construct(InscriptionService $inscriptionService)
+    public function __construct(InscriptionService $inscriptionService,ValidationDossierService $validationDossierService)
     {
         $this->inscriptionService = $inscriptionService;
-    }
+        $this->validationDossierService = $validationDossierService;
 
-    // public function __construct(
-    //     private readonly InscriptionService $inscriptionService
-    // ) {}
+
+    }
 
     public function store(InscrireEtudiantRequest $request): JsonResponse
     {
@@ -59,6 +60,44 @@ class InscriptionEtudiantController extends Controller
                 'message' => 'Erreur lors de la récupération de l\'inscription',
                 'error' => $e->getMessage()
             ], 404);
+        }
+    }
+
+    public function valider(int $inscriptionId): JsonResponse
+    {
+        try {
+            // Récupérer l'inscription avec le dossier associé
+            $inscription = $this->inscriptionService->getInscriptionComplete($inscriptionId);
+
+            if (!$inscription || !$inscription->dossier) {
+                return response()->json([
+                    'message' => 'Inscription ou dossier non trouvé',
+                    'success' => false
+                ], 404);
+            }
+
+            // Vérifier si le dossier est déjà validé
+            if (!$this->validationDossierService->isDossierValide($inscription->dossier->id)) {
+                return response()->json([
+                    'message' => 'Le dossier associé à cette inscription n\'est pas encore validé.',
+                    'success' => false
+                ], 400);
+            }
+
+            // Valider l'inscription uniquement si le dossier est validé
+            $this->inscriptionService->validateInscription($inscriptionId);
+
+            return response()->json([
+                'message' => 'Inscription validée avec succès.',
+                'success' => true,
+                'data' => $this->inscriptionService->getInscriptionComplete($inscriptionId)
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Erreur lors de la validation de l\'inscription.',
+                'error' => $e->getMessage(),
+                'success' => false
+            ], 500);
         }
     }
 }

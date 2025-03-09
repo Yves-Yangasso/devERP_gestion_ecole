@@ -10,7 +10,7 @@ class EnvoyerNotificationInvalidation implements ShouldQueue
 {
     public function handle(DossierInvalide $event)
     {
-        $etudiant = $event->dossier->inscription->etudiant;
+        $etudiant = $event->dossier->inscription;
         $etudiant->notify(new ResultatValidationDossier($event->dossier));
     }
 }

@@ -18,6 +18,7 @@ class InscriptionService
     public function __construct(
         private readonly CloudinaryStorageService $cloudinaryStorage,
         private readonly DossierService $dossierService,
+        private readonly EtudiantService $etudiantService,
         private readonly InscriptionRepository $inscriptionRepository
     ) {}
 
@@ -31,14 +32,25 @@ class InscriptionService
             // 2. Créer l'inscription
             $inscription = $this->createInscription($data['etudiant'], $tuteurIds[0]);
 
-            // 3. Créer le dossier avec les documents
-            $dossier = $this->createDossierWithDocuments(
-                $inscription,
-                $data['dossier']
-            );
+            if ($data['action'] == 'en_ligne') {
+                // 3. Créer le dossier avec les documents
+                $dossier = $this->createDossierWithDocuments(
+                    $inscription,
+                    $data['dossier']
+                );
 
-            // 4. Récupérer les URLs de stockage Cloudinary
-            $this->updateCloudinaryUrls($dossier);
+                // 4. Récupérer les URLs de stockage Cloudinary
+                $this->updateCloudinaryUrls($dossier);
+
+                // 5. Créer l'étudiant
+                $etudiant = $this->etudiantService->registerStudent([
+                    'inscription_id' => $inscription['id'],  // ID de l'inscription
+                    'nom' => $data['nom'],
+                    'prenom' => $data['prenom'],
+                    'matricule' => $data['matricule'],
+                    'email_institutionnel' => $data['email_institutionnel']
+                ]);
+            }
 
             // 5. Envoyer la notification d'inscription
             $this->sendInscriptionNotification($inscription);
