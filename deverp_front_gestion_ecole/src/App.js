@@ -26,6 +26,8 @@ import InformationTuteur from "./components/pages/Demandeurs/InformationTuteur";
 import DocAFournir from "./components/pages/Demandeurs/DocAFournir";
 import RecapStudents from "./components/pages/Demandeurs/RecapStudent";
 import PaiementEnLigne from "./components/pages/Demandeurs/PaiementEnLigne";
+import NouveauDepartement from "./components/popup/NouveauDepartement";
+import NouvelleFiliere from "./components/popup/NouvelleFiliere";
 
 
 function App() {
@@ -46,6 +48,20 @@ function App() {
                   <PublicRoute element={<HomePage />} restricted={true} />
                 }
               />
+
+              <Route
+                path="/home"
+                element={
+                  <PublicRoute element={<NouveauDepartement />} restricted={true} />
+                }
+              />
+
+              <Route
+                path="/home"
+                element={
+                  <PublicRoute element={<NouvelleFiliere />} restricted={true} />
+                }
+              />    
 
               {/* Routes d'inscription */}
               <Route

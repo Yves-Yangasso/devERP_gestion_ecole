@@ -15,6 +15,12 @@ const HomePage = () => {
   const handle_Paiement_line_Click = () => {
     navigate('/PaiementEnLigne'); // Redirige vers la page de connexion
   };
+  const handle_departements_Click = () => {
+    navigate('/NouveauDepartement'); // Redirige vers la page de connexion
+  };
+  const handle_filiere_Click = () => {
+    navigate('/NouvelleFiliere'); // Redirige vers la page de connexion
+  };
 
   return (
     <div className="home-page">
@@ -24,6 +30,8 @@ const HomePage = () => {
         <button onClick={handleInscriptionClick}>Inscription</button>
         <button onClick={handleConnexionClick}>Connexion</button>
         <button onClick={handle_Paiement_line_Click}>Paiement_en_Ligne</button>
+        <button onClick={handle_departements_Click}>Paiement_en_Ligne</button>
+        <button onClick={handle_filiere_Click}>Paiement_en_Ligne</button>
       </div>
     </div>
   );
