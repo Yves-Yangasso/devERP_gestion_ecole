@@ -183,10 +183,12 @@ Route::prefix('v1')->group(function () {
 
     Route::prefix('filiere')->group(function () {
         Route::get('/', [FiliereController::class, 'index']);
+        Route::get('/{id}/formations', [FiliereController::class, 'getFormationsByFiliere']);
         Route::get('/{id}', [FiliereController::class, 'show']);
         Route::post('/', [FiliereController::class, 'store']);
         Route::put('/{id}', [FiliereController::class, 'update']);
         Route::delete('/{id}', [FiliereController::class, 'destroy']);
+
     });
 
     Route::prefix('niveaux-etudes')->group(function () {

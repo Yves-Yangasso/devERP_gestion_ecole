@@ -42,4 +42,15 @@ class FiliereController extends Controller
         $this->filiereService->delete($id);
         return response()->json(['message' => 'Filière supprimée avec succès']);
     }
+
+    public function getFormationsByFiliere(int $id): JsonResponse
+    {
+        $formations = $this->filiereService->getFormationsByFiliereId($id);
+
+        if ($formations->isEmpty()) {
+            return response()->json(['message' => 'Aucune formation trouvée pour cette filière.'], 404);
+        }
+
+        return response()->json($formations, 200);
+    }
 }

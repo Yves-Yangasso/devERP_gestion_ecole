@@ -4,20 +4,25 @@ namespace App\Services\Etudiant;
 use App\Contracts\Repositories\Etudiant\EtudiantRepositoryInterface;
 use App\Contracts\Repositories\Etudiant\StudentServiceInterface as EtudiantStudentServiceInterface;
 use App\Models\Inscription;
-use Illuminate\Support\Facades\Log;
+use Exception;
 
-class EtudiantService implements EtudiantStudentServiceInterface {
+class EtudiantService implements EtudiantStudentServiceInterface
+{
     protected $studentRepository;
 
-    public function __construct(EtudiantRepositoryInterface $studentRepository) {
+    public function __construct(EtudiantRepositoryInterface $studentRepository)
+    {
         $this->studentRepository = $studentRepository;
     }
 
-    public function registerStudent(array $data) {
-        $inscription = Inscription::find($data['inscription_id']);
+    public function registerStudent(array $data)
+    {
+        $inscription = Inscription::find($data['id']);
+
         if (!$inscription || $inscription->status !== 'valide') {
-            throw new \Exception("L'inscription doit être valide avant de créer un étudiant");
+            throw new Exception("L'inscription doit être valide avant de créer un étudiant");
         }
+
         return $this->studentRepository->create($data);
     }
 }
