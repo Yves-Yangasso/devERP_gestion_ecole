@@ -50,14 +50,14 @@ function App() {
               />
 
               <Route
-                path="/home"
+                path="/NouveauDepartement"
                 element={
                   <PublicRoute element={<NouveauDepartement />} restricted={true} />
                 }
               />
 
               <Route
-                path="/home"
+                path="/NouvelleFiliere"
                 element={
                   <PublicRoute element={<NouvelleFiliere />} restricted={true} />
                 }

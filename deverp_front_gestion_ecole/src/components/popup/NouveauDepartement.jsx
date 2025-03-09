@@ -1,11 +1,7 @@
 import React, { useState } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
-import useCrudAxios from "../hooks/useCrudAxios";
+import useCrudAxios from "../../hooks/useCrudAxios";
 
-const NouveauDepartement = ({ open, onClose }) => {
+const NouveauDepartement = () => {
     const { create, loading, error } = useCrudAxios("departements");
     const [formData, setFormData] = useState({
         code: "",
@@ -25,42 +21,35 @@ const NouveauDepartement = ({ open, onClose }) => {
                 nom: formData.nom,
                 description: formData.description
             });
-            onClose();
         } catch (err) {
             console.error("Erreur lors de la création du département", err);
         }
     };
 
     return (
-        <Dialog open={open} onOpenChange={onClose}>
-            <DialogContent>
-                <DialogHeader>
-                    <DialogTitle>Nouveau Département</DialogTitle>
-                </DialogHeader>
-                <div className="space-y-4">
-                    <div className="grid grid-cols-2 gap-4">
-                        <div>
-                            <label>Code du Département</label>
-                            <Input name="code" placeholder="Code du Département" value={formData.code} onChange={handleChange} />
-                        </div>
-                        <div>
-                            <label>Nom du Département</label>
-                            <Input name="nom" placeholder="Nom du Département" value={formData.nom} onChange={handleChange} />
-                        </div>
-                    </div>
-                    <div>
-                        <label>Description</label>
-                        <Textarea name="description" placeholder="Description" value={formData.description} onChange={handleChange} />
-                    </div>
-                    <div className="flex justify-end">
-                        <Button onClick={handleSubmit} disabled={loading} className="bg-blue-600 text-white">
-                            {loading ? "Création..." : "Créer"}
-                        </Button>
-                    </div>
-                    {error && <p className="text-red-500">Erreur: {error.message}</p>}
+        <div className="p-6 bg-white shadow rounded">
+            <h2 className="text-xl font-bold mb-4">Nouveau Département</h2>
+            <div className="grid grid-cols-2 gap-4">
+                <div>
+                    <label>Code du Département</label>
+                    <input name="code" placeholder="Code du Département" value={formData.code} onChange={handleChange} className="border rounded p-2 w-full" />
                 </div>
-            </DialogContent>
-        </Dialog>
+                <div>
+                    <label>Nom du Département</label>
+                    <input name="nom" placeholder="Nom du Département" value={formData.nom} onChange={handleChange} className="border rounded p-2 w-full" />
+                </div>
+            </div>
+            <div className="mt-4">
+                <label>Description</label>
+                <textarea name="description" placeholder="Description" value={formData.description} onChange={handleChange} className="border rounded p-2 w-full" />
+            </div>
+            <div className="flex justify-end mt-4">
+                <button onClick={handleSubmit} disabled={loading} className="bg-blue-600 text-white rounded px-4 py-2">
+                    {loading ? "Création..." : "Créer"}
+                </button>
+            </div>
+            {error && <p className="text-red-500">Erreur: {error.message}</p>}
+        </div>
     );
 };
 
