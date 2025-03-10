@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import useCrudAxios from "../../hooks/useCrudAxios";
 
 const NouvelleFiliere = () => {
-    const { create, loading, error } = useCrudAxios("filieres");
+    const { create, loading, error } = useCrudAxios("filiere");
     const { data: departements } = useCrudAxios("departements");
 
     const [formData, setFormData] = useState({
