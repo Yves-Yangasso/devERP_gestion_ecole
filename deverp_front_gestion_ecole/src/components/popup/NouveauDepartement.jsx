@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import useCrudAxios from "../../hooks/useCrudAxios";
 
-const NouveauDepartement = () => {
+const NouveauDepartement = ({ onClose }) => {
     const { create, loading, error } = useCrudAxios("departements");
     const [formData, setFormData] = useState({
         code: "",
@@ -15,14 +15,17 @@ const NouveauDepartement = () => {
     };
 
     const handleSubmit = async () => {
+        console.log("Données envoyées :", formData);
         try {
-            await create({
-                code: formData.code,
-                nom: formData.nom,
-                description: formData.description
+            const response = await create({
+                code: formData.code.trim(),
+                nom: formData.nom.trim(),
+                description: formData.description.trim()
             });
+            console.log("Réponse du serveur :", response);
+            onClose();  // Ferme le popup après la création
         } catch (err) {
-            console.error("Erreur lors de la création du département", err);
+            console.error("Erreur lors de la création :", err.response?.data || err.message);
         }
     };
 
@@ -32,19 +35,41 @@ const NouveauDepartement = () => {
             <div className="grid grid-cols-2 gap-4">
                 <div>
                     <label>Code du Département</label>
-                    <input name="code" placeholder="Code du Département" value={formData.code} onChange={handleChange} className="border rounded p-2 w-full" />
+                    <input
+                        name="code"
+                        placeholder="Code du Département"
+                        value={formData.code}
+                        onChange={handleChange}
+                        className="border rounded p-2 w-full"
+                    />
                 </div>
                 <div>
                     <label>Nom du Département</label>
-                    <input name="nom" placeholder="Nom du Département" value={formData.nom} onChange={handleChange} className="border rounded p-2 w-full" />
+                    <input
+                        name="nom"
+                        placeholder="Nom du Département"
+                        value={formData.nom}
+                        onChange={handleChange}
+                        className="border rounded p-2 w-full"
+                    />
                 </div>
             </div>
             <div className="mt-4">
                 <label>Description</label>
-                <textarea name="description" placeholder="Description" value={formData.description} onChange={handleChange} className="border rounded p-2 w-full" />
+                <textarea
+                    name="description"
+                    placeholder="Description"
+                    value={formData.description}
+                    onChange={handleChange}
+                    className="border rounded p-2 w-full"
+                />
             </div>
             <div className="flex justify-end mt-4">
-                <button onClick={handleSubmit} disabled={loading} className="bg-blue-600 text-white rounded px-4 py-2">
+                <button
+                    onClick={handleSubmit}
+                    disabled={loading}
+                    className="bg-blue-600 text-white rounded px-4 py-2"
+                >
                     {loading ? "Création..." : "Créer"}
                 </button>
             </div>

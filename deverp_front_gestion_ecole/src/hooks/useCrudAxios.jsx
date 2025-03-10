@@ -90,7 +90,7 @@ const useCrudAxios = (baseURL) => {
     });
 
     const get = useCallback((id = '') => request('get', `/${id}`), [request]);
-    const create = useCallback((payload) => request('post', '/', payload), [request]);
+    const create = useCallback((payload) => request('post', '', payload), [request]);
     const update = useCallback((id, payload) => request('put', `/${id}`, payload), [request]);
     const remove = useCallback((id) => removeMutation.mutate(id), [removeMutation]);
 

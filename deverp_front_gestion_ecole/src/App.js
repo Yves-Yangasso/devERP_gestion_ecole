@@ -18,6 +18,8 @@ import Presence from "./components/pages/Admins/Presence";
 import GestionAdministrative from "./components/pages/Admins/Administrative";
 import Discussion from "./components/pages/Admins/Discussion";
 import Classes from "./components/pages/Admins/ClasseGroupe";
+import Departements from "./components/pages/Admins/Departements_filieres";
+import Filieres from "./components/pages/Admins/Filieres";
 
 // Importation des pages DEMANDEUR
 import InformationStudent from "./components/pages/Demandeurs/InformationStudent";
@@ -122,6 +124,14 @@ function App() {
               <Route
                 path="/etudiant"
                 element={<PrivateRoute element={<Etudiants />} />}
+              />
+              <Route
+                path="/Departements"
+                element={<PrivateRoute element={<Departements />} />}
+              />
+              <Route
+                path="/Filieres"
+                element={<PrivateRoute element={<Filieres />} />}
               />
               <Route
                 path="/professeur"

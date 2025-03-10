@@ -37,6 +37,7 @@ function SideNav({ isCollapsed }) {
           <NavItem icon={<LayoutDashboard size={20} />} label="Tableau de bord" navigate="/dashboard" active={activeRoute === "/dashboard"} isCollapsed={isCollapsed} />
           <NavItem icon={<UserPlus size={20} />} label="Inscription" navigate="/inscription" active={activeRoute === "/inscription"} isCollapsed={isCollapsed} />
           <NavItem icon={<Users size={20} />} label="Etudiants" navigate="/etudiant" active={activeRoute === "/etudiant"} isCollapsed={isCollapsed} />
+          <NavItem icon={<Users size={20} />} label="Départements et Filières" navigate="/Departements" active={activeRoute === "/Departements"} isCollapsed={isCollapsed} />
           <NavItem icon={<GraduationCap size={20} />} label="Professeurs" navigate="/professeur" active={activeRoute === "/professeur"} isCollapsed={isCollapsed} />
           <NavItem icon={<BookOpen size={20} />} label="Modules et Matières" navigate="/moduleMatiere" active={activeRoute === "/moduleMatiere"} isCollapsed={isCollapsed} />
           <NavItem icon={<Calendar size={20} />} label="Gestion des présences" navigate="/presence" active={activeRoute === "/presence"} isCollapsed={isCollapsed} />

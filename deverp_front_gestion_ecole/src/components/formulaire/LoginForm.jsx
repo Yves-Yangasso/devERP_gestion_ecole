@@ -23,7 +23,10 @@ const LoginForm = () => {
     setError(null);
 
     try {
-      const response = await create(credentials);
+      const response = await create({
+        login: credentials.login,
+        password: credentials.password
+    });    
       
       // Vérification du token dans la réponse
       if (response?.user?.access_token) {

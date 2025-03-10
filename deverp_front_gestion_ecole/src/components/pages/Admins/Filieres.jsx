@@ -6,16 +6,12 @@ import InscriptionStudent from "../../section/Inscription_student";
 import InscriptionDemandes from "../../section/Inscription_demandes";
 
 function InscriptionPage() {
-    const [activeTab, setActiveTab] = useState("students"); // Par défaut, onglet "Étudiants"
+    const [activeTab, setActiveTab] = useState("students");
 
     return (
         <PageContainer title="Inscriptions">
             <InfosPages title="Inscriptions">
-                <DoubleButton
-                    labels={["Étudiants", "Demandes"]} // 🔥 Labels dynamiques
-                    values={["students", "demandes"]}   // 🔥 Valeurs dynamiques associées
-                    onTabChange={setActiveTab}
-                />
+                <DoubleButton onTabChange={setActiveTab} />
             </InfosPages>
 
             {/* ✅ Affichage conditionnel des composants */}
