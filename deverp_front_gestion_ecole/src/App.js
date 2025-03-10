@@ -18,13 +18,18 @@ import Presence from "./components/pages/Admins/Presence";
 import GestionAdministrative from "./components/pages/Admins/Administrative";
 import Discussion from "./components/pages/Admins/Discussion";
 import Classes from "./components/pages/Admins/ClasseGroupe";
-
+import RecuInscription from "./components/formulaire/reçuInscription.jsx";
+import Attestation from "./components/formulaire/Attestation.jsx"
 // Importation des pages DEMANDEUR
 import InformationStudent from "./components/pages/Demandeurs/InformationStudent";
 import SuivieDossier from "./components/pages/Demandeurs/SuivieDossier";
 import InformationTuteur from "./components/pages/Demandeurs/InformationTuteur";
 import DocAFournir from "./components/pages/Demandeurs/DocAFournir";
 import RecapStudents from "./components/pages/Demandeurs/RecapStudent";
+import PaiementEnLigne from "./components/pages/Demandeurs/PaiementEnLigne";
+import NouveauDepartement from "./components/popup/NouveauDepartement";
+import NouvelleFiliere from "./components/popup/NouvelleFiliere";
+
 
 function App() {
   return (
@@ -38,12 +43,38 @@ function App() {
                 path="/login"
                 element={<PublicRoute element={<Login />} restricted={true} />}
               />
+
+              <Route
+                path="/RecuIns"
+                element={<PublicRoute element={<RecuInscription />} />}
+              />
+
+              <Route
+                path="/Attestation"
+                element={<PublicRoute element={<Attestation />} />}
+              />
+
+
               <Route
                 path="/home"
                 element={
                   <PublicRoute element={<HomePage />} restricted={true} />
                 }
               />
+
+              <Route
+                path="/NouveauDepartement"
+                element={
+                  <PublicRoute element={<NouveauDepartement />} restricted={true} />
+                }
+              />
+
+              <Route
+                path="/NouvelleFiliere"
+                element={
+                  <PublicRoute element={<NouvelleFiliere />} restricted={true} />
+                }
+              />    
 
               {/* Routes d'inscription */}
               <Route
@@ -64,6 +95,7 @@ function App() {
                   />
                 }
               />
+             
               <Route
                 path="/DocAFournir"
                 element={
@@ -82,9 +114,16 @@ function App() {
                   />
                 }
               />
+
+
               <Route
                 path="/SuivieDossier"
                 element={<InscriptionRoute element={<SuivieDossier />} />}
+              />
+
+              <Route
+                path="/PaiementEnLigne"
+                element={<InscriptionRoute element={<PaiementEnLigne />} />}
               />
 
               {/* Routes privées (administration) */}

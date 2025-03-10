@@ -24,4 +24,8 @@ class CertificationController extends Controller
     {
         return response()->json($this->certificationService->getCertificationById($id));
     }
+
+    public function store(StoreCertificationRequest $request): JsonResponse{
+        return response()->json($this->certificationService->createCertification($request->validated()), 201);
+    }
 }

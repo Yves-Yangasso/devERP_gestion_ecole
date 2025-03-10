@@ -32,8 +32,9 @@ class DepartementController extends Controller
         return response()->json($this->departementService->create($request->validated()), 201);
     }
 
-    public function update(StoreDepartementRequest $request, $id): JsonResponse
+    public function update(UpdateDepartementRequest $request, $id): JsonResponse
     {
+        //dd( $id);
         return response()->json($this->departementService->update($id, $request->validated()));
     }
 

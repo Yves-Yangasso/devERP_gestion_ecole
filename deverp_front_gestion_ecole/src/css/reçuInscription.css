@@ -1,0 +1,148 @@
+.invoice-modern-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #f0f4f8, #d9e2ec);
+    padding: 40px 20px;
+    font-family: 'Poppins', sans-serif;
+  }
+  
+  .invoice-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    max-width: 800px;
+    margin-bottom: 20px;
+    background: white;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .institute-logo {
+    font-size: 30px;
+    font-weight: 700;
+    color: #1e3a8a;
+  }
+  
+  .isi-logo {
+    background: linear-gradient(45deg, #1e3a8a, #3b82f6);
+    -webkit-background-clip: text;
+    color: transparent;
+  }
+  
+  .institute-details h1 {
+    font-size: 20px;
+    color: #1e3a8a;
+    margin: 0;
+  }
+  
+  .institute-details .address,
+  .institute-details .agreement,
+  .institute-details .service {
+    font-size: 12px;
+    color: #64748b;
+    margin: 5px 0;
+  }
+  
+  .invoice-id {
+    font-size: 18px;
+    color: #3b82f6;
+    font-weight: 600;
+  }
+  
+  .student-card, .receipt-details-card, .financial-card, .outstanding-card, .footer-card {
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin-bottom: 20px;
+    width: 100%;
+    max-width: 800px;
+    animation: fadeIn 1s ease-in;
+  }
+  
+  .student-card h2 {
+    font-size: 24px;
+    color: #1e3a8a;
+    margin: 0 0 10px;
+  }
+  
+  .student-card .degree {
+    font-size: 14px;
+    color: #64748b;
+  }
+  
+  .receipt-details-card h3,
+  .financial-card h3,
+  .outstanding-card h3 {
+    font-size: 18px;
+    color: #1e3a8a;
+    margin-bottom: 15px;
+  }
+  
+  .details-grid, .financial-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 10px;
+  }
+  
+  .details-grid p, .financial-grid p {
+    font-size: 14px;
+    color: #334155;
+    margin: 5px 0;
+  }
+  
+  .highlight {
+    color: #10b981;
+    font-weight: 600;
+  }
+  
+  .outstanding-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+  }
+  
+  .outstanding-table th,
+  .outstanding-table td {
+    border: 1px solid #e2e8f0;
+    padding: 8px;
+    text-align: center;
+    font-size: 12px;
+    color: #334155;
+  }
+  
+  .outstanding-table th {
+    background: #e0e7ff;
+    color: #1e3a8a;
+  }
+  
+  .footer-card {
+    text-align: center;
+  }
+  
+  .footer-card p {
+    font-size: 12px;
+    color: #64748b;
+    margin: 5px 0;
+  }
+  
+  .stamp-placeholder, .barcode-placeholder {
+    width: 120px;
+    height: 50px;
+    background: #e0e7ff;
+    border-radius: 5px;
+    margin: 10px auto;
+    display: block;
+  }
+  
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  
+  /* Ajout de la police Poppins */
+  @import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');

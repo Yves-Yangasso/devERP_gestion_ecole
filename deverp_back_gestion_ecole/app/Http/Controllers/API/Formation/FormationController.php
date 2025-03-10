@@ -40,4 +40,15 @@ class FormationController extends Controller
         $this->formationService->delete($id);
         return response()->json(['message' => 'Formation supprimée avec succès']);
     }
+
+    public function getStructureTarifaire($formation_id): JsonResponse
+    {
+        $result = $this->formationService->getStructureTarifaire($formation_id);
+
+        if (isset($result['error'])) {
+            return response()->json(['message' => $result['error']], $result['code']);
+        }
+
+        return response()->json($result);
+    }
 }

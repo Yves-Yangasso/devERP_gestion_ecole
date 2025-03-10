@@ -21,6 +21,7 @@ use App\Http\Controllers\API\StructureTarifaire\StructureTarifaireController;
 use App\Http\Controllers\API\Certifications\CertificationController;
 use App\Http\Controllers\API\Cours\CoursController;
 use App\Http\Controllers\DepartementController;
+use App\Http\Controllers\Etudiant\EtudiantController;
 use App\Http\Controllers\FiliereController;
 
 /*
@@ -52,6 +53,7 @@ Route::prefix('v1')->group(function () {
         Route::get('/', [InscriptionEtudiantController::class, 'index']);
         Route::post('/', [InscriptionEtudiantController::class, 'store']);
         Route::get('/{id}', [InscriptionEtudiantController::class, 'show']);
+        Route::post('/{id}/valider', [InscriptionEtudiantController::class, 'valider']);
     });
 
     // Suivi des dossiers (public)
@@ -61,9 +63,26 @@ Route::prefix('v1')->group(function () {
     });
 
     // Dossiers (routes publiques)
+    // Route::prefix('dossiers')->group(function () {
+    //     Route::get('/{dossierId}', [TraitementDossierController::class, 'getDossierDetails']);
+    //     Route::get('/a-traiter', [TraitementDossierController::class, 'getDossiersATraiter']);
+    // });
+
     Route::prefix('dossiers')->group(function () {
-        Route::get('/{dossierId}', [TraitementDossierController::class, 'getDossierDetails']);
-        Route::get('/a-traiter', [TraitementDossierController::class, 'getDossiersATraiter']);
+        // Création et modification
+        Route::post('/update-status', [DossierController::class, 'mettreAJourStatut']);
+        Route::post('/', [DossierController::class, 'store']);
+        Route::get('/etudiant/{etudiantId}', [DossierController::class, 'getDossiersEtudiant']);
+
+        // Validation des dossiers
+        Route::get('/en-attente', [ValidationDossierController::class, 'getDossiersEnAttente']);
+        Route::post('/{dossierId}/valider', [ValidationDossierController::class, 'validerDossier']);
+        Route::get('/{dossierId}/documents', [ValidationDossierController::class, 'getDocuments']);
+        Route::post('/documents/{documentId}/valider', [ValidationDossierController::class, 'validerDocument']);
+        Route::get('/documents/preview/{documentId}', [DocumentController::class, 'previewDocument'])->name('documents.preview');
+
+        // Traitement des documents
+        //Route::post('/documents/{documentId}/traiter', [TraitementDossierController::class, 'traiterDocument']);
     });
 
     /*
@@ -77,7 +96,7 @@ Route::prefix('v1')->group(function () {
         Route::post('/', [DossierController::class, 'store']);
         Route::get('/etudiant/{etudiantId}', [DossierController::class, 'getDossiersEtudiant']);
 
-        Route::post('/traitements', [TraitementDossierController::class, 'traiterDossierEtDocuments']);
+        //Route::post('/traitements', [TraitementDossierController::class, 'traiterDossierEtDocuments']);
 
         // Validation des dossiers
         Route::get('/en-attente', [ValidationDossierController::class, 'getDossiersEnAttente']);
@@ -86,7 +105,7 @@ Route::prefix('v1')->group(function () {
         Route::post('/documents/{documentId}/valider', [ValidationDossierController::class, 'validerDocument']);
 
         // Traitement des documents
-        Route::post('/documents/traiter', [TraitementDossierController::class, 'traiterDocument']);
+        // Route::post('/documents/traiter', [TraitementDossierController::class, 'traiterDocument']);
     });
     Route::middleware(['auth:api'])->group(function () {
         // Informations utilisateur
@@ -107,22 +126,7 @@ Route::prefix('v1')->group(function () {
         });
 
         // Gestion des dossiers
-        Route::prefix('dossiers')->group(function () {
-            // Création et modification
-            Route::post('/update-status', [DossierController::class, 'mettreAJourStatut']);
-            Route::post('/', [DossierController::class, 'store']);
-            Route::get('/etudiant/{etudiantId}', [DossierController::class, 'getDossiersEtudiant']);
 
-            // Validation des dossiers
-            Route::get('/en-attente', [ValidationDossierController::class, 'getDossiersEnAttente']);
-            Route::post('/{dossierId}/valider', [ValidationDossierController::class, 'validerDossier']);
-            Route::get('/{dossierId}/documents', [ValidationDossierController::class, 'getDocuments']);
-            Route::post('/documents/{documentId}/valider', [ValidationDossierController::class, 'validerDocument']);
-            Route::get('/documents/preview/{documentId}', [DocumentController::class, 'previewDocument'])->name('documents.preview');
-
-            // Traitement des documents
-            Route::post('/documents/{documentId}/traiter', [TraitementDossierController::class, 'traiterDocument']);
-        });
 
         // Gestion des documents
         Route::prefix('documents')->group(function () {
@@ -140,11 +144,7 @@ Route::prefix('v1')->group(function () {
         });
 
         //Route pour le paiement par les étudiant
-        Route::prefix('paiements')->group(function () {
-            Route::post('/', [PaiementController::class, 'store']);
-            Route::get('/{id}', [PaiementController::class, 'show']);
-            Route::delete('/{id}', [PaiementController::class, 'destroy']);
-        });
+
 
 
         // Route permettant aux étudiants d'effectuer un paiement/Modifier/Annuler
@@ -155,9 +155,13 @@ Route::prefix('v1')->group(function () {
             Route::put('/{id}', [LignePaiementController::class, 'update']);
             Route::delete('/{id}', [LignePaiementController::class, 'destroy']);
         });
+    });
 
-
-
+    Route::prefix('paiements')->group(function () {
+        Route::post('/', [PaiementController::class, 'store']);
+        Route::post('/valider', [PaiementController::class, 'valider']);
+        Route::get('/{id}', [PaiementController::class, 'show']);
+        Route::delete('/{id}', [PaiementController::class, 'destroy']);
     });
 
     Route::prefix('formations')->group(function () {
@@ -166,6 +170,7 @@ Route::prefix('v1')->group(function () {
         Route::post('/', [FormationController::class, 'store']);
         Route::put('/{id}', [FormationController::class, 'update']);
         Route::delete('/{id}', [FormationController::class, 'destroy']);
+        Route::get('/{id}/tarif', [FormationController::class, 'getStructureTarifaire']);
     });
 
     Route::prefix('departements')->group(function () {
@@ -176,12 +181,14 @@ Route::prefix('v1')->group(function () {
         Route::delete('/{id}', [DepartementController::class, 'destroy']);
     });
 
-    Route::prefix('filieres')->group(function () {
+    Route::prefix('filiere')->group(function () {
         Route::get('/', [FiliereController::class, 'index']);
+        Route::get('/{id}/formations', [FiliereController::class, 'getFormationsByFiliere']);
         Route::get('/{id}', [FiliereController::class, 'show']);
         Route::post('/', [FiliereController::class, 'store']);
         Route::put('/{id}', [FiliereController::class, 'update']);
         Route::delete('/{id}', [FiliereController::class, 'destroy']);
+
     });
 
     Route::prefix('niveaux-etudes')->group(function () {
@@ -232,5 +239,10 @@ Route::prefix('v1')->group(function () {
         Route::post('/', [StructureTarifaireController::class, 'store']);
         Route::put('/{id}', [StructureTarifaireController::class, 'update']);
         Route::delete('/{id}', [StructureTarifaireController::class, 'destroy']);
+    });
+
+    // Creation de l'etudiant
+    Route::prefix('etudiants')->group(function () {
+        Route::post('/', [EtudiantController::class, 'store']);
     });
 });

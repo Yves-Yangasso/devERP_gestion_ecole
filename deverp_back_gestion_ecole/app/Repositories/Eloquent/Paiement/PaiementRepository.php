@@ -1,5 +1,5 @@
 <?php
-namespace App\Repositories\Eloquent;
+namespace App\Repositories\Eloquent\Paiement;
 
 use App\Models\Paiement;
 use App\Contracts\Repositories\Paiement\PaiementRepositoryInterface;
@@ -28,7 +28,7 @@ class PaiementRepository implements PaiementRepositoryInterface
 
     public function trouverParId(int $id): ?Paiement
     {
-        return Paiement::with('lignePaiements')->find($id);
+        return Paiement::with('lignesPaiement')->find($id);
     }
 
     public function tous(): Collection

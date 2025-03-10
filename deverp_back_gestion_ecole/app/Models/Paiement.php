@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -10,17 +9,23 @@ class Paiement extends Model
     use HasFactory;
 
     protected $fillable = [
-        'montant_paie',
-        'date_paie',
+        'inscription_id',
+        'mode_paiement_id',
+        'montant_paiement',
+        'status'
     ];
 
-    public function lignePaiements()
+    public function lignesPaiement()
     {
         return $this->hasMany(LignePaiement::class);
     }
 
-    public function modePaiement()
-    {
-        return $this->belongsTo(ModePaiement::class);
+    public function inscription(){
+        return $this->belongsTo(Inscription::class);
     }
+
+    public function modePaiement(){
+        return $this->belongsTo(ModePaiement::class);
+        }
+
 }

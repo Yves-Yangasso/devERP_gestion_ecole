@@ -36,4 +36,19 @@ class FormationService
     {
         return $this->repository->delete($id);
     }
+
+    public function getStructureTarifaire($formation_id)
+    {
+        $formation = $this->repository->getStructureTarifaireByFormationId($formation_id);
+
+        if (!$formation) {
+            return ['error' => 'Formation non trouvée', 'code' => 404];
+        }
+
+        if (!$formation->structureTarifaire) {
+            return ['error' => 'Aucune structure tarifaire trouvée pour cette formation', 'code' => 404];
+        }
+
+        return $formation->structureTarifaire;
+    }
 }

@@ -1,27 +1,59 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useFormContext } from "../../context/FormContext";
 
 const Paiement = () => {
-  const [paiements, setPaiements] = useState([
-    { mois: "Octobre", montant: "50 000 FCFA", payé: true },
-    { mois: "Novembre", montant: "50 000 FCFA", payé: true },
-    { mois: "Décembre", montant: "50 000 FCFA", payé: true },
-    { mois: "Janvier", montant: "50 000 FCFA", payé: false },
-    { mois: "Février", montant: "50 000 FCFA", payé: false },
-    { mois: "Mars", montant: "50 000 FCFA", payé: false },
-    { mois: "Avril", montant: "50 000 FCFA", payé: false },
-    { mois: "Mai", montant: "50 000 FCFA", payé: false },
-    { mois: "Juin", montant: "50 000 FCFA", payé: false },
-  ]);
+  const { formState, updatePayment } = useFormContext();
+  const savedPayment = formState.payment || {};
 
-  const [frais, setFrais] = useState([
-    { label: "Frais Scolarité", montant: "450 000 FCFA", payé: true },
-    { label: "Frais d'Examen", montant: "0 000 FCFA", payé: false },
-    { label: "Frais Dossier", montant: "50 000 FCFA", payé: true },
-    { label: "Frais Soutenance", montant: "0 000 FCFA", payé: false },
-    { label: "Frais d'Uniforme", montant: "60 000 FCFA", payé: true },
-    { label: "Frais d'Assurance", montant: "5 000 FCFA", payé: true },
-    { label: "Frais Amicale", montant: "5 000 FCFA", payé: true },
-  ]);
+  const [paiements, setPaiements] = useState(
+    savedPayment.detailsPaiements || [
+      { mois: "Octobre", montant: 50000, payé: true },
+      { mois: "Novembre", montant: 50000, payé: true },
+      { mois: "Décembre", montant: 50000, payé: true },
+      { mois: "Janvier", montant: 50000, payé: false },
+      { mois: "Février", montant: 50000, payé: false },
+      { mois: "Mars", montant: 50000, payé: false },
+      { mois: "Avril", montant: 50000, payé: false },
+      { mois: "Mai", montant: 50000, payé: false },
+      { mois: "Juin", montant: 50000, payé: false },
+    ]
+  );
+
+  const [frais, setFrais] = useState(
+    savedPayment.detailsFrais || [
+      { label: "Frais Scolarité", montant: 450000, payé: true },
+      { label: "Frais d'Examen", montant: 0, payé: false },
+      { label: "Frais Dossier", montant: 50000, payé: true },
+      { label: "Frais Soutenance", montant: 0, payé: false },
+      { label: "Frais d'Uniforme", montant: 60000, payé: true },
+      { label: "Frais d'Assurance", montant: 5000, payé: true },
+      { label: "Frais Amicale", montant: 5000, payé: true },
+    ]
+  );
+
+  const [selectedMode, setSelectedMode] = useState(savedPayment.modePaiement || "");
+
+  useEffect(() => {
+    const totalMontant = frais.reduce((acc, item) => acc + item.montant, 0);
+    const montantPaye = frais.reduce((acc, item) => item.payé ? acc + item.montant : acc, 0);
+    const mensualitesPaye = paiements.filter(p => p.payé).length;
+    const mensualitesRestantes = paiements.length - mensualitesPaye;
+
+    updatePayment({
+      totalMontant,
+      montantPaye,
+      resteAPayer: totalMontant - montantPaye,
+      mensualitePaye: mensualitesPaye,
+      mensualiteRestante: mensualitesRestantes,
+      modePaiement: selectedMode,
+      detailsPaiements: paiements,
+      detailsFrais: frais
+    });
+  }, [paiements, frais, selectedMode]);
+
+  const handleModeSelection = (mode) => {
+    setSelectedMode(mode);
+  };
 
   const togglePaiement = (index) => {
     setPaiements((prev) =>
@@ -34,7 +66,6 @@ const Paiement = () => {
       prev.map((f, i) => (i === index ? { ...f, payé: !f.payé } : f))
     );
   };
-
   return (
     <div className="p-3 space-y-3">
       <div className="grid grid-cols-2 gap-4">
@@ -99,48 +130,32 @@ const Paiement = () => {
       <div className="bg-white p-3 rounded-lg shadow">
         <h2 className="text-lg font-semibold mb-2">Mode de paiement</h2>
         <ul className="grid grid-cols-3 gap-3">
-          <li className="flex items-center border rounded-lg p-2">
-            <img src="img_espece.jpeg" alt="Espèces" className="w-8 h-8 mr-2" />
-            <div>
-              <h3 className="font-medium">Espèces</h3>
-              <p className="text-xs text-gray-500">Paiement au bureau</p>
-            </div>
-          </li>
-          <li className="flex items-center border rounded-lg p-2">
-            <img src="img_cb.jpeg" alt="Carte Bancaire" className="w-8 h-8 mr-2" />
-            <div>
-              <h3 className="font-medium">Carte Bancaire</h3>
-              <p className="text-xs text-gray-500">Visa, Mastercard</p>
-            </div>
-          </li>
-          <li className="flex items-center border rounded-lg p-2">
-            <img src="img_om.png" alt="Orange Money" className="w-8 h-8 mr-2" />
-            <div>
-              <h3 className="font-medium">Orange Money</h3>
-              <p className="text-xs text-gray-500">Paiement Mobile</p>
-            </div>
-          </li>
-          <li className="flex items-center border rounded-lg p-2">
-            <img src="img_wave.webp" alt="Wave" className="w-8 h-8 mr-2" />
-            <div>
-              <h3 className="font-medium">Wave</h3>
-              <p className="text-xs text-gray-500">Paiement Mobile</p>
-            </div>
-          </li>
-          <li className="flex items-center border rounded-lg p-2">
-            <img src="img_free_money.png" alt="Free Money" className="w-8 h-8 mr-2" />
-            <div>
-              <h3 className="font-medium">Free Money</h3>
-              <p className="text-xs text-gray-500">Paiement Mobile</p>
-            </div>
-          </li>
-          <li className="flex items-center border rounded-lg p-2">
-            <img src="img_free_money.png" alt="Free Money" className="w-8 h-8 mr-2" />
-            <div>
-              <h3 className="font-medium">Yas</h3>
-              <p className="text-xs text-gray-500">Paiement Mobile</p>
-            </div>
-          </li>
+          {[
+            { name: "Espèces", img: "img_espece.jpeg" },
+            { name: "Carte Bancaire", img: "img_cb.jpeg" },
+            { name: "Orange Money", img: "img_om.png" },
+            { name: "Wave", img: "img_wave.webp" },
+            { name: "Free Money", img: "img_free_money.png" },
+            { name: "Yas", img: "img_free_money.png" },
+          ].map((mode) => (
+            <li 
+              key={mode.name}
+              onClick={() => handleModeSelection(mode.name)}
+              className={`flex items-center border rounded-lg p-2 cursor-pointer ${
+                selectedMode === mode.name ? 'border-blue-500 bg-blue-50' : ''
+              }`}
+            >
+              <img src={mode.img} alt={mode.name} className="w-8 h-8 mr-2" />
+              <div>
+                <h3 className="font-medium">{mode.name}</h3>
+                <p className="text-xs text-gray-500">
+                  {mode.name === "Espèces" ? "Paiement au bureau" :
+                   mode.name === "Carte Bancaire" ? "Visa, Mastercard" :
+                   "Paiement Mobile"}
+                </p>
+              </div>
+            </li>
+          ))}
         </ul>
       </div>
     </div>

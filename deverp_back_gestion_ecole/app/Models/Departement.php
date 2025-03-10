@@ -8,7 +8,7 @@ class Departement extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['nom', 'description'];
+    protected $fillable = ['nom', 'code' , 'description'];
 
     public function filieres()
     {

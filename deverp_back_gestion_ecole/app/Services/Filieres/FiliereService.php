@@ -36,4 +36,9 @@ class FiliereService
     {
         return $this->repository->delete($id);
     }
+
+    public function getFormationsByFiliereId(int $id)
+    {
+        return $this->repository->getFormationsByFiliereId($id);
+    }
 }

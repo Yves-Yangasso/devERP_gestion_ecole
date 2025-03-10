@@ -10,7 +10,7 @@ class NotifierEtudiantTraitementDocument implements ShouldQueue
 {
     public function handle(DocumentTraite $event)
     {
-        $etudiant = $event->document->dossier->inscription->etudiant;
+        $etudiant = $event->document->dossier->inscription;
         $etudiant->notify(new ResultatTraitementDocument($event->document));
     }
 }

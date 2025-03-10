@@ -9,4 +9,5 @@ class OptionFormation extends Model
     use HasFactory;
 
     protected $fillable = ['nom', 'description'];
+
 }

@@ -15,6 +15,7 @@ class StoreDepartementRequest extends FormRequest
         return [
             'nom' => 'required|string|max:255|unique:departements,nom',
             'description' => 'nullable|string|max:500',
+            'code' => 'required|string|max:500',
         ];
     }
 }

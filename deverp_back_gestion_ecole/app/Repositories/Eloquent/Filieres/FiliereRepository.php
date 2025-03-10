@@ -32,4 +32,15 @@ class FiliereRepository implements FiliereRepositoryInterface
     {
         return Filiere::destroy($id);
     }
+
+    public function getFormationsByFiliereId($id)
+    {
+        $filiere = Filiere::with('formations')->find($id);
+
+        if (!$filiere) {
+            return collect(); // Retourne une collection vide si la filière n'existe pas
+        }
+
+        return $filiere->formations;
+    }
 }

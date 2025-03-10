@@ -1,11 +1,11 @@
 <?php
-
 namespace App\Notifications\Dossier;
 
 use App\Models\Dossier;
 use Illuminate\Notifications\Notification;
 use Illuminate\Notifications\Messages\MailMessage;
 use App\Enums\Dossier\StatutDossier;
+
 class ResultatValidationDossier extends Notification
 {
     protected $dossier;
@@ -15,10 +15,16 @@ class ResultatValidationDossier extends Notification
         $this->dossier = $dossier;
     }
 
+    // Ajoute cette méthode pour spécifier le canal de notification
+    public function via($notifiable)
+    {
+        return ['mail']; // Utilisation du canal e-mail
+    }
+
     public function toMail($notifiable)
     {
         $mailMessage = new MailMessage;
-        
+
         if ($this->dossier->statut === StatutDossier::VALIDE) {
             return $mailMessage
                 ->subject('Votre dossier a été validé')

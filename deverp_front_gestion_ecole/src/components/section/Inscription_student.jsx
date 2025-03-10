@@ -1,11 +1,12 @@
 // Importation des dépendances nécessaires
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import useCrud from "../../hooks/useCrudAxios";
 import SearchBar from "../formulaire/SearchBar";
 import DataTable from "./DataTable";
 import AlertService from "../../services/notifications/AlertService";
 import { confirmAlert } from "react-confirm-alert";
 import "react-confirm-alert/src/react-confirm-alert.css";
+import PopupLayout_Details_Inscription from "../formulaire/PopupLayout_Details_Inscription";
 
 // Définition des colonnes pour la table
 const columns = [
@@ -22,6 +23,9 @@ const columns = [
 const actions = ["Voir détails", "Traité", "Supprimé"];
 
 function InscriptionStudent() {
+    const [selectedDossier, setSelectedDossier] = useState(null);
+    const [showDetails, setShowDetails] = useState(false);
+    const [selectedData, setSelectedData] = useState(null);
     // Hooks pour la gestion des données et des états
     const { data = [], get, remove } = useCrud("inscriptions");
     
@@ -120,7 +124,8 @@ function InscriptionStudent() {
     const handleActionSelect = (action, dossier) => {
         switch (action) {
             case "Voir détails":
-
+                setSelectedData(dossier.fullData);
+                setShowDetails(true);
                 break;
 
             case "Traité":
@@ -174,7 +179,10 @@ function InscriptionStudent() {
                 data={formattedData} // 👈 Ajout de formattedData ici !
                 actions={actions}
                 onActionSelect={handleActionSelect}
+                onRowClick={setSelectedDossier}
             />
+
+            {showDetails && (<PopupLayout_Details_Inscription inscriptionData={selectedData} onClose={()=> setShowDetails(false)}/>)}
         </>
     );
 }

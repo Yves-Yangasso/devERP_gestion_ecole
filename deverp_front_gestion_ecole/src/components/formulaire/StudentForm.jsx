@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import Input from "../ui/Input/InputField";
 import SelectInput from "../ui/Input/SelectInput";
@@ -10,6 +10,7 @@ import AlertService from "../../services/notifications/AlertService";
 import PhoneInput from 'react-phone-number-input';
 import 'react-phone-number-input/style.css';
 import useCountryList from 'react-select-country-list';
+import useCrud from '../../hooks/useCrudAxios';
 
 const options = {
   niveau: ["Licence 1", "Licence 2", "Licence 3", "Master 1", "Master 2", "Baccalauréat"].map((value) => ({ value, label: value })),
@@ -28,51 +29,98 @@ const StudentForm = () => {
   const [filteredSpecialties, setFilteredSpecialties] = useState([]);
   const [phoneNumber, setPhoneNumber] = useState(formState.student.telephone || "");
   const countryList = useCountryList();
+  
+  // Setup CRUD hooks properly
+  const filiereCrud = useCrud('filiere');
+  const niveauCrud = useCrud('niveaux-etudes');
+  const formationCrud = useCrud('formations');
+  
+  // State for storing data from API
+  const [niveaux, setNiveaux] = useState([]);
+  const [filieres, setFilieres] = useState([]);
+  const [formations, setFormations] = useState([]);
+  
+  // Fetch data in useEffect hooks with proper dependencies
+  useEffect(() => {
+    const fetchNiveaux = async () => {
+      const data = await niveauCrud.get();
+      setNiveaux(data);
+    };
+    fetchNiveaux();
+  }, []);  // Empty dependency array means this runs once on mount
+  
+  useEffect(() => {
+    const fetchFilieres = async () => {
+      const data = await filiereCrud.get();
+      setFilieres(data);
+    };
+    fetchFilieres();
+  }, []);
+  
+  useEffect(() => {
+    const fetchFormations = async () => {
+      const data = await formationCrud.get();
+      setFormations(data);
+    };
+    fetchFormations();
+  }, []);
+
+  // Memoize clearSpecialties to prevent recreation on each render
+  const memoizedClearSpecialties = useCallback(clearSpecialties, []);
 
   useEffect(() => {
     if (formState.student.formation) {
       setFilteredSpecialties(options.specialites[formState.student.formation] || []);
-      clearSpecialties();
+      memoizedClearSpecialties();
     } else {
       setFilteredSpecialties([]); // Reset if no formation is selected
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [formState.student.formation]);
+  }, [formState.student.formation, memoizedClearSpecialties]);
 
   useEffect(() => {
     localStorage.removeItem("selectedSpecialties");
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-  
+
   const handleChange = (e) => {
     updateStudent({ [e.target.name]: e.target.value });
   };
 
   const handlePhoneChange = (value) => {
-    setPhoneNumber(value);
-    updateStudent({ telephone: value });
+    // Ensure the phone number is updated only if it changes
+    if (value !== phoneNumber) {
+      setPhoneNumber(value);
+      updateStudent({ telephone: value });
+    }
   };
 
   const handleNextClick = (e) => {
     e.preventDefault();
     const errors = {};
+
     updateStudent({ specialites: selectedSpecialties });
 
-    ["prenom", "nom", "date", "lieu", "adresse", "email", "telephone", "nationalite", "universite", "niveau", "formation", "dernierDiplome"].forEach((field) => {
+    // Validate required fields
+    [
+      "prenom", "nom", "date", "lieu", "adresse", "email", "telephone",
+      "nationalite", "universite", "niveau", "formation", "dernierDiplome"
+    ].forEach((field) => {
       if (!formState.student[field]) errors[field] = `${field} est requis`;
     });
+
+    // Validate specialties selection
     if (selectedSpecialties.length === 0) errors.specialites = "Les spécialités sont requises";
-    
-    // Phone number validation example
+
+    // Validate phone number
     if (!phoneNumber) {
       errors.telephone = "Le numéro de téléphone est requis";
     }
 
+    // If there are errors, show alert and update state
     if (Object.keys(errors).length > 0) {
       AlertService.error("Veuillez remplir tous les champs", errors);
       updateStudent({ errors });
     } else {
-      console.log(navigate("/TuteurInfos"));
+      // Navigate to next page if validation passed
       navigate("/TuteurInfos");
     }
   };
@@ -114,12 +162,12 @@ const StudentForm = () => {
             validate={validateSelect}
           />
 
-          <Input label="Dernier Diplôme" placeholder="Veillez saisir votre dernier diplome" name="dernierDiplome" value={formState.student.dernierDiplome} onChange={handleChange} validate={validateRequired} />
-          <Input label="Dernier Etablissement" placeholder="Veillez saisir votre dernier etablissement" name="universite" value={formState.student.universite} onChange={handleChange} validate={validateRequired} />
+          <Input label="Dernier Diplôme" placeholder="Veillez saisir votre dernier diplôme" name="dernierDiplome" value={formState.student.dernierDiplome || ""} onChange={handleChange} validate={validateRequired} />
+          <Input label="Dernier Etablissement" placeholder="Veillez saisir votre dernier établissement" name="universite" value={formState.student.universite || ""} onChange={handleChange} validate={validateRequired} />
 
           <SelectInput label="Niveau" name="niveau" options={options.niveau} value={formState.student.niveau} onChange={handleChange} validate={validateSelect} />
-          <SelectInput label="Formation Souhaitée" name="formation" options={options.formation} value={formState.student.formation} onChange={handleChange} validate={validateSelect} />
-          <SelectInput label="Spécialités" name="specialites" isMulti options={filteredSpecialties.map((s) => ({ value: s, label: s }))} value={selectedSpecialties} onChange={handleSpecialtyChange} validate={validateSelect} error={formState.errors?.specialites} />
+          <SelectInput label="Filière" name="formation" options={options.formation} value={formState.student.formation} onChange={handleChange} validate={validateSelect} />
+          <SelectInput label="Formation" name="specialites" isMulti options={filteredSpecialties.map((s) => ({ value: s, label: s }))} value={selectedSpecialties} onChange={handleSpecialtyChange} validate={validateSelect} error={formState.student.errors?.specialites} />
 
           {selectedSpecialties.length > 0 && (
             <div className="mt-2">
