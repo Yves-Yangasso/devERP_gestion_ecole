@@ -1,62 +1,200 @@
-import React, { useState, useEffect } from 'react';
-import useCrudAxios from "../../hooks/useCrudAxios";
+import { useEffect, useState } from "react";
+import { X } from 'lucide-react';
+import useCrud from "../../hooks/useCrudAxios";
+import SearchBar from "../formulaire/SearchBar";
+import DataTable from "./DataTable";
+import AlertService from "../../services/notifications/AlertService";
+import { confirmAlert } from "react-confirm-alert";
+import "react-confirm-alert/src/react-confirm-alert.css";
+import NouvelleFiliere from "../popup/NouvelleFiliere";
 
-const NouvelleFiliere = ({ onClose }) => {
-    const { create, loading, error } = useCrudAxios("filieres");
-    const { data: departements } = useCrudAxios("departements");
+const columns = [
+    { key: "code", label: "Code" },
+    { key: "nom", label: "Nom de la Filière" },
+    { key: "description", label: "Description" },
+    { key: "est_professionnelle", label: "Professionnelle ?" },
+    { key: "actions", label: "Actions" },
+];
 
-    const [formData, setFormData] = useState({
+const actions = ["Modifier", "Supprimé"];
+
+function FiliereList() {
+    const [showPopup, setShowPopup] = useState(false);
+    const [selectedFiliere, setSelectedFiliere] = useState(null);
+    const [showEditModal, setShowEditModal] = useState(false);
+    const [selectedData, setSelectedData] = useState(null);
+    const [editForm, setEditForm] = useState({
         code: "",
         nom: "",
         description: "",
-        departement_id: "",
-        est_professionnelle: false
+        est_professionnelle: false,
+        departement_id: ""
     });
+    
+    const { data, get, remove, update, create } = useCrud("filiere");
+    const { data: departements, get: getDepartements } = useCrud("departements");
 
-    const handleChange = (e) => {
-        const { name, value, type, checked } = e.target;
-        setFormData(prev => ({
-            ...prev,
-            [name]: type === "checkbox" ? checked : value
-        }));
+    useEffect(() => {
+        get();
+        getDepartements();
+    }, [get, getDepartements]);
+
+    const safeData = data || [];
+    const safeDepartements = departements || [];
+
+    const formattedData = safeData.map((item) => ({
+        id: item.id,
+        code: item.code,
+        nom: item.nom,
+        description: item.description,
+        est_professionnelle: item.est_professionnelle ? "Oui" : "Non",
+        fullData: item,
+    }));
+
+    const handleActionSelect = (action, filiere) => {
+        switch (action) {
+            case "Modifier":
+                setSelectedData(filiere.fullData);
+                setEditForm({
+                    code: filiere.fullData.code || "",
+                    nom: filiere.fullData.nom || "",
+                    description: filiere.fullData.description || "",
+                    est_professionnelle: filiere.fullData.est_professionnelle || false,
+                    departement_id: filiere.fullData.departement_id?.toString() || ""
+                });
+                setShowEditModal(true);
+                break;
+            case "Supprimé":
+                handleDeleteConfirmation(filiere);
+                break;
+            default:
+                break;
+        }
     };
 
-    const handleSubmit = async () => {
-        console.log("Données envoyées :", formData);
+    const handleDeleteConfirmation = (filiere) => {
+        confirmAlert({
+            title: "Confirmation de suppression",
+            message: `Êtes-vous sûr de vouloir supprimer la filière ${filiere.fullData.nom} ?`,
+            buttons: [
+                {
+                    label: "Oui",
+                    onClick: async () => {
+                        try {
+                            await remove(filiere.fullData.id);
+                            AlertService.success(`La filière ${filiere.fullData.nom} a été supprimée avec succès!`);
+                            get();
+                        } catch (error) {
+                            AlertService.error("Erreur lors de la suppression : " + error.message);
+                        }
+                    },
+                },
+                { label: "Non" },
+            ],
+        });
+    };
+
+    const handleEditSubmit = async (e) => {
+        e.preventDefault();
         try {
-            await create(formData);
-            onClose();  // Fermer le popup après la création
-        } catch (err) {
-            console.error("Erreur lors de la création :", err.response?.data || err.message);
+            const formData = {
+                code: editForm.code.trim(),
+                nom: editForm.nom.trim(),
+                description: editForm.description.trim(),
+                departement_id: parseInt(editForm.departement_id, 10),
+                est_professionnelle: editForm.est_professionnelle
+            };
+            await update(selectedData.id, formData);
+            AlertService.success(`La filière ${formData.nom} a été modifiée avec succès!`);
+            setShowEditModal(false);
+            get();
+        } catch (error) {
+            AlertService.error(`Erreur : ${error.response?.data?.message || error.message}`);
         }
     };
 
     return (
-        <div className="p-6 bg-white shadow rounded">
-            <h2 className="text-xl font-bold mb-4">Nouvelle Filière</h2>
-            <div className="space-y-4">
-                <input name="code" placeholder="Code" value={formData.code} onChange={handleChange} className="border rounded p-2 w-full" />
-                <input name="nom" placeholder="Nom" value={formData.nom} onChange={handleChange} className="border rounded p-2 w-full" />
-                <textarea name="description" placeholder="Description" value={formData.description} onChange={handleChange} className="border rounded p-2 w-full" />
-                <select name="departement_id" value={formData.departement_id} onChange={handleChange} className="border rounded p-2 w-full">
-                    <option value="">Sélectionnez un département</option>
-                    {departements?.map((dept) => (
-                        <option key={dept.id} value={dept.id}>{dept.nom}</option>
-                    ))}
-                </select>
-                <label className="flex items-center">
-                    <input type="checkbox" name="est_professionnelle" checked={formData.est_professionnelle} onChange={handleChange} />
-                    <span className="ml-2">Professionnelle</span>
-                </label>
+        <>
+            <div className="flex items-center justify-between gap-4 mb-4">
+                <SearchBar
+                    placeholder="Rechercher filières..."
+                    buttonLabel="Nouvelle Filière"
+                    onButtonClick={() => setShowPopup(true)}
+                />
             </div>
-            <div className="flex justify-end mt-4">
-                <button onClick={handleSubmit} disabled={loading} className="bg-blue-600 text-white rounded px-4 py-2">
-                    {loading ? "Création..." : "Créer"}
-                </button>
-            </div>
-            {error && <p className="text-red-500">Erreur: {error.message}</p>}
-        </div>
-    );
-};
 
-export default NouvelleFiliere;
+            <DataTable
+                columns={columns}
+                data={formattedData}
+                actions={actions}
+                onActionSelect={handleActionSelect}
+                onRowClick={setSelectedFiliere}
+            />
+
+            {showPopup && (
+                <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-30 z-50">
+                    <div className="relative bg-white p-10 rounded shadow-lg max-w-4xl w-full h-[75vh] overflow-y-auto">
+                        <button
+                            className="absolute top-2 right-2 text-gray-600 hover:text-gray-900"
+                            onClick={() => setShowPopup(false)}
+                        >
+                            <X className="w-8 h-8" />
+                        </button>
+                        <NouvelleFiliere onClose={() => setShowPopup(false)} />
+                    </div>
+                </div>
+            )}
+
+            {showEditModal && (
+                <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-30 z-50">
+                    <div className="relative bg-white p-10 rounded shadow-lg max-w-4xl w-full h-[78vh] overflow-y-auto">
+                        <button
+                            className="absolute top-2 right-2 text-gray-600 hover:text-gray-900"
+                            onClick={() => setShowEditModal(false)}
+                        >
+                            <X className="w-8 h-8" />
+                        </button>
+                        
+                        <h2 className="text-2xl font-bold mb-6">Modifier la Filière</h2>
+                        <form onSubmit={handleEditSubmit} className="space-y-6">
+                            <input
+                                type="text"
+                                value={editForm.code}
+                                onChange={(e) => setEditForm({ ...editForm, code: e.target.value })}
+                            />
+                            <input
+                                type="text"
+                                value={editForm.nom}
+                                onChange={(e) => setEditForm({ ...editForm, nom: e.target.value })}
+                            />
+                            <textarea
+                                value={editForm.description}
+                                onChange={(e) => setEditForm({ ...editForm, description: e.target.value })}
+                            />
+                            <select
+                                value={editForm.departement_id}
+                                onChange={(e) => setEditForm({ ...editForm, departement_id: e.target.value })}
+                            >
+                                <option value="">Sélectionnez un département</option>
+                                {safeDepartements.map((dept) => (
+                                    <option key={dept.id} value={dept.id}>{dept.nom}</option>
+                                ))}
+                            </select>
+                            <label>
+                                <input
+                                    type="checkbox"
+                                    checked={editForm.est_professionnelle}
+                                    onChange={(e) => setEditForm({ ...editForm, est_professionnelle: e.target.checked })}
+                                />
+                                Professionnelle
+                            </label>
+                            <button type="submit">Enregistrer</button>
+                        </form>
+                    </div>
+                </div>
+            )}
+        </>
+    );
+}
+
+export default FiliereList;
