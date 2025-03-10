@@ -10,6 +10,7 @@ const NouvelleFiliere = () => {
         nom: "",
         description: "",
         departement_id: "",
+        est_professionnelle: true,
     });
 
     const handleChange = (e) => {

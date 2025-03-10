@@ -45,6 +45,7 @@ const useCrudAxios = (baseURL) => {
         setError(null);
         try {
             const response = await api[method](endpoint, payload);
+            console.log(response);
             setData(response.data);
             return response.data;
         } catch (err) {
