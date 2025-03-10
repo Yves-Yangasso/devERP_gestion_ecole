@@ -9,7 +9,7 @@ const HomePage = () => {
   };
 
   const handleConnexionClick = () => {
-    navigate('/PaiementEnLigne'); // Redirige vers la page de connexion
+    navigate('/login'); // Redirige vers la page de connexion
   };
 
   const handle_Paiement_line_Click = () => {

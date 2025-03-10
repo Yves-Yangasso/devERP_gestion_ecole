@@ -1,11 +1,12 @@
 import React from 'react';
 import { DollarSign, Calendar } from 'lucide-react';
 import { useFormContext } from "../../context/FormContext";
+import {useCrud} from '../../hooks/useCrudAxios';
 
 const Recapitulatif = () => {
   const { formState } = useFormContext();
   const { student, tuteur, payment } = formState;
-
+  // const {post} = useCrud("");
   const formatMontant = (montant) => {
     return new Intl.NumberFormat('fr-FR').format(montant) + ' FCFA';
   };
