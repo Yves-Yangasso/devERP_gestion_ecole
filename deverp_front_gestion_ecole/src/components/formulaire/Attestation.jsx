@@ -55,7 +55,7 @@ const AttestationModern = () => {
           {/* Détails de l'étudiant */}
           <div className="student-details">
             <h3>Détails de l'Inscription</h3>
-            <p><strong>Nom :</strong> Mme Syntiche Lisa Priscille NGARSO MBIMBAI</p>
+            <p><strong>Nom :</strong> Mme Syntiche </p>
             <p><strong>Date de naissance :</strong> 11/11/2003 à Bangui</p>
             <p><strong>Programme :</strong> Licence Professionnelle</p>
             <p><strong>Spécialité :</strong> Informatique Appliquée à la Gestion des Entreprises</p>
