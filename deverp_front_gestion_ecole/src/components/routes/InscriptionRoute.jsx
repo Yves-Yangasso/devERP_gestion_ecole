@@ -10,7 +10,7 @@ export const InscriptionRoute = ({ element: Element, requiredStep }) => {
         return !!formState.student?.prenom && !!formState.student?.nom;
       case 'tuteurInfo':
         return formState.tutors?.length > 0 ? !!formState.tutors[0]?.prenom : true;
-      case 'documents':
+      case 'DocAFournir':
         // 🔥 ✅ Permet l'accès même si aucun fichier n'est encore ajouté
         return formState.documents !== undefined;
       default:

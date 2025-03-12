@@ -55,8 +55,8 @@ const RecapStudent = () => {
       formData.append('etudiant[nationalite]', formState.student.nationalite);
       formData.append('etudiant[dernier_etablissement]', formState.student.universite);
       formData.append('etudiant[niveau]', formState.student.niveau);
-      formData.append('etudiant[formation_superieure]', formState.student.formation);
-      formData.append('etudiant[specialites]', formState.student.specialites.join(', '));
+      formData.append('etudiant[formations]', formState.student.formation);
+      formData.append('etudiant[filiere]', formState.student.specialites.join(', '));
 
       // Données tuteurs
       formState.tutors.forEach((tuteur, index) => {

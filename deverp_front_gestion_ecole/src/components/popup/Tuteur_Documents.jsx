@@ -28,7 +28,7 @@ const Tuteur_Documents = () => {
   ];
 
   const { updateTuteur, formState } = useFormContext();
-  
+
   const handleChange = (e) => {
     updateTuteur({ [e.target.name]: e.target.value });
   };
@@ -36,7 +36,7 @@ const Tuteur_Documents = () => {
   const handleDocumentChange = (e, document) => {
     const isChecked = e.target.checked;
     const currentDocs = Array.isArray(formState.tuteur.documents) ? [...formState.tuteur.documents] : [];
-    
+
     if (isChecked && !currentDocs.includes(document)) {
       updateTuteur({ documents: [...currentDocs, document] });
     } else if (!isChecked && currentDocs.includes(document)) {
@@ -117,8 +117,8 @@ const Tuteur_Documents = () => {
         <div className="grid grid-cols-4 gap-2">
           {documents.map((doc, index) => (
             <label key={index} className="bg-white p-2 rounded flex items-center text-sm">
-              <input 
-                type="checkbox" 
+              <input
+                type="checkbox"
                 className="mr-2 w-4 h-4"
                 checked={Array.isArray(formState.tuteur?.documents) && formState.tuteur.documents.includes(doc)}
                 onChange={(e) => handleDocumentChange(e, doc)}

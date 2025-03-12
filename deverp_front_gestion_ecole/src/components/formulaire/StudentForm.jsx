@@ -41,7 +41,7 @@ const StudentForm = () => {
   const [formations, setFormations] = useState([]);
   
   // Fetch data in useEffect hooks with proper dependencies
-  useEffect(() => {
+  const niveau = useEffect(() => {
     const fetchNiveaux = async () => {
       const data = await niveauCrud.get();
       setNiveaux(data);
@@ -165,9 +165,9 @@ const StudentForm = () => {
           <Input label="Dernier Diplôme" placeholder="Veillez saisir votre dernier diplôme" name="dernierDiplome" value={formState.student.dernierDiplome || ""} onChange={handleChange} validate={validateRequired} />
           <Input label="Dernier Etablissement" placeholder="Veillez saisir votre dernier établissement" name="universite" value={formState.student.universite || ""} onChange={handleChange} validate={validateRequired} />
 
-          <SelectInput label="Niveau" name="niveau" options={options.niveau} value={formState.student.niveau} onChange={handleChange} validate={validateSelect} />
-          <SelectInput label="Filière" name="formation" options={options.formation} value={formState.student.formation} onChange={handleChange} validate={validateSelect} />
-          <SelectInput label="Formation" name="specialites" isMulti options={filteredSpecialties.map((s) => ({ value: s, label: s }))} value={selectedSpecialties} onChange={handleSpecialtyChange} validate={validateSelect} error={formState.student.errors?.specialites} />
+          <SelectInput label="Niveau" name="niveau" options={niveau} value={1} onChange={handleChange} validate={validateSelect} />
+          <SelectInput label="Filière" name="formation" options={options.formation} value={1} onChange={handleChange} validate={validateSelect} />
+          <SelectInput label="Formation" name="specialites" isMulti options={filteredSpecialties.map((s) => ({ value: s, label: s }))} value={1} onChange={handleSpecialtyChange} validate={validateSelect} error={formState.student.errors?.specialites} />
 
           {selectedSpecialties.length > 0 && (
             <div className="mt-2">
