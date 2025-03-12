@@ -30,8 +30,8 @@ const HomePage = () => {
         <button onClick={handleInscriptionClick}>Inscription</button>
         <button onClick={handleConnexionClick}>Connexion</button>
         <button onClick={handle_Paiement_line_Click}>Paiement_en_Ligne</button>
-        <button onClick={handle_departements_Click}>Add Département</button>
-        <button onClick={handle_filiere_Click}>Add Filière</button>
+        {/* <button onClick={handle_departements_Click}>Add Département</button>
+        <button onClick={handle_filiere_Click}>Add Filière</button> */}
       </div>
     </div>
   );

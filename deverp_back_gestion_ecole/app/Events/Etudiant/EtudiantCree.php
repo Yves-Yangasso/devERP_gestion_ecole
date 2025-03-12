@@ -5,11 +5,14 @@ use App\Models\Etudiant;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class EtudiantCree {
+class EtudiantCree
+{
     use Dispatchable, SerializesModels;
+
     public $student;
 
-    public function __construct(Etudiant $student) {
+    public function __construct(Etudiant $student)
+    {
         $this->student = $student;
     }
 }

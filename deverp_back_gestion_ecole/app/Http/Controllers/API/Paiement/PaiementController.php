@@ -6,9 +6,13 @@ use App\Http\Requests\Paiement\CreerPaiementRequest;
 use App\Services\Etudiant\EtudiantService;
 use App\Services\Etudiant\InscriptionService;
 use App\Services\Paiement\PaiementService;
+use App\Notifications\Paiement\PaymentValidatedNotification;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Http\JsonResponse;
+
 
 class PaiementController extends Controller
 {
@@ -17,7 +21,7 @@ class PaiementController extends Controller
     protected InscriptionService $inscriptionService;
     protected array $tableau_inscription;
 
-    public function __construct(PaiementService $paiementService,EtudiantService $etudiantService , InscriptionService $inscriptionService)
+    public function __construct(PaiementService $paiementService, EtudiantService $etudiantService, InscriptionService $inscriptionService)
     {
         $this->paiementService = $paiementService;
         $this->etudiantService = $etudiantService;
@@ -49,29 +53,59 @@ class PaiementController extends Controller
 
     public function valider(Request $request): JsonResponse
     {
+        // Validate the incoming request
         $request->validate([
             'paiement_id' => 'required|integer',
             'inscription_id' => 'required|integer',
         ]);
 
+        // Retrieve payment and inscription IDs from the request
         $paiementId = $request->input('paiement_id');
         $inscriptionId = $request->input('inscription_id');
 
         try {
+            // Validate the payment
             $this->paiementService->validerPaiement($paiementId, $inscriptionId);
 
-            // Récupérer les données d'inscription sous forme de tableau
+            // Get the complete inscription details
             $inscription = $this->inscriptionService->getInscriptionComplete($inscriptionId);
             if (!$inscription) {
                 return response()->json(['error' => 'Inscription introuvable.'], 404);
             }
 
-            // Convertir en tableau et ajouter l'étudiant
-            //$this->etudiantService->registerStudent($inscription->toArray());
+            // Register the student based on the inscription
+            $student = $this->etudiantService->registerStudent($inscription->toArray());
 
-            return response()->json(['message' => 'Paiement validé et étudiant créé avec succès.'], 200);
+            // Find the payment and notify the student
+            $paiement = $this->paiementService->trouverPaiement($paiementId);
+            $personalEmail = $paiement->inscription->email;
+            $student->notify(new PaymentValidatedNotification($paiement, $personalEmail));
+
+            // Generate the student card PDF
+            $pdf = Pdf::loadView('pdf.carte-etudiant', [
+                'matricule' => $student->matricule,
+                'email_institutionnel' => $student->email_institutionnel,
+                'nom' => $student->nom,
+                'prenom' => $student->prenom,
+                'filiere' => $student->inscription->filiere->nom ?? 'Non spécifiée',
+                'telephone' => $student->inscription->telephone,
+            ]);
+
+            $pdfPath = storage_path('app/public/carte_etudiant_' . $student->matricule . '.pdf');
+            $pdf->save($pdfPath);
+
+            return response()->json([
+                'message' => 'Paiement validé avec succès',
+                'download_url' => url('/storage/carte_etudiant_' . $student->matricule . '.pdf')
+            ]);
+
         } catch (Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
         }
+    }
+
+    public function telecharger($pdf, $matricule): Response
+    {
+        return $pdf->download('carte_etudiant_' . $matricule . '.pdf');
     }
 }

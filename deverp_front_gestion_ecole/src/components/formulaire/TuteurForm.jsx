@@ -1,3 +1,4 @@
+// src/components/TuteurForm.js
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import Input from "../ui/Input/InputField";
@@ -8,11 +9,11 @@ import { useFormContext } from "../../context/FormContext";
 import { validateName, validateEmail, validateRequired } from "../../utils/validators";
 import AlertService from "../../services/notifications/AlertService";
 import SelectInput from "../ui/Input/SelectInput";
-import PhoneInput from 'react-phone-number-input';
-import 'react-phone-number-input/style.css';
-import '../../css/layout.css';
+import PhoneInput from "react-phone-number-input";
+import "react-phone-number-input/style.css";
+import "../../css/layout.css";
 
-// Relation options for the select input
+// Options de relation pour le champ select
 const RELATION_OPTIONS = [
     { value: "pere", label: "Père" },
     { value: "mere", label: "Mère" },
@@ -41,7 +42,7 @@ const TuteurForm = () => {
         const newTuteurs = [...tuteurs];
         newTuteurs[index] = { ...newTuteurs[index], [field]: value };
 
-        // Check for duplicate email and phone numbers
+        // Vérification des doublons pour email et téléphone
         if (index === 1) {
             const premierTuteur = newTuteurs[0];
             if (field === "email" && value === premierTuteur.email) {
@@ -55,7 +56,7 @@ const TuteurForm = () => {
         }
 
         setTuteurs(newTuteurs);
-        updateTutors(newTuteurs);
+        updateTutors(newTuteurs); // Cette fonction existe maintenant dans le contexte
         if (index === 0) {
             setAjoutPossible(isTuteurComplet(newTuteurs[0]));
         }
@@ -96,7 +97,7 @@ const TuteurForm = () => {
 
         if (Object.keys(errors).length > 0) {
             AlertService.error("Veuillez remplir tous les champs", errors);
-            updateTutors({ errors });
+            updateTutors(tuteurs); // Mise à jour même en cas d'erreur si nécessaire
         } else {
             navigate("/DocAFournir");
         }
@@ -124,9 +125,30 @@ const TuteurForm = () => {
                         )}
 
                         <div className="grid grid-cols-2 gap-x-8 gap-y-2">
-                            <Input label="Prénom" name={`prenom-${index}`} placeholder="Saisir le prénom" value={tuteur.prenom} onChange={(e) => handleTuteurChange(index, "prenom", e.target.value)} validate={(value) => validateName(value, "Prénom")} />
-                            <Input label="Nom" name={`nom-${index}`} placeholder="Saisir le nom" value={tuteur.nom} onChange={(e) => handleTuteurChange(index, "nom", e.target.value)} validate={(value) => validateName(value, "Nom")} />
-                            <Input label="Adresse" name={`adresse-${index}`} placeholder="Saisir l'adresse" value={tuteur.adresse} onChange={(e) => handleTuteurChange(index, "adresse", e.target.value)} validate={(value) => validateRequired(value, "Adresse")} />
+                            <Input
+                                label="Prénom"
+                                name={`prenom-${index}`}
+                                placeholder="Saisir le prénom"
+                                value={tuteur.prenom}
+                                onChange={(e) => handleTuteurChange(index, "prenom", e.target.value)}
+                                validate={(value) => validateName(value, "Prénom")}
+                            />
+                            <Input
+                                label="Nom"
+                                name={`nom-${index}`}
+                                placeholder="Saisir le nom"
+                                value={tuteur.nom}
+                                onChange={(e) => handleTuteurChange(index, "nom", e.target.value)}
+                                validate={(value) => validateName(value, "Nom")}
+                            />
+                            <Input
+                                label="Adresse"
+                                name={`adresse-${index}`}
+                                placeholder="Saisir l'adresse"
+                                value={tuteur.adresse}
+                                onChange={(e) => handleTuteurChange(index, "adresse", e.target.value)}
+                                validate={(value) => validateRequired(value, "Adresse")}
+                            />
 
                             <div className="mb-4">
                                 <label htmlFor={`telephone-${index}`} className="block mb-2 text-[#333] text-sm">
@@ -136,7 +158,7 @@ const TuteurForm = () => {
                                     international
                                     defaultCountry="FR"
                                     value={tuteur.telephone}
-                                    onChange={(value) => handleTuteurChange(index, "telephone", value)}
+                                    onChange={(value) => handleTuteurChange(index, "telephone", value || "")}
                                     className="w-full p-3 border border-[#ddd] rounded-lg text-sm"
                                     name={`telephone-${index}`}
                                     id={`telephone-${index}`}
@@ -144,22 +166,46 @@ const TuteurForm = () => {
                                 />
                             </div>
 
-                            <Input label="Email" name={`email-${index}`} placeholder="Saisir l'email" value={tuteur.email} onChange={(e) => handleTuteurChange(index, "email", e.target.value)} validate={(value) => validateEmail(value, "Email")} />
-                            <SelectInput label="Relation" name={`relation-${index}`} options={RELATION_OPTIONS} value={tuteur.relation} onChange={(e) => handleTuteurChange(index, "relation", e.target.value)} validate={(value) => validateRequired(value, "Relation")} />
+                            <Input
+                                label="Email"
+                                name={`email-${index}`}
+                                placeholder="Saisir l'email"
+                                value={tuteur.email}
+                                onChange={(e) => handleTuteurChange(index, "email", e.target.value)}
+                                validate={(value) => validateEmail(value, "Email")}
+                            />
+                            <SelectInput
+                                label="Relation"
+                                name={`relation-${index}`}
+                                options={RELATION_OPTIONS}
+                                value={tuteur.relation}
+                                onChange={(e) => handleTuteurChange(index, "relation", e.target.value)}
+                                validate={(value) => validateRequired(value, "Relation")}
+                            />
                         </div>
                     </div>
                 ))}
 
                 {tuteurs.length < 2 && (
                     <div className="flex justify-end mb-6">
-                        <Button onClick={ajouterTuteur} type="button" className={`bg-blue-600 text-white flex items-center ${!ajoutPossible ? "opacity-50 cursor-not-allowed" : ""}`} disabled={!ajoutPossible}>
+                        <Button
+                            onClick={ajouterTuteur}
+                            type="button"
+                            className={`bg-blue-600 text-white flex items-center ${!ajoutPossible ? "opacity-50 cursor-not-allowed" : ""}`}
+                            disabled={!ajoutPossible}
+                        >
                             <PlusCircle className="w-5 h-5 mr-2" />
                             Ajouter Tuteur
                         </Button>
                     </div>
                 )}
 
-                <NavigationButtons onPrevClick={handlePrevClick} onNextClick={handleNextClick} prevText="Précédent" nextText="Suivant" />
+                <NavigationButtons
+                    onPrevClick={handlePrevClick}
+                    onNextClick={handleNextClick}
+                    prevText="Précédent"
+                    nextText="Suivant"
+                />
             </form>
         </div>
     );

@@ -8,14 +8,7 @@ class EtudiantRepository implements EtudiantRepositoryInterface
 {
     public function create(array $data)
     {
-        $etudiant = Etudiant::create($data);
-        // Génération du matricule après création (id est maintenant disponible)
-        $etudiant->matricule = date('Y') . '-' . date('m') . '-' . $etudiant->id;
-        $etudiant->email_institutionnel = strtolower("{$etudiant->prenom}.{$etudiant->nom}@groupeisi.sn");
-
-        $etudiant->save();
-
-        return $etudiant;
+        return Etudiant::create($data);
     }
 
     public function findById($id)
