@@ -13,8 +13,8 @@ class UpdateFiliereRequest extends FormRequest {
         $id = is_numeric($id) ? (int) $id : null; // Forcer à un entier ou NULL
 
         return [
-            'nom' => 'sometimes|string|max:255|unique:filieres,nom,' . ($id ?? 'NULL') . ',id',
-            'code' => 'sometimes|string|max:255|unique:filieres,code,' . ($id ?? 'NULL') . ',id',
+            'nom' => 'sometimes|string|max:255,' . ($id ?? 'NULL') . ',id',
+            'code' => 'sometimes|string|max:255,' . ($id ?? 'NULL') . ',id',
             'departement_id' => 'sometimes|exists:departements,id',
             'description' => 'nullable|string|max:500',
             'est_professionnelle' => 'required|boolean',
