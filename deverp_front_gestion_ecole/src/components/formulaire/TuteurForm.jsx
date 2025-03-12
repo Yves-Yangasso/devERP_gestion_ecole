@@ -85,7 +85,7 @@ const TuteurForm = () => {
     const handleNextClick = (e) => {
         e.preventDefault();
         const errors = {};
-
+    
         tuteurs.forEach((tuteur, index) => {
             if (!tuteur.prenom) errors[`prenom-${index}`] = "Le prénom est requis";
             if (!tuteur.nom) errors[`nom-${index}`] = "Le nom est requis";
@@ -94,14 +94,20 @@ const TuteurForm = () => {
             if (!tuteur.email) errors[`email-${index}`] = "L'email est requis";
             if (!tuteur.relation) errors[`relation-${index}`] = "La relation est requise";
         });
-
+    
+        console.log("Validation - erreurs détectées :", errors);
+        console.log("FormState avant validation :", formState);
+    
         if (Object.keys(errors).length > 0) {
             AlertService.error("Veuillez remplir tous les champs", errors);
-            updateTutors(tuteurs); // Mise à jour même en cas d'erreur si nécessaire
+            updateTutors(tuteurs); // Mise à jour même en cas d'erreur
         } else {
-            navigate("/DocAFournir");
+            updateTutors(tuteurs); // ✅ Mise à jour des tuteurs avant de passer à l'étape suivante
+            console.log("FormState après mise à jour :", formState);
+            navigate("/DocAFournir"); // ✅ Navigation après mise à jour
         }
     };
+    
 
     return (
         <div className="flex flex-col h-full">

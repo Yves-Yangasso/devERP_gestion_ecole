@@ -1,5 +1,5 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';  // Assurez-vous d'importer useNavigate
+import { useNavigate } from 'react-router-dom';
 import NavigationButtons from '../ui/Button/NavigationButtons';
 import { useFormContext } from '../../context/FormContext';
 import FileInput from '../ui/Input/InputField';
@@ -9,20 +9,24 @@ const DocForm = () => {
   const { formState, updateDocuments } = useFormContext();
   const navigate = useNavigate();
 
+  // ✅ Assurer que `documents` est défini avant d'y accéder
+  const documents = formState.documents || {};
+
   const handleFileUpload = (name, files) => {
     if (files && files[0]) {
       const file = files[0];
-      updateDocuments({ ...formState.documents, [name]: file });
+      updateDocuments({ [name]: file });
     }
   };
 
+  // ✅ Correction de la vérification des fichiers
   const areAllFilesProvided = () => {
     const requiredFiles = [
       'cni/passeport', 'diplome', 'certificat scolarite', 'casier judiciaire', 'bulletin notes', 
       'certificat residence', 'visite contre visite', 'extrait de naissance', 'certificat domicile', 
       'certificat de travail', 'visite medicale', 'photo identite'
     ];
-    return requiredFiles.every(file => formState.documents[file]);
+    return requiredFiles.every(file => documents[file]);
   };
 
   const handlePrevClick = (e) => {
@@ -33,7 +37,7 @@ const DocForm = () => {
   const handleNextClick = (e) => {
     e.preventDefault();
 
-    if (areAllFilesProvided()) {
+    if (!areAllFilesProvided()) {
       AlertService.error('Veuillez télécharger tous les documents requis.');
     } else {
       navigate('/RecapEtudiant');
@@ -43,24 +47,26 @@ const DocForm = () => {
   return (
     <div className="flex flex-col flex-1 px-4 sm:px-8 lg:px-12">
       <h2 className="text-2xl font-bold text-center text-blue-600 mb-8">
-        Document A fournir
+        Documents à fournir
       </h2>
 
       <form className="flex flex-col">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4 py-6">
-          {['cni/passeport', 'diplome', 'certificat scolarite', 'casier judiciaire', 
+          {[
+            'cni/passeport', 'diplome', 'certificat scolarite', 'casier judiciaire', 
             'bulletin notes', 'certificat residence', 'visite contre visite', 
-            'extrait de naissance', 'certificat domicile', 'certificat travail', 
-            'visite medicale', 'photo identite'].map((file, index) => (
-              <FileInput
-                key={index}
-                label={file.replace('/', ' / ')} // Replace '/' for better readability
-                type="file"
-                name={file}
-                accept=".pdf"
-                initialFile={formState.documents[file]}
-                onChange={(e) => handleFileUpload(file, e.target.files)}
-              />
+            'extrait de naissance', 'certificat domicile', 'certificat de travail', 
+            'visite medicale', 'photo identite'
+          ].map((file, index) => (
+            <FileInput
+              key={index}
+              label={file.replace('/', ' / ')} // Amélioration d'affichage
+              type="file"
+              name={file}
+              accept=".pdf"
+              initialFile={documents[file]} // ✅ Empêche l'erreur undefined
+              onChange={(e) => handleFileUpload(file, e.target.files)}
+            />
           ))}
         </div>
 

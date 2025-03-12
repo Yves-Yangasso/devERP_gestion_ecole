@@ -5,11 +5,13 @@ const FormContext = createContext();
 export const FormProvider = ({ children }) => {
   const [formState, setFormState] = useState({
     student: {},
-    tuteur: {},
+    tutors: [],
     payment: {},
+    documents: {}, // ✅ Ajout de l'initialisation des documents
     errors: {}
   });
 
+  // ✅ Mise à jour des informations de l'étudiant
   const updateStudent = (data) => {
     setFormState(prev => ({
       ...prev,
@@ -24,23 +26,19 @@ export const FormProvider = ({ children }) => {
     }));
   };
 
-  const updateTuteur = (data) => {
+  // ✅ Mise à jour de plusieurs tuteurs
+  const updateTutors = (newTutors) => {
     setFormState(prev => ({
       ...prev,
-      tuteur: {
-        ...prev.tuteur,
-        ...data
-      },
+      tutors: newTutors.length > 0 ? newTutors : prev.tutors,
       errors: {
         ...prev.errors,
-        tuteur: {
-          ...prev.errors?.tuteur,
-          ...data.errors
-        }
+        tutors: newTutors.length > 0 ? newTutors.map(() => ({})) : prev.errors?.tutors
       }
     }));
   };
 
+  // ✅ Mise à jour des paiements
   const updatePayment = (data) => {
     setFormState(prev => ({
       ...prev,
@@ -51,8 +49,19 @@ export const FormProvider = ({ children }) => {
     }));
   };
 
+  // ✅ Mise à jour des documents
+  const updateDocuments = (newDocuments) => {
+    setFormState(prev => ({
+      ...prev,
+      documents: {
+        ...prev.documents,
+        ...newDocuments
+      }
+    }));
+  };
+
   return (
-    <FormContext.Provider value={{ formState, updateStudent, updateTuteur, updatePayment }}>
+    <FormContext.Provider value={{ formState, updateStudent, updateTutors, updatePayment, updateDocuments }}>
       {children}
     </FormContext.Provider>
   );
