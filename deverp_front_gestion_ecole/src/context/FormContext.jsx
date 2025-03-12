@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 // import React, { createContext, useState, useContext } from 'react';
 
 // const FormContext = createContext();
@@ -69,6 +70,8 @@
 
 // export default FormContext;
 
+=======
+>>>>>>> 3e34f25 (🔧 Mise à jour gestion inscription : corrections et améliorations backend/frontend)
 import { createContext, useState, useContext } from 'react';
 
 const FormContext = createContext();
@@ -76,10 +79,15 @@ const FormContext = createContext();
 export const FormProvider = ({ children }) => {
   const [formState, setFormState] = useState({
     student: {},
+<<<<<<< HEAD
     tuteur: [],
     documents: {},
     payment: {},
     errors: {}
+=======
+    tutors: [],
+    documents: {}
+>>>>>>> 3e34f25 (🔧 Mise à jour gestion inscription : corrections et améliorations backend/frontend)
   });
 
   const updateStudent = (data) => {
