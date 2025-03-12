@@ -32,7 +32,7 @@ class InscriptionService
             // 2. Créer l'inscription
             $inscription = $this->createInscription($data['etudiant'], $tuteurIds[0]);
 
-            if ($data['action'] == 'en_ligne') {
+            //if ($data['action'] == 'en_ligne') {
                 // 3. Créer le dossier avec les documents
                 $dossier = $this->createDossierWithDocuments(
                     $inscription,
@@ -50,7 +50,7 @@ class InscriptionService
                     'matricule' => $data['matricule'],
                     'email_institutionnel' => $data['email_institutionnel']
                 ]);
-            }
+            //}
 
             // 5. Envoyer la notification d'inscription
             $this->sendInscriptionNotification($inscription);

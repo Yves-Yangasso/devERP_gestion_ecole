@@ -3,37 +3,35 @@ import RecapStudents from '../../recap/RecapPart';
 import Layout from '../../formulaire/Layout';
 import StepIndicator from '../../formulaire/StepIndicator';
 import { useFormContext } from '../../../context/FormContext';
-import useCrud from '../../../hooks/useCrudAxios'; // Importation du hook personnalisé
+import useCrud from '../../../hooks/useCrudAxios';
 import AlertService from '../../../services/notifications/AlertService';
 import { useNavigate } from 'react-router-dom';
-import { confirmAlert } from "react-confirm-alert";
-import "react-confirm-alert/src/react-confirm-alert.css";
+import { confirmAlert } from 'react-confirm-alert';
+import 'react-confirm-alert/src/react-confirm-alert.css';
 
 const RecapStudent = () => {
   const { formState } = useFormContext();
-  const { create } = useCrud('inscriptions'); // Utilisation du hook pour envoyer les données
-  const [isSubmitting, setIsSubmitting] = useState(false); // Ajouter un état de soumission
+  const { create } = useCrud('inscriptions');
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
-
-  // Fonction pour envoyer les données
 
   const handleConfirmation = (response) => {
     confirmAlert({
-      title: "Redirection vers Suivie de demandes",
-      message: `Chére ${response.prenom} ${response.nom}, Votre Demande a été envoyé, Veuillez vous rendre sur la page Suivie de demandes en cliquant sur le button oui ?`,
+      title: 'Redirection vers Suivie de demandes',
+      message: `Chère ${response.prenom} ${response.nom}, Votre demande a été envoyée. Veuillez vous rendre sur la page Suivie de demandes en cliquant sur le bouton Oui ?`,
       buttons: [
         {
-          label: "Oui",
+          label: 'Oui',
           onClick: async () => {
             try {
-              navigate('/SuivieDossier')
+              navigate('/SuivieDossier');
             } catch (error) {
-              AlertService.error("Error loading");
+              AlertService.error('Erreur lors de la redirection');
             }
           },
         },
         {
-          label: "Non",
+          label: 'Non',
         },
       ],
     });
@@ -55,8 +53,8 @@ const RecapStudent = () => {
       formData.append('etudiant[nationalite]', formState.student.nationalite);
       formData.append('etudiant[dernier_etablissement]', formState.student.universite);
       formData.append('etudiant[niveau]', formState.student.niveau);
-      formData.append('etudiant[formations]', formState.student.formation);
-      formData.append('etudiant[filiere]', formState.student.specialites.join(', '));
+      formData.append('etudiant[formations]', formState.student.formations);
+      formData.append('etudiant[filiere]', formState.student.filiere || ''); // Utilisez filiere au lieu de specialites
 
       // Données tuteurs
       formState.tutors.forEach((tuteur, index) => {
@@ -80,7 +78,7 @@ const RecapStudent = () => {
       formData.append('dossier[titre]', `Dossier de ${formState.student.prenom} ${formState.student.nom}`);
       formData.append('dossier[description]', 'Dossier contenant les documents de l\'étudiant');
 
-      // Debug: afficher les données qui seront envoyées
+      // Debug: afficher les données envoyées
       for (let [key, value] of formData.entries()) {
         console.log(`${key}: ${value instanceof File ? value.name : value}`);
       }
@@ -99,10 +97,10 @@ const RecapStudent = () => {
       setIsSubmitting(false);
     }
   };
-  
+
   return (
     <Layout
-      leftText="Voici le récapitulatif de vos données pour plus de contrôle, Veuillez revérifier vos données avant de l’envoyer. Une fois envoyées vous ne pourrez plus les modifier."
+      leftText="Voici le récapitulatif de vos données pour plus de contrôle. Veuillez revérifier vos données avant de l’envoyer. Une fois envoyées, vous ne pourrez plus les modifier."
       formComponent={<RecapStudents tuteur={formState.tutors} demandeur={formState.student} document={formState.documents} onSubmit={handleSubmit} isSubmitting={isSubmitting} />}
       StepIndicator={<StepIndicator activeStep={4} totalSteps={4} activeStepColor="bg-green-600" />}
     />
