@@ -165,7 +165,13 @@ return [
         App\Providers\RepositoryServiceProvider::class,
         App\Providers\AuthServiceProvider::class,
        // Maatwebsite\Excel\ExcelServiceProvider::class,
+       Barryvdh\DomPDF\ServiceProvider::class,
     ],
+
+    'aliases' => [
+    // ...
+    'PDF' => Barryvdh\DomPDF\Facade\Pdf::class,
+],
 
 
 ];

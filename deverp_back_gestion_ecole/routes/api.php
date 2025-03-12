@@ -21,6 +21,7 @@ use App\Http\Controllers\API\StructureTarifaire\StructureTarifaireController;
 use App\Http\Controllers\API\Certifications\CertificationController;
 use App\Http\Controllers\API\Cours\CoursController;
 use App\Http\Controllers\DepartementController;
+use App\Http\Controllers\Etudiant\CarteEtudiantController;
 use App\Http\Controllers\Etudiant\EtudiantController;
 use App\Http\Controllers\FiliereController;
 
@@ -241,8 +242,11 @@ Route::prefix('v1')->group(function () {
         Route::delete('/{id}', [StructureTarifaireController::class, 'destroy']);
     });
 
+    Route::get('/etudiants/{id}/carte', [CarteEtudiantController::class, 'genererCarte']);
+
     // Creation de l'etudiant
     Route::prefix('etudiants')->group(function () {
         Route::post('/', [EtudiantController::class, 'store']);
     });
 });
+

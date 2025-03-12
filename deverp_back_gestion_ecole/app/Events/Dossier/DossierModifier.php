@@ -6,7 +6,7 @@ use App\Models\Document;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class DossierModifie
+class DossierModifier
 {
     use Dispatchable, SerializesModels;
 
