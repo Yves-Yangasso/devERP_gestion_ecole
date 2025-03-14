@@ -24,12 +24,18 @@ use App\Http\Controllers\DepartementController;
 use App\Http\Controllers\Etudiant\CarteEtudiantController;
 use App\Http\Controllers\Etudiant\EtudiantController;
 use App\Http\Controllers\FiliereController;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\TestEmail;
 
 /*
 |--------------------------------------------------------------------------
 | API Routes
 |--------------------------------------------------------------------------
 */
+Route::get('/send-test-email', function () {
+    Mail::to('yangassoyowane@gmail.com')->send(new TestEmail());
+    return 'Email envoyé avec succès !';
+});
 
 
 // Routes de test et debug

@@ -3,16 +3,23 @@ namespace App\Services\Paiement;
 
 use App\Contracts\Repositories\Paiement\PaiementRepositoryInterface;
 use App\Models\Paiement;
+use App\Models\Inscription;
 use App\Models\LignePaiement;
 use Illuminate\Support\Facades\DB;
+use App\Mail\FactureMail;
+use App\Mail\TestEmail;
+use Illuminate\Support\Facades\Mail;
+use App\Services\Etudiant\InscriptionService;
 
 class PaiementService
 {
     protected $paiementRepository;
+    protected $inscriptionService;
 
-    public function __construct(PaiementRepositoryInterface $paiementRepository)
+    public function __construct(PaiementRepositoryInterface $paiementRepository, InscriptionService $inscriptionService,)
     {
         $this->paiementRepository = $paiementRepository;
+        $this->inscriptionService = $inscriptionService;
     }
 
     public function creerPaiement(array $donnees): Paiement
@@ -25,25 +32,30 @@ class PaiementService
                 'mode_paiement_id' => $donnees['mode_paiement_id'],
                 'status' => 'en_attente',
             ]);
-
-            foreach ($donnees['lignes_paiement'] as $ligne) {
-                // Vérifiez que 'type_frais' existe dans le tableau
-                $typeFrais = isset($ligne['type_frais']) ? $ligne['type_frais'] : null; // Ou une valeur par défaut
-
-                LignePaiement::create([
-                    'paiement_id' => $paiement->id,
-                    'montant' => $ligne['montant'],
-                    'type_frais' => $typeFrais  // Utilisez la variable ici
-                ]);
+    
+            if (!empty($donnees['lignes_paiement'])) {
+                foreach ($donnees['lignes_paiement'] as $ligne) {
+                    LignePaiement::create([
+                        'paiement_id' => $paiement->id,
+                        'montant' => $ligne['montant'],
+                        'type_frais' => $ligne['type_frais'] ?? null,
+                    ]);
+                }
             }
+    
 
-            if ($paiement->status === 'valide') {  // Assurez-vous de mettre à jour le statut ici
+           // Mail::to('yangassoyowane@gmail.com  diankaseydou52@gmail.com')->send(new TestEmail());
+
+            Mail::to('jeanyves-yowane.yangasso@uahb.sn')->send(new FactureMail($paiement));
+    
+            if ($paiement->status === 'valide') {
                 $this->validerInscription($donnees['inscription_id']);
             }
-
+    
             return $paiement;
         });
     }
+    
 
     public function modifierPaiement(int $id, array $donnees): Paiement
     {
