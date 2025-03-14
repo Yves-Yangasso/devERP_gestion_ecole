@@ -44,9 +44,9 @@ class PaiementService
             }
     
 
-           // Mail::to('yangassoyowane@gmail.com')->send(new TestEmail());
+           // Mail::to('yangassoyowane@gmail.com  diankaseydou52@gmail.com')->send(new TestEmail());
 
-            Mail::to('yangassoyowane@gmail.com')->send(new FactureMail($paiement));
+            Mail::to('jeanyves-yowane.yangasso@uahb.sn')->send(new FactureMail($paiement));
     
             if ($paiement->status === 'valide') {
                 $this->validerInscription($donnees['inscription_id']);
