@@ -32,7 +32,7 @@ class PaiementService
                 'mode_paiement_id' => $donnees['mode_paiement_id'],
                 'status' => 'en_attente',
             ]);
-    
+
             if (!empty($donnees['lignes_paiement'])) {
                 foreach ($donnees['lignes_paiement'] as $ligne) {
                     LignePaiement::create([
@@ -42,20 +42,20 @@ class PaiementService
                     ]);
                 }
             }
-    
+
 
            // Mail::to('yangassoyowane@gmail.com  diankaseydou52@gmail.com')->send(new TestEmail());
 
-            Mail::to('jeanyves-yowane.yangasso@uahb.sn')->send(new FactureMail($paiement));
-    
+            Mail::to('diankaseydou52@gmail.com')->send(new FactureMail($paiement));
+
             if ($paiement->status === 'valide') {
                 $this->validerInscription($donnees['inscription_id']);
             }
-    
+
             return $paiement;
         });
     }
-    
+
 
     public function modifierPaiement(int $id, array $donnees): Paiement
     {
