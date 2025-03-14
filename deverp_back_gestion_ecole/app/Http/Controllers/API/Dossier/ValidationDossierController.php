@@ -32,4 +32,14 @@ class ValidationDossierController extends Controller
             'dossiers' => DossierResource::collection($dossiers)
         ]);
     }
+
+    public function getDocuments(int $dossierId): JsonResponse
+{
+    $documents = $this->validationService->getDocumentsByDossierId($dossierId);
+    return response()->json([
+        'documents' => $documents
+    ]);
+}
+
+
 }

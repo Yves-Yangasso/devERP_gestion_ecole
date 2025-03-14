@@ -23,7 +23,7 @@ class DossierValidationService
         DB::beginTransaction();
         try {
             $dossier = $this->dossierRepository->findById($dossierId);
-            
+
             // Vérifier si tous les documents sont validés
             $documentsValides = $dossier->documents()
                 ->where('statut', 'valide')
@@ -48,5 +48,10 @@ class DossierValidationService
     public function getDossiersEnAttente()
     {
         return $this->dossierRepository->getDossiersByStatut(StatutDossier::EN_ATTENTE);
+    }
+
+    public function getDocumentsByDossierId(int $dossierId)
+    {
+        return $this->dossierRepository->findDocumentsByDossierId($dossierId);
     }
 }

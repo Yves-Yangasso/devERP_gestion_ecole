@@ -44,6 +44,11 @@ interface DossierRepositoryInterface
     public function ajouterDocument(Dossier $dossier, array $documentData): void;
 
     /**
+     * Cette fonction permet de retourner tout les document d'un dossier
+     */
+    public function findDocumentsByDossierId(int $dossierId);
+
+    /**
      * Mettre à jour le statut d'un dossier
      */
     public function updateStatut(Dossier $dossier, string $statut, ?string $commentaire = null): bool;

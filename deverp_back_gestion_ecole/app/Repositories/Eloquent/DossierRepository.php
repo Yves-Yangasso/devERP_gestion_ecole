@@ -31,7 +31,7 @@ class DossierRepository implements DossierRepositoryInterface
     public function findByCodeSuivi(string $codeSuivi ): ?Dossier
 {
     Log::info("Recherche dossier avec code_suivi: $codeSuivi "); // Ajouter un log
-    
+
     $dossier = $this->model
         ->where('code_suivi', $codeSuivi)
         ->with(['documents', 'inscription'])
@@ -70,6 +70,11 @@ class DossierRepository implements DossierRepositoryInterface
     public function ajouterDocument(Dossier $dossier, array $documentData): void
     {
         $dossier->documents()->create($documentData);
+    }
+
+    public function findDocumentsByDossierId(int $dossierId)
+    {
+        return Document::where('dossier_id', $dossierId)->get();
     }
 
     public function updateStatut(Dossier $dossier, string $statut, ?string $commentaire = null): bool

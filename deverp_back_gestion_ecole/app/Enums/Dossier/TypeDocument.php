@@ -14,6 +14,6 @@ enum TypeDocument: string
     case EXTRAIT_NAISSANCE = 'extrait de naissance';
     case VISITE_CONTRE_VISITE = 'visite contre visite';
     case CERTIFICAT_DOMICILE = 'certificat domicile';
-    case CERTIFICAT_TRAVAIL = 'certificat de travail';
+    case CERTIFICAT_TRAVAIL = 'certificat travail';
     case VISITE_MEDICALE = 'visite medicale';
 }
