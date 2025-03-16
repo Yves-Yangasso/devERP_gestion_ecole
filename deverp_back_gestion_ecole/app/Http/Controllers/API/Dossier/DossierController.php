@@ -20,7 +20,7 @@ class DossierController extends Controller
     public function store(CreerDossierRequest $request): JsonResponse
     {
         $dossier = $this->dossierService->creerDossier($request->validated());
-        
+
         return response()->json([
             'message' => 'Dossier créé avec succès',
             'data' => new DossierResource($dossier)
@@ -69,5 +69,23 @@ class DossierController extends Controller
         $dossiers = $this->dossierService->getDossiersByStatut($statut);
 
         return response()->json($dossiers, 200);
+    }
+
+    public function mettreAJourStatut(Request $request): JsonResponse
+    {
+        $donnees = $request->validate([
+            'id' => 'required|integer|exists:dossiers,id',
+            'documents' => 'required|array',
+            'documents.*.id' => 'required|integer|exists:documents,id',
+            'documents.*.status' => 'required|string|in:valide,invalide,en_attente',
+        ]);
+
+        $success = $this->dossierService->mettreAJourStatutDocuments($donnees);
+
+        if (!$success) {
+            return response()->json(['message' => 'Erreur lors de la mise à jour'], 500);
+        }
+
+        return response()->json(['message' => 'Statuts mis à jour avec succès'], 200);
     }
 }

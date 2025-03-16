@@ -10,6 +10,9 @@ use App\Http\Controllers\API\Dossier\TraitementDossierController;
 use App\Http\Controllers\API\Dossier\DocumentController;
 use App\Http\Controllers\API\Dossier\SuiviDossierController;
 use App\Http\Controllers\API\Auth\AuthController;
+use App\Http\Controllers\API\Paiement\ModePaiementController;
+use App\Http\Controllers\LignePaiementController;
+use App\Http\Controllers\PaiementController;
 
 /*
 |--------------------------------------------------------------------------
@@ -54,6 +57,35 @@ Route::prefix('v1')->group(function () {
         Route::get('/a-traiter', [TraitementDossierController::class, 'getDossiersATraiter']);
     });
 
+
+
+    // Route pour le gestion des Mode de Paiement(Creer,Modifier,Trouver,Supprimer)
+    Route::prefix('modes-paiement')->group(function () {
+        Route::get('/', [ModePaiementController::class, 'index']);
+        Route::post('/', [ModePaiementController::class, 'store']);
+        Route::get('/{id}', [ModePaiementController::class, 'show']);
+        Route::put('/{id}', [ModePaiementController::class, 'update']);
+        Route::delete('/{id}', [ModePaiementController::class, 'destroy']);
+    });
+
+     //Route pour le paiement par les étudiant
+     Route::prefix('paiements')->group(function () {
+        Route::post('/', [PaiementController::class, 'store']);
+        Route::get('/{id}', [PaiementController::class, 'show']);
+        Route::delete('/{id}', [PaiementController::class, 'destroy']);
+    });
+
+    
+    // Route permettant aux étudiants d'effectuer un paiement/Modifier/Annuler
+    Route::prefix('ligne-paiements')->group(function () {
+        Route::get('/', [LignePaiementController::class, 'index']);
+        Route::post('/', [LignePaiementController::class, 'store']);
+        Route::get('/{id}', [LignePaiementController::class, 'show']);
+        Route::put('/{id}', [LignePaiementController::class, 'update']);
+        Route::delete('/{id}', [LignePaiementController::class, 'destroy']);
+    });
+
+
     /*
     |--------------------------------------------------------------------------
     | Routes Protégées (authentification requise)
@@ -65,6 +97,8 @@ Route::prefix('v1')->group(function () {
         Route::get('/user', function (Request $request) {
             return response()->json($request->user());
         });
+
+
 
         // Déconnexion
         Route::post('/logout', [AuthController::class, 'logout']);
@@ -81,6 +115,7 @@ Route::prefix('v1')->group(function () {
         // Gestion des dossiers
         Route::prefix('dossiers')->group(function () {
             // Création et modification
+            Route::post('/update-status', [DossierController::class, 'mettreAJourStatut']);
             Route::post('/', [DossierController::class, 'store']);
             Route::get('/etudiant/{etudiantId}', [DossierController::class, 'getDossiersEtudiant']);
 

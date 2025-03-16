@@ -11,6 +11,7 @@ class LignePaiement extends Model
 
     protected $fillable = [
         'paiement_id',
+        'mode_paiement_id',
         'montant',
         'date_paiement',
         'status',

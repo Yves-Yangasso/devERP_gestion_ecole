@@ -34,16 +34,18 @@ class CloudinaryStorageService implements CloudStorageInterface
     public function uploadDocument(UploadedFile $file, string $folder, array $options = [], string $prenom, string $nom): array
     {
         try {
-            // Nettoyer le nom pour le dossier (version simplifiée sans transliterator)
+            // Nettoyer le nom pour le dossier
             $studentName = $this->cleanName($prenom . '_' . $nom);
 
-            // Construire le chemin final
-            $finalFolder = config('cloudinary.dossier_folder') . '/' . $folder . '/' . $studentName;
+            // Générer l'horodatage au format souhaité
+            $timestamp = now()->format('Y-m-d_H-i-s');
+
+            // Construire le chemin final avec le code de suivi et l'horodatage
+            $finalFolder = config('cloudinary.dossier_folder') . '/' . $folder . '-' . $timestamp . '/' . $studentName;
 
             // Détecter si c'est un PDF
             $isPDF = strtolower($file->getClientOriginalExtension()) === 'pdf';
 
-            // Options spécifiques pour les PDFs
             $uploadOptions = array_merge([
                 'folder' => $finalFolder,
                 'resource_type' => $isPDF ? 'image' : 'raw',
@@ -63,7 +65,6 @@ class CloudinaryStorageService implements CloudStorageInterface
                 $uploadOptions
             );
 
-            // Pour les PDFs, construire une URL de prévisualisation spéciale
             $previewUrl = $isPDF
                 ? "https://res.cloudinary.com/" . config('cloudinary.cloud_name') . "/image/upload/fl_attachment/" . $result['public_id'] . ".pdf"
                 : $result['secure_url'];
@@ -75,7 +76,9 @@ class CloudinaryStorageService implements CloudStorageInterface
                 'secure_url' => $result['secure_url'],
                 'preview_url' => $previewUrl,
                 'resource_type' => $result['resource_type'],
-                'format' => $isPDF ? 'pdf' : $file->getClientOriginalExtension()
+                'format' => $isPDF ? 'pdf' : $file->getClientOriginalExtension(),
+                'folder' => $finalFolder,
+                'timestamp' => $timestamp
             ];
         } catch (\Exception $e) {
             Log::error('Erreur Cloudinary: ' . $e->getMessage());

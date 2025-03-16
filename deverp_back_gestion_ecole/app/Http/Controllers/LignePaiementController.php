@@ -2,64 +2,49 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\LignePaiement;
-use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\Paiement\CreerLignePaiementRequest;
+use App\Services\Paiement\LignePaiementService;
+use Illuminate\Http\JsonResponse;
 
 class LignePaiementController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    protected LignePaiementService $lignePaiementService;
+
+    public function __construct(LignePaiementService $lignePaiementService)
     {
-        //
+        $this->lignePaiementService = $lignePaiementService;
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function index(): JsonResponse
     {
-        //
+        return response()->json($this->lignePaiementService->tous());
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+    public function store(CreerLignePaiementRequest $request): JsonResponse
     {
-        //
+        $lignePaiement = $this->lignePaiementService->creer($request->validated());
+        return response()->json($lignePaiement, 201);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(LignePaiement $lignePaiement)
+    public function show(int $id): JsonResponse
     {
-        //
+        $lignePaiement = $this->lignePaiementService->trouverParId($id);
+        if (!$lignePaiement) {
+            return response()->json(['message' => 'Ligne de paiement non trouvée'], 404);
+        }
+        return response()->json($lignePaiement);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(LignePaiement $lignePaiement)
+    public function update(CreerLignePaiementRequest $request, int $id): JsonResponse
     {
-        //
+        $lignePaiement = $this->lignePaiementService->modifier($id, $request->validated());
+        return response()->json($lignePaiement);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, LignePaiement $lignePaiement)
+    public function destroy(int $id): JsonResponse
     {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(LignePaiement $lignePaiement)
-    {
-        //
+        $this->lignePaiementService->supprimer($id);
+        return response()->json(['message' => 'Ligne de paiement supprimée'], 204);
     }
 }
