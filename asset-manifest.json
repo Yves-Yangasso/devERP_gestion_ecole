@@ -1,15 +1,15 @@
 {
   "files": {
-    "main.css": "/Yves-Yangasso/devERP_gestion_ecole/static/css/main.43fa5bdb.css",
-    "main.js": "/Yves-Yangasso/devERP_gestion_ecole/static/js/main.9d17393a.js",
+    "main.css": "/Yves-Yangasso/devERP_gestion_ecole/static/css/main.66750254.css",
+    "main.js": "/Yves-Yangasso/devERP_gestion_ecole/static/js/main.7aef0466.js",
     "static/js/511.a2fd106e.chunk.js": "/Yves-Yangasso/devERP_gestion_ecole/static/js/511.a2fd106e.chunk.js",
     "index.html": "/Yves-Yangasso/devERP_gestion_ecole/index.html",
-    "main.43fa5bdb.css.map": "/Yves-Yangasso/devERP_gestion_ecole/static/css/main.43fa5bdb.css.map",
-    "main.9d17393a.js.map": "/Yves-Yangasso/devERP_gestion_ecole/static/js/main.9d17393a.js.map",
+    "main.66750254.css.map": "/Yves-Yangasso/devERP_gestion_ecole/static/css/main.66750254.css.map",
+    "main.7aef0466.js.map": "/Yves-Yangasso/devERP_gestion_ecole/static/js/main.7aef0466.js.map",
     "511.a2fd106e.chunk.js.map": "/Yves-Yangasso/devERP_gestion_ecole/static/js/511.a2fd106e.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.43fa5bdb.css",
-    "static/js/main.9d17393a.js"
+    "static/css/main.66750254.css",
+    "static/js/main.7aef0466.js"
   ]
 }
