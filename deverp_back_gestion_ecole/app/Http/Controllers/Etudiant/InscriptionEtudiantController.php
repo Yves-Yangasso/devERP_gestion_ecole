@@ -23,6 +23,7 @@ class InscriptionEtudiantController extends Controller
 
     public function store(InscrireEtudiantRequest $request): JsonResponse
     {
+       // dd($request->all());
         try {
             $inscription = $this->inscriptionService->createCompleteInscription($request->validated());
             return response()->json([

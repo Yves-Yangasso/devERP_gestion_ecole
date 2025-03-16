@@ -23,6 +23,7 @@ const TraiteDemandes = ({ dossier, checkedDocs, setCheckedDocs,closePopup, openS
                 ...prev,
                 [docId]: !prev[docId]
             };
+            console.log(newCheckedDocs);
             return newCheckedDocs;
         });
     };

@@ -72,6 +72,8 @@ class DocumentController extends Controller
             'nom' => $request->nom
         ], $file);
 
+        //dd($document);
+
         return response()->json([
             'message' => 'Document uploadé avec succès',
             'document' => $document,

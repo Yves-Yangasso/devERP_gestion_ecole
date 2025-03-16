@@ -40,7 +40,7 @@ class ValidationDossierNotification extends Notification implements ShouldQueue
             ->line('Vous pouvez maintenant procéder au paiement des frais d\'inscription pour finaliser votre admission.')
             ->action('Procéder au paiement', $paiementUrl)
             ->line('Une fois le paiement effectué, vous recevrez votre carte d\'étudiant et votre certificat de scolarité.')
-            ->line('Montant à payer: XXX FCFA') // Remplacez XXX par le montant réel
+            ->line('Montant à payer: XXX FCFA')
             ->line('Code de suivi: ' . ($this->inscription->dossier ? $this->inscription->dossier->code_suivi : 'Non disponible'))
             ->line('En cas de questions, n\'hésitez pas à nous contacter.')
             ->salutation('Cordialement, l\'équipe pédagogique');

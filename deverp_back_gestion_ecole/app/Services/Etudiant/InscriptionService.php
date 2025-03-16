@@ -43,13 +43,13 @@ class InscriptionService
                 $this->updateCloudinaryUrls($dossier);
 
                 // 5. Créer l'étudiant
-                $etudiant = $this->etudiantService->registerStudent([
-                    'inscription_id' => $inscription['id'],  // ID de l'inscription
-                    'nom' => $data['nom'],
-                    'prenom' => $data['prenom'],
-                    'matricule' => $data['matricule'],
-                    'email_institutionnel' => $data['email_institutionnel']
-                ]);
+                // $etudiant = $this->etudiantService->registerStudent([
+                //     'inscription_id' => $inscription['id'],  // ID de l'inscription
+                //     'nom' => $data['nom'],
+                //     'prenom' => $data['prenom'],
+                //     'matricule' => $data['matricule'],
+                //     'email_institutionnel' => $data['email_institutionnel']
+                // ]);
             //}
 
             // 5. Envoyer la notification d'inscription

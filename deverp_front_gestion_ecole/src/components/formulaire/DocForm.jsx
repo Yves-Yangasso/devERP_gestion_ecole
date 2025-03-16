@@ -22,9 +22,7 @@ const DocForm = () => {
   // ✅ Correction de la vérification des fichiers
   const areAllFilesProvided = () => {
     const requiredFiles = [
-      'cni/passeport', 'diplome', 'certificat scolarite', 'casier judiciaire', 'bulletin notes', 
-      'certificat residence', 'visite contre visite', 'extrait de naissance', 'certificat domicile', 
-      'certificat de travail', 'visite medicale', 'photo identite'
+      'cni/passeport', 'diplome', 'bulletin notes',  'extrait de naissance' , 'photo identite'
     ];
     return requiredFiles.every(file => documents[file]);
   };
@@ -53,10 +51,7 @@ const DocForm = () => {
       <form className="flex flex-col">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4 py-6">
           {[
-            'cni/passeport', 'diplome', 'certificat scolarite', 'casier judiciaire', 
-            'bulletin notes', 'certificat residence', 'visite contre visite', 
-            'extrait de naissance', 'certificat domicile', 'certificat de travail', 
-            'visite medicale', 'photo identite'
+            'cni/passeport', 'diplome','bulletin notes','extrait de naissance','photo identite'
           ].map((file, index) => (
             <FileInput
               key={index}

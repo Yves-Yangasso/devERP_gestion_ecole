@@ -19,6 +19,7 @@ class ValidationDossierController extends Controller
     public function validerDossier(ValidationDossierRequest $request, int $dossierId): JsonResponse
     {
         $dossier = $this->validationService->validerDossier($dossierId, $request->validated());
+
         return response()->json([
             'message' => 'Dossier traité avec succès',
             'dossier' => new DossierResource($dossier)

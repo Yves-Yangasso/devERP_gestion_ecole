@@ -90,15 +90,29 @@ class DocumentService
         return $this->documentRepository->trouverParDossierId($dossierId)->toArray();
     }
 
-
-    public function validerDocument(Document $document, string $statut, ?string $commentaire = null): bool
+    public function validerDocument(array $documents): array
     {
-        return $this->documentRepository->update($document, [
-            'statut' => $statut,
-            'commentaire' => $commentaire,
-            'date_validation' => now(),
-        ]);
+        $documentsValides = [];
+
+        foreach ($documents as $doc) {
+            // Récupérer le document par son ID
+            $document = $this->documentRepository->trouverParId($doc['id']);
+
+            // Vérifier si le document existe avant de le mettre à jour
+            if ($document) {
+                $this->documentRepository->update($document, [
+                    'statut' => $doc['statut'],
+                    'date_validation' => now(),
+                ]);
+
+                // Ajouter le document mis à jour à la liste des documents validés
+                $documentsValides[] = $document->refresh();
+            }
+        }
+
+        return $documentsValides; // Retourne la liste des documents après mise à jour
     }
+
 
     public function getDocument(int $documentId): ?Document
     {

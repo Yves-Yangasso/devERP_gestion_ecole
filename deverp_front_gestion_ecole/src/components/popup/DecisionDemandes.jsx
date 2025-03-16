@@ -4,36 +4,35 @@ import  useCrud  from "../../hooks/useCrudAxios";
 import AlertService from "../../services/notifications/AlertService";
 
 const DecisionDemande = ({ closePopup, goBack, initialStatus, nom_admin, setCheckedDocs, decisionData }) => {
-  const { create: traiterDossierEtDocuments, loading: loadingTraitement } = useCrud("dossiers/traitements");
+    const id = decisionData?.dossierId;
+  const { create: traiterDossierEtDocuments, loading: loadingTraitement } = useCrud(`dossiers/${id}/valider`);
   const [statut, setStatut] = useState(initialStatus?.decision || "valide");
   const [commentaire, setCommentaire] = useState(initialStatus?.motif || "");
 
   const handleSubmit = async () => {
       try {
-        const dossierId = decisionData?.dossierId;
+        //const dossierId = decisionData?.dossierId;
         const checkedDocument = decisionData?.checkedDocuments;
-        if (!dossierId) {
+        if (!id) {
             AlertService.error("ID du dossier manquant !");
             return;
         }
         
           const dataToSend = {
-              id: dossierId,
+              //id: dossierId,
               statut,
-              commentaire,
+              //commentaire,
               documents: Object.entries(checkedDocument).map(([id, doc]) => ({
                   id: doc.id,
                   statut: doc.statut,
               }))
           };        
-          console.log("Données envoyées :", dataToSend);
-
           await traiterDossierEtDocuments(dataToSend);
 
           // Nettoyer les documents cochés après succès
-          setCheckedDocs({});
-          closePopup();
           AlertService.success("Dossier traite avec success");
+        //   setCheckedDocs({});
+          closePopup();
       } catch (error) {
         AlertService.error("Erreur lors du traitement du dossier :", error);
       }
