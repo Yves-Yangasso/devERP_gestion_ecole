@@ -6,94 +6,89 @@
     <title>Facture Scolaire</title>
     <style>
         body {
-            font-family: 'Roboto', sans-serif;
+            font-family: 'Arial', sans-serif;
             margin: 0;
-            padding: 0;
-            background-color: #f7f7f7;
+            padding: 20px;
+            background-color: #f4f4f4;
         }
         .container {
             max-width: 800px;
-            margin: 50px auto;
-            background: #ffffff;
-            border-radius: 10px;
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+            margin: auto;
+            background: #fff;
             padding: 30px;
-            animation: fadeIn 1s ease-out;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
-        h1, h2 {
-            color: #2c3e50;
+        .header {
             text-align: center;
-        }
-        h1 {
-            font-size: 2.5em;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 20px;
             margin-bottom: 20px;
         }
-        h2 {
-            font-size: 1.6em;
-            margin-top: 40px;
+        .header h1 {
+            color: #333;
+            font-size: 2em;
         }
-        p {
+        .details {
             font-size: 18px;
-            color: #34495e;
-            line-height: 1.6;
-        }
-        ul {
-            list-style-type: none;
-            padding: 0;
-        }
-        li {
-            background: #ecf0f1;
-            margin: 10px 0;
-            padding: 15px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease-in-out;
-        }
-        li:hover {
-            transform: scale(1.05);
-        }
-        .footer {
-            margin-top: 40px;
-            text-align: center;
-            font-size: 14px;
-            color: #95a5a6;
-        }
-        .footer p {
-            margin: 5px 0;
+            color: #555;
+            margin-bottom: 20px;
         }
         .highlight {
             color: #e74c3c;
             font-weight: bold;
         }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        .payment-details {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        .payment-details th, .payment-details td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+        .payment-details th {
+            background-color: #007bff;
+            color: #fff;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            font-size: 14px;
+            color: #777;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Facture #{{ htmlspecialchars($facture['id']) }}</h1>
-        <p><strong>Montant total :</strong> <span class="highlight">{{ number_format($facture['montant_paiement'], 2, ',', ' ') }} €</span></p>
-        <p><strong>Statut :</strong> {{ htmlspecialchars($facture['status']) }}</p>
+        <div class="header">
+            <h1>Facture #{{ htmlspecialchars($facture['id']) }}</h1>
+        </div>
+
+        <div class="details">
+            <p><strong>Montant total :</strong> <span class="highlight">{{ number_format($facture['montant_paiement'], 2, ',', ' ') }} F CFA</span></p>
+            <p><strong>Statut :</strong> {{ htmlspecialchars($facture['status']) }}</p>
+        </div>
 
         <h2>Détails du Paiement :</h2>
         @if (!empty($facture['lignes_paiement']))
-            <ul>
-                @foreach ($facture['lignes_paiement'] as $ligne)
-                    <li>
-                        <strong>{{ htmlspecialchars($ligne['type_frais'] ?? 'Non spécifié') }}</strong> : 
-                        <span class="highlight">{{ number_format($ligne['montant'], 2, ',', ' ') }} €</span>
-                    </li>
-                @endforeach
-            </ul>
+            <table class="payment-details">
+                <thead>
+                    <tr>
+                        <th>Type de Frais</th>
+                        <th>Montant (F CFA)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($facture['lignes_paiement'] as $ligne)
+                        <tr>
+                            <td>{{ htmlspecialchars($ligne['type_frais'] ?? 'Non spécifié') }}</td>
+                            <td class="highlight">{{ number_format($ligne['montant'], 2, ',', ' ') }}</td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
         @else
             <p>Aucun détail de paiement disponible.</p>
         @endif
