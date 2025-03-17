@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Input from "../ui/Input/InputField";
 import Button from "../ui/Button/Button";
 import InfoRow from "../ui/label/InfoRow";
@@ -9,10 +9,11 @@ import { useNavigate } from "react-router-dom";
 
 const StudentTrackingForm = () => {
     const [codeSuivi, setCodeSuivi] = useState("");
-    const [showDecision, setShowDecision] = useState(false);
+    const [showDossier, setShowDossier] = useState(false);
     const [dossierData, setDossierData] = useState(null);
+    const [dossierStatus, setDossierStatus] = useState("");
     const { create } = useCrud('suivi-dossier/verifier');
-    //const router = useRouter();
+    const navigate = useNavigate();
 
     const handleEmailSubmit = async () => {
         const requestPayload = { code_suivi: codeSuivi };
@@ -20,7 +21,8 @@ const StudentTrackingForm = () => {
             const response = await create(requestPayload);
             if (response && response.data.code_suivi === codeSuivi) {
                 setDossierData(response.data);
-                setShowDecision(true);
+                setShowDossier(true);
+                console.log("Données reçues :", response.data);
             } else {
                 AlertService.error("Code de suivi non trouvé. Veuillez entrer un code valide.");
             }
@@ -29,12 +31,29 @@ const StudentTrackingForm = () => {
         }
     };
 
-    const navigate = useNavigate();
+    useEffect(() => {
+        if (dossierData && dossierData.documents) {
+            const documents = Object.values(dossierData.documents);
+            
+            // Check if all documents have 'en_attente' status
+            const allDocumentsWaiting = documents.every(doc => doc.statut === 'en_attente');
+            
+            // Check if all documents have 'valide' status
+            const allDocumentsValid = documents.every(doc => doc.statut === 'valide');
+            
+            if (allDocumentsWaiting) {
+                setDossierStatus('en attente');
+            } else if (allDocumentsValid) {
+                setDossierStatus('valide');
+            } else {
+                setDossierStatus('invalide');
+            }
+        }
+    }, [dossierData]);
 
     const handleGoToPayment = () => {
         navigate("/PaiementEnLigne", { state: dossierData.inscription });
     };
-
 
     const renderStatusIcon = (statut) => {
         switch (statut) {
@@ -53,6 +72,19 @@ const StudentTrackingForm = () => {
         }
     };
 
+    const getStatusColor = (status) => {
+        switch (status) {
+            case 'valide':
+                return "text-green-500";
+            case 'invalide':
+                return "text-red-500";
+            case 'en attente':
+                return "text-yellow-500";
+            default:
+                return "text-gray-500";
+        }
+    };
+
     return (
         <div className="flex flex-col items-center justify-center w-full h-full bg-gray-100">
             <div className="bg-white p-6 h-full w-full">
@@ -60,7 +92,7 @@ const StudentTrackingForm = () => {
                     Suivi de Dossier
                 </h2>
 
-                {!showDecision && (
+                {!showDossier && (
                     <div className="mb-6 flex justify-between w-full">
                         <Input
                             value={codeSuivi}
@@ -76,7 +108,7 @@ const StudentTrackingForm = () => {
                     </div>
                 )}
 
-                {showDecision && dossierData && (
+                {showDossier && dossierData && (
                     <div className="bg-white p-6 rounded-lg shadow w-full">
                         <h3 className="text-lg font-semibold text-gray-700 mb-4">Informations du demandeur</h3>
                         <div className="grid grid-cols-2 gap-4 w-full border">
@@ -100,24 +132,17 @@ const StudentTrackingForm = () => {
 
                         <div className="bg-white p-6 mt-6 rounded-lg shadow">
                             <div className="bg-gray-50 shadow-lg px-10 py-2 rounded-3xl items-center flex justify-between">
-                                <h3 className="text-lg font-semibold text-gray-700">Décision</h3>
-                                <p className={`font-bold text-lg ${dossierData.decision === "Rejeté" ? "text-red-500" : "text-green-500"}`}>
-                                    {dossierData.status}
+                                <h3 className="text-lg font-semibold text-gray-700">Statut Dossier</h3>
+                                <p className={`font-bold text-lg ${getStatusColor(dossierStatus)}`}>
+                                    {dossierStatus}
                                 </p>
                             </div>
-                            {dossierData.motif && <p className="mt-6 text-gray-600 text-left">Motif : {dossierData.motif}</p>}
                         </div>
 
-                        {dossierData.decision === "Rejeté" || dossierData.decision === "incomplet" ? (
-                            <div className="flex justify-end mt-6">
-                                <Button className="bg-yellow-600 text-white hover:bg-yellow-700">
-                                    Revoir mes informations
-                                </Button>
-                            </div>
-                        ) : (
+                        {dossierStatus === "valide" && (
                             <div className="flex justify-end mt-6">
                                 <Button className="bg-green-600 text-white hover:bg-green-700" onClick={handleGoToPayment}>
-                                    Aller à la connexion
+                                    Finaliser Votre Inscription
                                 </Button>
                             </div>
                         )}
