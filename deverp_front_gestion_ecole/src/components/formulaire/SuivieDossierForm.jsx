@@ -2,30 +2,39 @@ import React, { useState } from "react";
 import Input from "../ui/Input/InputField";
 import Button from "../ui/Button/Button";
 import InfoRow from "../ui/label/InfoRow";
-import { CheckCircle, XCircle, Hourglass, AlertTriangle, FileText } from "lucide-react"; // Ajout de nouvelles icônes
+import { CheckCircle, XCircle, Hourglass, AlertTriangle, FileText } from "lucide-react";
 import AlertService from "../../services/notifications/AlertService";
-import useCrud from '../../hooks/useCrudAxios'; 
+import useCrud from '../../hooks/useCrudAxios';
+import { useNavigate } from "react-router-dom";
 
 const StudentTrackingForm = () => {
-    const [codeSuivi, setCodeSuivi] = useState(""); // L'email de suivi
-    const [showDecision, setShowDecision] = useState(false); // Pour afficher la décision
-    const [dossierData, setDossierData] = useState(null); // Pour stocker les données du dossier
-    const { create } = useCrud('suivi-dossier/verifier'); // Utilisation du hook pour envoyer les données
+    const [codeSuivi, setCodeSuivi] = useState("");
+    const [showDecision, setShowDecision] = useState(false);
+    const [dossierData, setDossierData] = useState(null);
+    const { create } = useCrud('suivi-dossier/verifier');
+    //const router = useRouter();
 
     const handleEmailSubmit = async () => {
-        const requestPayload = { code_suivi: codeSuivi }; // Créez l'objet avec le code de suivi
+        const requestPayload = { code_suivi: codeSuivi };
         try {
-            const response = await create(requestPayload); // Passez l'objet au hook `create`
+            const response = await create(requestPayload);
             if (response && response.data.code_suivi === codeSuivi) {
-                setDossierData(response.data); // Stocker la réponse dans l'état
-                setShowDecision(true); // Afficher la décision si le code de suivi est valide
+                setDossierData(response.data);
+                setShowDecision(true);
             } else {
                 AlertService.error("Code de suivi non trouvé. Veuillez entrer un code valide.");
             }
         } catch (error) {
             AlertService.error("Une erreur s'est produite lors de la vérification du code de suivi.");
         }
-    };    
+    };
+
+    const navigate = useNavigate();
+
+    const handleGoToPayment = () => {
+        navigate("/PaiementEnLigne", { state: dossierData.inscription });
+    };
+
 
     const renderStatusIcon = (statut) => {
         switch (statut) {
@@ -51,14 +60,12 @@ const StudentTrackingForm = () => {
                     Suivi de Dossier
                 </h2>
 
-                {/* Entrée du code de suivi */}
                 {!showDecision && (
                     <div className="mb-6 flex justify-between w-full">
                         <Input
                             value={codeSuivi}
                             onChange={(e) => setCodeSuivi(e.target.value)}
                             placeholder="Entrez votre code de suivi"
-                            className=""
                         />
                         <Button
                             className="bg-blue-600 text-white hover:bg-blue-700 ml-4"
@@ -69,12 +76,11 @@ const StudentTrackingForm = () => {
                     </div>
                 )}
 
-                {/* Affichage de la décision si le code est trouvé */}
                 {showDecision && dossierData && (
                     <div className="bg-white p-6 rounded-lg shadow w-full">
                         <h3 className="text-lg font-semibold text-gray-700 mb-4">Informations du demandeur</h3>
                         <div className="grid grid-cols-2 gap-4 w-full border">
-                            <InfoRow label="Nom Complet" className={"w-full"} value={`${dossierData.inscription.prenom} ${dossierData.inscription.nom}`}/>
+                            <InfoRow label="Nom Complet" className="w-full" value={`${dossierData.inscription.prenom} ${dossierData.inscription.nom}`} />
                             <InfoRow label="Nationalité" value={dossierData.inscription.nationalite} />
                             <InfoRow label="Email" value={dossierData.inscription.email} />
                             <InfoRow label="Téléphone" value={dossierData.inscription.telephone} />
@@ -86,7 +92,7 @@ const StudentTrackingForm = () => {
                                 {Object.entries(dossierData.documents).map(([doc, details]) => (
                                     <div key={doc} className="flex items-center justify-between border-b py-2 last:border-none">
                                         <span>{details.type}</span>
-                                        {renderStatusIcon(details.statut)} {/* Affichage dynamique de l'icône selon le statut */}
+                                        {renderStatusIcon(details.statut)}
                                     </div>
                                 ))}
                             </div>
@@ -102,8 +108,7 @@ const StudentTrackingForm = () => {
                             {dossierData.motif && <p className="mt-6 text-gray-600 text-left">Motif : {dossierData.motif}</p>}
                         </div>
 
-                        {/* Affichage des boutons selon la décision */}
-                        {dossierData.decision === "Rejeté" ? (
+                        {dossierData.decision === "Rejeté" || dossierData.decision === "incomplet" ? (
                             <div className="flex justify-end mt-6">
                                 <Button className="bg-yellow-600 text-white hover:bg-yellow-700">
                                     Revoir mes informations
@@ -111,7 +116,7 @@ const StudentTrackingForm = () => {
                             </div>
                         ) : (
                             <div className="flex justify-end mt-6">
-                                <Button className="bg-green-600 text-white hover:bg-green-700">
+                                <Button className="bg-green-600 text-white hover:bg-green-700" onClick={handleGoToPayment}>
                                     Aller à la connexion
                                 </Button>
                             </div>
